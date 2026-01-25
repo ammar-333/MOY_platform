@@ -11,7 +11,8 @@
     "email": "Email",
     "password": "Password",
     "forgotPassword": "Forgot your password?",
-    "submit": "Sign in"
+    "signup": "Sign up",
+    "noaccount": "Don't have an account?"
   },
   "buttons": {
     "save": "Save",
@@ -22,5 +23,9 @@
     "welcome": "Welcome, {{name}}!",
     "loading": "Loading...",
     "error": "Something went wrong"
+  },
+  "form": {
+    "gate": "Ministry of Youth portal",
+    "reservation": "Youth hostel booking and rental system"
   }
 }

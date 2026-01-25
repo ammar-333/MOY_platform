@@ -26,7 +26,7 @@ i18n
       en: { translation: enLang },
       ar: { translation: arLang },
     },
-    lng: "en",
+    lng: localStorage.getItem("lang") || "en",
     fallbackLng: "en",
     debug: true,
 

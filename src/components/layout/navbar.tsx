@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ModeToggle } from "../common/mode-toggle";
 import { Button } from "../ui/button";
 import { useTranslation } from "react-i18next";
@@ -6,18 +6,25 @@ import { useState } from "react";
 
 export default function Navbar() {
   const { t, i18n } = useTranslation();
+  const navigate = useNavigate();
 
   // true => eng
   // false => عربي
-  const [lang, setLang] = useState("en");
+  const [lang, setLang] = useState(localStorage.getItem("lang") || "en");
   function handleClick() {
     if (lang === "en") {
       setLang("ar");
       i18n.changeLanguage("ar");
+      localStorage.setItem("lang", "ar");
     } else {
       setLang("en");
       i18n.changeLanguage("en");
+      localStorage.setItem("lang", "en");
     }
+  }
+
+  function handleLoginBtn() {
+    navigate("/login");
   }
 
   return (
@@ -25,7 +32,7 @@ export default function Navbar() {
       <div className="flex items-center justify-around">
         {/* left */}
         <div className="flex items-center space-x-4 ">
-          <div className="flex-shrink-0 text-slate-600 dark:text-slate-200 text-2xl font-bold">
+          <div className="shrink-0 text-slate-600 dark:text-slate-200 text-2xl font-bold">
             <Link to="/">{t("appName")}</Link>
           </div>
         </div>
@@ -55,7 +62,7 @@ export default function Navbar() {
 
         {/* right */}
         <div className="flex items-center space-x-3">
-          <Button>{t("auth.login")}</Button>
+          <Button onClick={handleLoginBtn}>{t("auth.login")}</Button>
           <div className="text-slate-600 dark:text-slate-300 bg-slate-100/80 dark:bg-slate-900/80">
             <ModeToggle />
           </div>
