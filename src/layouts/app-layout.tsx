@@ -1,13 +1,15 @@
+import Footer from "@/components/layout/footer";
+import Navbar from "@/components/layout/navbar";
 import { Outlet } from "react-router-dom";
 
 function AppLayout() {
   return (
     <div>
-      <nav>navbar</nav>
+      <Navbar />
       <hr />
       <Outlet /> {/* renders child routes */}
       <hr />
-      <footer>footer</footer>
+      <Footer />
     </div>
   );
 }

@@ -1,0 +1,26 @@
+{
+  "appName": "MOY Platform",
+  "nav": {
+    "home": "Home",
+    "about": "About us",
+    "contact": "Contact"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "forgotPassword": "Forgot your password?",
+    "submit": "Sign in"
+  },
+  "buttons": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete"
+  },
+  "messages": {
+    "welcome": "Welcome, {{name}}!",
+    "loading": "Loading...",
+    "error": "Something went wrong"
+  }
+}
