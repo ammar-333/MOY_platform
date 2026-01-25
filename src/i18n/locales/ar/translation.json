@@ -1,0 +1,26 @@
+{
+  "appName": "وزارة الشباب",
+  "nav": {
+    "home": "الرئيسية",
+    "about": "من نحن",
+    "contact": "تواصل معنا"
+  },
+  "auth": {
+    "login": "تسجيل الدخول",
+    "register": "إنشاء حساب",
+    "email": "البريد الإلكتروني",
+    "password": "كلمة المرور",
+    "forgotPassword": "هل نسيت كلمة المرور؟",
+    "submit": "دخول"
+  },
+  "buttons": {
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "delete": "حذف"
+  },
+  "messages": {
+    "welcome": "مرحباً، {{name}}!",
+    "loading": "جاري التحميل...",
+    "error": "حدث خطأ ما"
+  }
+}
