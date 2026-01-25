@@ -6,12 +6,14 @@
     "contact": "تواصل معنا"
   },
   "auth": {
+    "nationalId": "الرقم الوطني / الشخصي",
+    "nationalIdPlaceholder": "ادخل الرقم الوطني أو الرقم الشخصي",
+    "orgNationalId": "الرقم الوطني للمنشأة",
+    "orgNationalIdPlaceholder": "ادخل الرقم الوطني للمنشأة",
+    "passwordPlaceholder": "ادخل كلمة المرور",
+    "signup": "تسجيل",
     "login": "تسجيل الدخول",
-    "register": "إنشاء حساب",
-    "email": "البريد الإلكتروني",
     "password": "كلمة المرور",
-    "forgotPassword": "هل نسيت كلمة المرور؟",
-    "signup": "سجل الان",
     "noaccount": "ليس لديك حساب؟"
   },
   "buttons": {
@@ -26,6 +28,9 @@
   },
   "form": {
     "gate": "بوابة وزارة الشباب",
-    "reservation": "نظام حجز وتأجير بيوت الشباب"
+    "reservation": "نظام حجز وتأجير بيوت الشباب",
+    "userType": "نوع المستفيد",
+    "individual": "أفراد",
+    "organization": "مؤسسات"
   }
 }

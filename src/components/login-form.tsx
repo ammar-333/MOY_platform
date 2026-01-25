@@ -8,58 +8,118 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { LogIn } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useState } from "react";
+
+type UserType = "individual" | "organization";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
   const { t } = useTranslation();
-  return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
-      <Card className="overflow-hidden">
-        {/* HEADER */}
-        <div className="bg-[#3B2AF6] text-white text-center p-8">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-white/20">
-            <LogIn className="h-6 w-6" />
-          </div>
+  const [userType, setUserType] = useState<UserType>("individual");
 
-          <h1 className="text-2xl font-bold">{t("form.gate")}</h1>
-          <p className="mt-2 text-sm opacity-90">{t("form.reservation")}</p>
+  return (
+    <div
+      className={cn("rounded-2xl shadow-lg overflow-hidden", className)}
+      {...props}
+    >
+      {/* HEADER */}
+      <div className="bg-[#2563eb] text-white text-center px-6 pt-10 pb-8">
+        <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-white/20">
+          <ArrowRight className="h-6 w-6" />
         </div>
 
-        {/* form */}
-        <CardContent>
+        <h1 className="text-xl font-bold">{t("form.gate")}</h1>
+        <p className="mt-1 text-sm opacity-90">{t("form.reservation")}</p>
+      </div>
+
+      {/* FORM */}
+      <Card className="rounded-none shadow-none">
+        <CardContent className="p-6">
           <form>
             <FieldGroup>
+              {/* USER TYPE TOGGLE */}
               <Field>
-                <FieldLabel htmlFor="email">{t("auth.email")}</FieldLabel>
+                <FieldLabel>{t("form.userType")}</FieldLabel>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setUserType("individual")}
+                    className={cn(
+                      "rounded-md border px-4 py-2 text-sm transition",
+                      userType === "individual"
+                        ? "bg-primary text-white"
+                        : "bg-muted",
+                    )}
+                  >
+                    {t("form.individual")}
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setUserType("organization")}
+                    className={cn(
+                      "rounded-md border px-4 py-2 text-sm transition",
+                      userType === "organization"
+                        ? "bg-primary text-white"
+                        : "bg-muted",
+                    )}
+                  >
+                    {t("form.organization")}
+                  </button>
+                </div>
+              </Field>
+
+              {/* CONDITIONAL FIELDS */}
+              {userType === "individual" ? (
+                <Field>
+                  <FieldLabel htmlFor="nationalId">
+                    {t("auth.nationalId")}
+                  </FieldLabel>
+                  <Input
+                    id="nationalId"
+                    placeholder={t("auth.nationalIdPlaceholder")}
+                    required
+                  />
+                </Field>
+              ) : (
+                <>
+                  <Field>
+                    <FieldLabel htmlFor="orgNationalId">
+                      {t("auth.orgNationalId")}
+                    </FieldLabel>
+                    <Input
+                      id="orgNationalId"
+                      placeholder={t("auth.orgNationalIdPlaceholder")}
+                      required
+                    />
+                  </Field>
+                </>
+              )}
+
+              {/* PASSWORD */}
+              <Field>
+                <FieldLabel htmlFor="password">{t("auth.password")}</FieldLabel>
                 <Input
-                  id="email"
-                  type="email"
-                  placeholder="m@example.com"
+                  id="password"
+                  type="password"
+                  placeholder={t("auth.passwordPlaceholder")}
                   required
                 />
               </Field>
+
+              {/* SUBMIT */}
               <Field>
-                <div className="flex items-center">
-                  <FieldLabel htmlFor="password">
-                    {t("auth.password")}
-                  </FieldLabel>
-                </div>
-                <Input id="password" type="password" required />
-                <a
-                  href="#"
-                  className="ml-auto text-sm underline-offset-4 hover:underline"
-                >
-                  {t("auth.forgotPassword")}
-                </a>
-              </Field>
-              <Field>
-                <Button type="submit">{t("auth.login")}</Button>
+                <Button className="w-full">{t("auth.login")}</Button>
+
                 <FieldDescription className="text-center">
-                  {t("auth.noaccount")} <a href="#">{t("auth.signup")}</a>
+                  {t("auth.noaccount")}{" "}
+                  <a href="#" className="text-primary hover:underline">
+                    {t("auth.signup")}
+                  </a>
                 </FieldDescription>
               </Field>
             </FieldGroup>
