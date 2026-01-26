@@ -5,6 +5,9 @@
     "about": "About us",
     "contact": "Contact"
   },
+  "footer": {
+    "name": "Footer"
+  },
   "auth": {
     "nationalId": "National / Personal ID",
     "nationalIdPlaceholder": "Enter national or personal ID",

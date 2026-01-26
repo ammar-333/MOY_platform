@@ -1,27 +1,12 @@
 import { Link, useNavigate } from "react-router-dom";
 import { ModeToggle } from "../common/mode-toggle";
 import { Button } from "../ui/button";
+import LangToggle from "../common/lang-toggle";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
 
 export default function Navbar() {
-  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
-
-  // true => eng
-  // false => عربي
-  const [lang, setLang] = useState(localStorage.getItem("lang") || "en");
-  function handleClick() {
-    if (lang === "en") {
-      setLang("ar");
-      i18n.changeLanguage("ar");
-      localStorage.setItem("lang", "ar");
-    } else {
-      setLang("en");
-      i18n.changeLanguage("en");
-      localStorage.setItem("lang", "en");
-    }
-  }
+  const { t } = useTranslation();
 
   function handleLoginBtn() {
     navigate("/login");
@@ -42,17 +27,17 @@ export default function Navbar() {
         {/* center */}
         <div className="hidden sm:flex space-x-6">
           <Link to="/">
-            <p className="text-slate-600 dark:text-slate-200 hover:underline hover:decoration-indigo-600 hover:decoration-2 font-medium">
+            <p className="text-slate-600 dark:text-slate-200 hover:underline hover:decoration-primary hover:decoration-2 font-medium">
               {t("nav.home")}
             </p>{" "}
           </Link>
           <Link to="/">
-            <p className="text-slate-600 dark:text-slate-200 hover:underline hover:decoration-indigo-600 hover:decoration-2 font-medium">
+            <p className="text-slate-600 dark:text-slate-200 hover:underline hover:decoration-primary hover:decoration-2 font-medium">
               {t("nav.about")}
             </p>{" "}
           </Link>
           <Link to="/">
-            <p className="text-slate-600 dark:text-slate-200 hover:underline hover:decoration-indigo-600 hover:decoration-2 font-medium">
+            <p className="text-slate-600 dark:text-slate-200 hover:underline hover:decoration-primary hover:decoration-2 font-medium">
               {t("nav.contact")}
             </p>{" "}
           </Link>
@@ -67,9 +52,7 @@ export default function Navbar() {
             <ModeToggle />
           </div>
           <div className="text-slate-600 dark:text-slate-300 bg-slate-100/80 dark:bg-slate-900/80">
-            <Button variant="outline" size="icon" onClick={handleClick}>
-              {lang === "en" ? "عربي" : "eng"}
-            </Button>
+            <LangToggle />
           </div>
         </div>
       </div>

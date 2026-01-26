@@ -8,7 +8,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { ArrowRight } from "lucide-react";
+import { LogIn } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 
@@ -29,7 +29,7 @@ export function LoginForm({
       {/* HEADER */}
       <div className="bg-[#2563eb] text-white text-center px-6 pt-10 pb-8">
         <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-white/20">
-          <ArrowRight className="h-6 w-6" />
+          <LogIn className="h-6 w-6" />
         </div>
 
         <h1 className="text-xl font-bold">{t("form.gate")}</h1>
