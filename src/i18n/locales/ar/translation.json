@@ -140,5 +140,117 @@
         "desc": "المزيد من الخدمات قريباً"
       }
     }
+  },
+  "requests": {
+    "pageTitle": "طلبات الخدمات",
+    "pageSubtitle": "عرض جميع الطلبات المقدمة",
+    "searchPlaceholder": "بحث...",
+    "newRequest": "تقديم طلب جديد",
+    "requestNo": "رقم الحجز",
+    "submittedAt": "تاريخ التقديم",
+    "fromDate": "من تاريخ",
+    "toDate": "إلى تاريخ",
+    "days": "عدد أيام",
+    "day": "أيام",
+    "serviceType": "نوع الخدمة",
+    "requestBy": "مقدم الطلب",
+    "noResults": "لا توجد نتائج",
+    "canceledNote": "تم إلغاء هذا الطلب.",
+    "status": {
+      "pending": "قيد المراجعة",
+      "approved": "مقبول",
+      "rejected": "مرفوض",
+      "canceled": "ملغي"
+    },
+    "samples": {
+      "pending": [
+        {
+          "title": "بيت الشباب - وادي موسى",
+          "location": "البترا - وادي موسى",
+          "serviceType": "نشاط"
+        },
+        {
+          "title": "بيت شباب عجلون",
+          "location": "عجلون",
+          "serviceType": "إقامة"
+        },
+        {
+          "title": "بيت شباب العقبة",
+          "location": "العقبة",
+          "serviceType": "نشاط"
+        },
+        {
+          "title": "بيت الشباب - وادي موسى",
+          "location": "البترا - وادي موسى",
+          "serviceType": "إقامة"
+        }
+      ],
+      "approved": [
+        {
+          "title": "بيت شباب عجلون",
+          "location": "عجلون",
+          "serviceType": "إقامة"
+        },
+        {
+          "title": "بيت شباب العقبة",
+          "location": "العقبة",
+          "serviceType": "نشاط"
+        },
+        {
+          "title": "بيت الشباب - وادي موسى",
+          "location": "البترا - وادي موسى",
+          "serviceType": "نشاط"
+        },
+        {
+          "title": "بيت شباب عجلون",
+          "location": "عجلون",
+          "serviceType": "إقامة"
+        }
+      ],
+      "rejected": [
+        {
+          "title": "بيت شباب العقبة",
+          "location": "العقبة",
+          "serviceType": "نشاط"
+        },
+        {
+          "title": "بيت شباب عجلون",
+          "location": "عجلون",
+          "serviceType": "إقامة"
+        },
+        {
+          "title": "بيت الشباب - وادي موسى",
+          "location": "البترا - وادي موسى",
+          "serviceType": "نشاط"
+        },
+        {
+          "title": "بيت شباب العقبة",
+          "location": "العقبة",
+          "serviceType": "إقامة"
+        }
+      ],
+      "canceled": [
+        {
+          "title": "بيت الشباب - وادي موسى",
+          "location": "البترا - وادي موسى",
+          "serviceType": "إقامة"
+        },
+        {
+          "title": "بيت شباب عجلون",
+          "location": "عجلون",
+          "serviceType": "نشاط"
+        },
+        {
+          "title": "بيت شباب العقبة",
+          "location": "العقبة",
+          "serviceType": "إقامة"
+        },
+        {
+          "title": "بيت الشباب - وادي موسى",
+          "location": "البترا - وادي موسى",
+          "serviceType": "نشاط"
+        }
+      ]
+    }
   }
 }

@@ -140,5 +140,117 @@
         "desc": "More services coming soon"
       }
     }
+  },
+  "requests": {
+    "pageTitle": "Service Requests",
+    "pageSubtitle": "View all submitted requests",
+    "searchPlaceholder": "Search...",
+    "newRequest": "Create New Request",
+    "requestNo": "Booking No.",
+    "submittedAt": "Submitted Date",
+    "fromDate": "From",
+    "toDate": "To",
+    "days": "Days",
+    "day": "Days",
+    "serviceType": "Service Type",
+    "requestBy": "Requested By",
+    "noResults": "No results found",
+    "canceledNote": "This request has been canceled.",
+    "status": {
+      "pending": "Under Review",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "canceled": "Canceled"
+    },
+    "samples": {
+      "pending": [
+        {
+          "title": "Petra Youth House - Wadi Musa",
+          "location": "Petra - Wadi Musa",
+          "serviceType": "Activity"
+        },
+        {
+          "title": "Ajloun Youth House",
+          "location": "Ajloun",
+          "serviceType": "Accommodation"
+        },
+        {
+          "title": "Aqaba Youth House",
+          "location": "Aqaba",
+          "serviceType": "Activity"
+        },
+        {
+          "title": "Petra Youth House - Wadi Musa",
+          "location": "Petra - Wadi Musa",
+          "serviceType": "Accommodation"
+        }
+      ],
+      "approved": [
+        {
+          "title": "Ajloun Youth House",
+          "location": "Ajloun",
+          "serviceType": "Accommodation"
+        },
+        {
+          "title": "Aqaba Youth House",
+          "location": "Aqaba",
+          "serviceType": "Activity"
+        },
+        {
+          "title": "Petra Youth House - Wadi Musa",
+          "location": "Petra - Wadi Musa",
+          "serviceType": "Activity"
+        },
+        {
+          "title": "Ajloun Youth House",
+          "location": "Ajloun",
+          "serviceType": "Accommodation"
+        }
+      ],
+      "rejected": [
+        {
+          "title": "Aqaba Youth House",
+          "location": "Aqaba",
+          "serviceType": "Activity"
+        },
+        {
+          "title": "Ajloun Youth House",
+          "location": "Ajloun",
+          "serviceType": "Accommodation"
+        },
+        {
+          "title": "Petra Youth House - Wadi Musa",
+          "location": "Petra - Wadi Musa",
+          "serviceType": "Activity"
+        },
+        {
+          "title": "Aqaba Youth House",
+          "location": "Aqaba",
+          "serviceType": "Accommodation"
+        }
+      ],
+      "canceled": [
+        {
+          "title": "Petra Youth House - Wadi Musa",
+          "location": "Petra - Wadi Musa",
+          "serviceType": "Accommodation"
+        },
+        {
+          "title": "Ajloun Youth House",
+          "location": "Ajloun",
+          "serviceType": "Activity"
+        },
+        {
+          "title": "Aqaba Youth House",
+          "location": "Aqaba",
+          "serviceType": "Accommodation"
+        },
+        {
+          "title": "Petra Youth House - Wadi Musa",
+          "location": "Petra - Wadi Musa",
+          "serviceType": "Activity"
+        }
+      ]
+    }
   }
 }
