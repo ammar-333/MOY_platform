@@ -129,12 +129,14 @@ export function LoginForm({
                   {t("auth.login")}
                 </Button>
 
-                <FieldDescription className="text-center">
-                  {t("auth.noaccount")}{" "}
-                  <Link to="/signup" className="text-primary hover:underline">
-                    {t("auth.signup")}
-                  </Link>
-                </FieldDescription>
+                {userType === "organization" && (
+                  <FieldDescription className="text-center">
+                    {t("auth.noaccount")}{" "}
+                    <Link to="/signup" className="text-primary hover:underline">
+                      {t("auth.signup")}
+                    </Link>
+                  </FieldDescription>
+                )}
               </Field>
             </FieldGroup>
           </form>

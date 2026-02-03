@@ -1,4 +1,5 @@
 {
+  "dir": "rtl",
   "appName": "وزارة الشباب الأردنية",
   "nav": {
     "home": "الرئيسية",
@@ -31,7 +32,9 @@
     "phoneNumber": "رقم الهاتف",
     "phoneNumberPlaceholder": "ادخل رقم هاتفك",
     "organizationName": "اسم المنشأة",
-    "organizationNamePlaceholder": "ادخل اسم منشأتك"
+    "organizationNamePlaceholder": "ادخل اسم منشأتك",
+    "government": "القطاع الحكومي",
+    "private": "القطاع الخاص"
   },
   "buttons": {
     "save": "حفظ",
@@ -108,6 +111,7 @@
       "requiredTents": "عدد الخيم المطلوبة",
       "requiredSuites": "عدد السويتات المطلوبة",
       "requiredChalets": "عدد الشاليهات المطلوبة",
+      "requiredBeds": "عدد الأسرّة المطلوبة",
       "activityPlan": "خطة النشاط",
       "groupLeader": "مسؤول المجموعة",
       "participantsInfo": "تصنيف المشاركين"
@@ -136,7 +140,8 @@
         "room": "غرفة",
         "tent": "خيمة",
         "suite": "سويت",
-        "chalet": "شاليه"
+        "chalet": "شاليه",
+        "bed": "سرير"
       }
     }
   },

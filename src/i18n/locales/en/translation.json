@@ -1,4 +1,5 @@
 {
+  "dir": "ltr",
   "appName": "Jordanian Ministry of Youth",
   "nav": {
     "home": "Home",
@@ -31,7 +32,9 @@
     "phoneNumber": "Phone Number",
     "phoneNumberPlaceholder": "Enter your phone number",
     "organizationName": "Organization Name",
-    "organizationNamePlaceholder": "Enter your organization name"
+    "organizationNamePlaceholder": "Enter your organization name",
+    "government": "Government Sector",
+    "private": "Private Sector"
   },
   "buttons": {
     "save": "Save",
@@ -108,6 +111,7 @@
       "requiredTents": "Required tents",
       "requiredSuites": "Required suites",
       "requiredChalets": "Required chalets",
+      "requiredBeds": "Required beds",
       "activityPlan": "Activity plan",
       "groupLeader": "Group leader",
       "participantsInfo": "Participants classification"
@@ -136,7 +140,8 @@
         "room": "Room",
         "tent": "Tent",
         "suite": "Suite",
-        "chalet": "Chalet"
+        "chalet": "Chalet",
+        "bed": "Bed"
       }
     }
   },

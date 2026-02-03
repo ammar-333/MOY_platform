@@ -11,7 +11,7 @@ import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 type Option = { value: string; label: string };
-type FacilityType = "" | "room" | "tent" | "suite" | "chalet";
+type FacilityType = "" | "room" | "tent" | "suite" | "chalet" | "bed";
 
 function Select({
   id,
@@ -84,6 +84,7 @@ export default function ReservationForm({
   const [requiredTents, setRequiredTents] = useState("1");
   const [requiredSuites, setRequiredSuites] = useState("1");
   const [requiredChalets, setRequiredChalets] = useState("1");
+  const [requiredBeds, setRequiredBeds] = useState("1");
 
   const [activityPlan, setActivityPlan] = useState("");
   const [groupLeader, setGroupLeader] = useState("");
@@ -125,6 +126,7 @@ export default function ReservationForm({
       { value: "chalet", label: t("reservation.options.facility.chalet") },
       { value: "tent", label: t("reservation.options.facility.tent") },
       { value: "suite", label: t("reservation.options.facility.suite") },
+      { value: "bed", label: t("reservation.options.facility.bed") },
     ],
     [t],
   );
@@ -140,6 +142,7 @@ export default function ReservationForm({
     if (facility === "tent") return "tent";
     if (facility === "suite") return "suite";
     if (facility === "chalet") return "chalet";
+    if (facility === "bed") return "bed";
     return "";
   }, [facility, showFacilitySection]);
 
@@ -150,6 +153,7 @@ export default function ReservationForm({
       return t("reservation.fields.requiredSuites");
     if (activeCountKey === "chalet")
       return t("reservation.fields.requiredChalets");
+    if (activeCountKey === "bed") return t("reservation.fields.requiredBeds");
     return "";
   }, [activeCountKey, t]);
 
@@ -158,6 +162,7 @@ export default function ReservationForm({
     if (activeCountKey === "tent") return requiredTents;
     if (activeCountKey === "suite") return requiredSuites;
     if (activeCountKey === "chalet") return requiredChalets;
+    if (activeCountKey === "bed") return requiredBeds;
     return "";
   }, [
     activeCountKey,
@@ -165,6 +170,7 @@ export default function ReservationForm({
     requiredTents,
     requiredSuites,
     requiredChalets,
+    requiredBeds,
   ]);
 
   function setActiveCountValue(v: string) {
@@ -172,6 +178,7 @@ export default function ReservationForm({
     else if (activeCountKey === "tent") setRequiredTents(v);
     else if (activeCountKey === "suite") setRequiredSuites(v);
     else if (activeCountKey === "chalet") setRequiredChalets(v);
+    else if (activeCountKey === "bed") setRequiredBeds(v);
   }
 
   function resetFacilityCounts() {

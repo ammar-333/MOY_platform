@@ -10,22 +10,28 @@ import {
 import { Input } from "@/components/ui/input";
 import { LogIn } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import { Label } from "../ui/label";
 
-type UserType = "individual" | "organization";
+type companySectorType = "government" | "private";
 
 export default function SignupForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
   const { t } = useTranslation();
-  const [userType, setUserType] = useState<UserType>("individual");
   const navigate = useNavigate();
+  const [companySector, setCompanySector] =
+    useState<companySectorType>("government");
+
+  useEffect(() => {
+    console.log(companySector);
+  }, [companySector]);
 
   const handleSubmit = () => {
-    if (userType === "individual") navigate("/person-profile");
-    else if (userType === "organization") navigate("/organization-profile");
+    navigate("/organization-profile");
   };
 
   return (
@@ -48,123 +54,47 @@ export default function SignupForm({
         <CardContent className="p-6">
           <form>
             <FieldGroup>
-              {/* USER TYPE TOGGLE */}
+              {/*  ID */}
               <Field>
-                <FieldLabel>{t("form.userType")}</FieldLabel>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setUserType("individual")}
-                    className={cn(
-                      "rounded-md border px-4 py-2 text-sm transition",
-                      userType === "individual"
-                        ? "bg-primary text-white"
-                        : "bg-muted",
-                    )}
-                  >
-                    {t("form.individual")}
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setUserType("organization")}
-                    className={cn(
-                      "rounded-md border px-4 py-2 text-sm transition",
-                      userType === "organization"
-                        ? "bg-primary text-white"
-                        : "bg-muted",
-                    )}
-                  >
-                    {t("form.organization")}
-                  </button>
-                </div>
+                <FieldLabel htmlFor="orgNationalId">
+                  {t("auth.orgNationalId")}{" "}
+                  <span className="text-red-500">*</span>
+                </FieldLabel>
+                <Input
+                  id="orgNationalId"
+                  placeholder={t("auth.orgNationalIdPlaceholder")}
+                  required
+                />
               </Field>
 
-              {/* CONDITIONAL ID */}
-              {userType === "individual" ? (
-                <Field>
-                  <FieldLabel htmlFor="nationalId">
-                    {t("auth.nationalId")}
-                    <span className="text-red-500">*</span>
-                  </FieldLabel>
-                  <Input
-                    id="nationalId"
-                    placeholder={t("auth.nationalIdPlaceholder")}
-                    required
-                  />
-                </Field>
-              ) : (
-                <>
-                  <Field>
-                    <FieldLabel htmlFor="orgNationalId">
-                      {t("auth.orgNationalId")}{" "}
-                      <span className="text-red-500">*</span>
-                    </FieldLabel>
-                    <Input
-                      id="orgNationalId"
-                      placeholder={t("auth.orgNationalIdPlaceholder")}
-                      required
-                    />
-                  </Field>
-                </>
-              )}
+              {/*  name */}
+              <Field>
+                <FieldLabel htmlFor="orgNationalName">
+                  {t("auth.organizationName")}
+                  <span className="text-red-500">*</span>
+                </FieldLabel>
+                <Input
+                  id="orgNationalName"
+                  placeholder={t("auth.organizationNamePlaceholder")}
+                  required
+                />
+              </Field>
 
-              {/* CONDITIONAL name */}
-              {userType === "individual" ? (
-                <Field>
-                  <FieldLabel htmlFor="fullName">
-                    {t("auth.fullName")}
-                    <span className="text-red-500">*</span>
-                  </FieldLabel>
-                  <Input
-                    id="fullName"
-                    placeholder={t("auth.fullNamePlaceholder")}
-                    required
-                  />
-                </Field>
-              ) : (
-                <>
-                  <Field>
-                    <FieldLabel htmlFor="orgNationalName">
-                      {t("auth.organizationName")}
-                      <span className="text-red-500">*</span>
-                    </FieldLabel>
-                    <Input
-                      id="orgNationalName"
-                      placeholder={t("auth.organizationNamePlaceholder")}
-                      required
-                    />
-                  </Field>
-                </>
-              )}
-
-              <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Email */}
-                <Field>
-                  <FieldLabel htmlFor="email">
-                    {t("auth.email")}
-                    <span className="text-red-500">*</span>
-                  </FieldLabel>
-                  <Input
-                    id="email"
-                    placeholder={t("auth.emailPlaceholder")}
-                    required
-                  />
-                </Field>
-
-                {/* PhoneNumber */}
-                <Field>
-                  <FieldLabel htmlFor="phoneNumber">
-                    {t("auth.phoneNumber")}{" "}
-                    <span className="text-red-500">*</span>
-                  </FieldLabel>
-                  <Input
-                    id="phoneNumber"
-                    placeholder={t("auth.phoneNumberPlaceholder")}
-                    required
-                  />
-                </Field>
-              </FieldGroup>
+              {/* company sector */}
+              <RadioGroup
+                defaultValue="goverment"
+                onValueChange={setCompanySector}
+                dir={t("dir")}
+              >
+                <div className="flex items-center gap-3">
+                  <RadioGroupItem value="goverment" id="goverment" />
+                  <Label htmlFor="goverment">{t("auth.government")}</Label>
+                </div>
+                <div className="flex items-center gap-3">
+                  <RadioGroupItem value="private" id="private" />
+                  <Label htmlFor="private">{t("auth.private")}</Label>
+                </div>
+              </RadioGroup>
 
               <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* PASSWORD */}
