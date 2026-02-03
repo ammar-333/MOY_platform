@@ -5,11 +5,12 @@ import NotFound from "../pages/not-found";
 import LoginPage from "@/pages/auth/login-page";
 import PersonProfile from "@/pages/profile/person-profile";
 import OrganizationProfile from "@/pages/profile/organization-profile";
-import ReservationPage from "@/pages/reservation/reservation";
 import ConfirmationMessage from "@/pages/confirmation-message";
 import ServicesPage from "@/pages/service/services";
 import ServiceRequestsPage from "@/pages/service/service-requests";
 import SignupPage from "@/pages/auth/signup-page";
+import SportComplexPage from "@/pages/reservation/sportComplex-page";
+import YouthHousePage from "@/pages/reservation/youthHouse-page";
 
 const routes = createBrowserRouter([
   {
@@ -39,8 +40,12 @@ const routes = createBrowserRouter([
     element: <OrganizationProfile />,
   },
   {
-    path: "/reservation",
-    element: <ReservationPage />,
+    path: "/youthHouse",
+    element: <YouthHousePage />,
+  },
+  {
+    path: "/sportComplex",
+    element: <SportComplexPage />,
   },
   {
     path: "/services",

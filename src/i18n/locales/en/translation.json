@@ -101,6 +101,7 @@
     "fields": {
       "serviceType": "Service type",
       "youthHouse": "Youth house",
+      "sportsComplex": "Sports Complex",
       "fromDate": "From date",
       "toDate": "To date",
       "durationDays": "Duration (days)",
@@ -142,6 +143,26 @@
         "suite": "Suite",
         "chalet": "Chalet",
         "bed": "Bed"
+      }
+    },
+    "sportsComplex": {
+      "title": "Sports Complex Booking & Rental",
+      "subtitle": "Fill the form below to complete the reservation request",
+      "sections": {
+        "booking": "Booking Details",
+        "facility": "Facility Details",
+        "activity": "Activity Details"
+      },
+      "fields": {
+        "sportsComplex": "Sports Complex",
+        "complexType": "Complex Type"
+      },
+      "options": {
+        "complex": {
+          "ammanSportsCity": "Amman Sports City",
+          "irbidSportsCity": "Irbid Sports City",
+          "aqabaSportsCity": "Aqaba Sports City"
+        }
       }
     }
   },

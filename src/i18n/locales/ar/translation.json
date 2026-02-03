@@ -101,6 +101,7 @@
     "fields": {
       "serviceType": "نوع الخدمة",
       "youthHouse": "بيت الشباب",
+      "sportsComplex": "المجمع الرياضي",
       "fromDate": "من تاريخ",
       "toDate": "إلى تاريخ",
       "durationDays": "المدة (أيام)",
@@ -142,6 +143,21 @@
         "suite": "سويت",
         "chalet": "شاليه",
         "bed": "سرير"
+      }
+    },
+    "sportsComplex": {
+      "title": "حجز وتأجير المجمعات الرياضية",
+      "subtitle": "املأ النموذج التالي لإتمام عملية الحجز",
+      "fields": {
+        "complexType": "نوع المجمع",
+        "sportsComplex": "المجمع الرياضي"
+      },
+      "options": {
+        "complex": {
+          "ammanSportsCity": "مدين الرياضة - عمان",
+          "irbidSportsCity": "مدينة الرياضة - إربد",
+          "aqabaSportsCity": "مدينة الرياضة - العقبة"
+        }
       }
     }
   },

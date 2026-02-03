@@ -5,13 +5,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { CalendarDays, Users, Hotel } from "lucide-react";
+import { CalendarDays, Hotel } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 
 type Option = { value: string; label: string };
-type FacilityType = "" | "room" | "tent" | "suite" | "chalet" | "bed";
+// type FacilityType = "" | "room" | "tent" | "suite" | "chalet" | "bed";
+type compleType = "" | "youthouse" | "sportComplex";
 
 function Select({
   id,
@@ -64,7 +65,7 @@ function daysBetween(from: string, to: string) {
   return days > 0 ? days : 0;
 }
 
-export default function ReservationForm({
+export default function SportComplex({
   className,
   ...props
 }: React.ComponentProps<"div">) {
@@ -72,38 +73,39 @@ export default function ReservationForm({
   const navigate = useNavigate();
 
   const [serviceType, setServiceType] = useState("");
+  const [complexType, setComplexType] = useState<compleType>("");
   const [house, setHouse] = useState("");
+  const [complex, setComplex] = useState("");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [beneficiaries, setBeneficiaries] = useState("1");
 
-  const [facility, setFacility] = useState<FacilityType>("");
-  const [availableCapacity] = useState("15");
+  //   const [facility, setFacility] = useState<FacilityType>("");
+  //   const [availableCapacity] = useState("15");
 
-  const [requiredRooms, setRequiredRooms] = useState("1");
-  const [requiredTents, setRequiredTents] = useState("1");
-  const [requiredSuites, setRequiredSuites] = useState("1");
-  const [requiredChalets, setRequiredChalets] = useState("1");
-  const [requiredBeds, setRequiredBeds] = useState("1");
+  //   const [requiredRooms, setRequiredRooms] = useState("1");
+  //   const [requiredTents, setRequiredTents] = useState("1");
+  //   const [requiredSuites, setRequiredSuites] = useState("1");
+  //   const [requiredChalets, setRequiredChalets] = useState("1");
+  //   const [requiredBeds, setRequiredBeds] = useState("1");
 
   const [activityPlan, setActivityPlan] = useState("");
   const [groupLeader, setGroupLeader] = useState("");
   const [participantsInfo, setParticipantsInfo] = useState("");
 
-  const showFacilitySection =
-    serviceType === "accommodation" || serviceType === "both";
-  const showActivitySection =
-    serviceType === "activity" || serviceType === "both";
-  const showCapacity = showFacilitySection && facility !== "";
+  //   const showFacilitySection =
+  //     serviceType === "accommodation" || serviceType === "both";
+  const showActivitySection = serviceType === "activity";
+  //   const showCapacity = showFacilitySection && facility !== "";
 
   const serviceOptions: Option[] = useMemo(
     () => [
-      {
-        value: "accommodation",
-        label: t("reservation.options.service.accommodation"),
-      },
+      //   {
+      //     value: "accommodation",
+      //     label: t("reservation.options.service.accommodation"),
+      //   },
       { value: "activity", label: t("reservation.options.service.activity") },
-      { value: "both", label: t("reservation.options.service.both") },
+      //   { value: "both", label: t("reservation.options.service.both") },
     ],
     [t],
   );
@@ -120,73 +122,102 @@ export default function ReservationForm({
     [t],
   );
 
-  const facilityOptions: Option[] = useMemo(
+  const complexTypeOptions: Option[] = useMemo(
     () => [
-      { value: "room", label: t("reservation.options.facility.room") },
-      { value: "chalet", label: t("reservation.options.facility.chalet") },
-      { value: "tent", label: t("reservation.options.facility.tent") },
-      { value: "suite", label: t("reservation.options.facility.suite") },
-      { value: "bed", label: t("reservation.options.facility.bed") },
+      {
+        value: "youthouse",
+        label: t("reservation.fields.youthHouse"),
+      },
+      { value: "sportComplex", label: t("reservation.fields.sportsComplex") },
     ],
     [t],
   );
+
+  const complexOptions: Option[] = useMemo(
+    () => [
+      {
+        value: "petra-wadi-musa",
+        label: t("reservation.sportsComplex.options.complex.ammanSportsCity"),
+      },
+      {
+        value: "ajloun",
+        label: t("reservation.sportsComplex.options.complex.irbidSportsCity"),
+      },
+      {
+        value: "aqaba",
+        label: t("reservation.sportsComplex.options.complex.aqabaSportsCity"),
+      },
+    ],
+    [t],
+  );
+
+  //   const facilityOptions: Option[] = useMemo(
+  //     () => [
+  //       { value: "room", label: t("reservation.options.facility.room") },
+  //       { value: "chalet", label: t("reservation.options.facility.chalet") },
+  //       { value: "tent", label: t("reservation.options.facility.tent") },
+  //       { value: "suite", label: t("reservation.options.facility.suite") },
+  //       { value: "bed", label: t("reservation.options.facility.bed") },
+  //     ],
+  //     [t],
+  //   );
 
   const durationDays = useMemo(
     () => daysBetween(fromDate, toDate),
     [fromDate, toDate],
   );
 
-  const activeCountKey = useMemo(() => {
-    if (!showFacilitySection) return "";
-    if (facility === "room") return "room";
-    if (facility === "tent") return "tent";
-    if (facility === "suite") return "suite";
-    if (facility === "chalet") return "chalet";
-    if (facility === "bed") return "bed";
-    return "";
-  }, [facility, showFacilitySection]);
+  //   const activeCountKey = useMemo(() => {
+  //     if (!showFacilitySection) return "";
+  //     if (facility === "room") return "room";
+  //     if (facility === "tent") return "tent";
+  //     if (facility === "suite") return "suite";
+  //     if (facility === "chalet") return "chalet";
+  //     if (facility === "bed") return "bed";
+  //     return "";
+  //   }, [facility, showFacilitySection]);
 
-  const activeCountLabel = useMemo(() => {
-    if (activeCountKey === "room") return t("reservation.fields.requiredRooms");
-    if (activeCountKey === "tent") return t("reservation.fields.requiredTents");
-    if (activeCountKey === "suite")
-      return t("reservation.fields.requiredSuites");
-    if (activeCountKey === "chalet")
-      return t("reservation.fields.requiredChalets");
-    if (activeCountKey === "bed") return t("reservation.fields.requiredBeds");
-    return "";
-  }, [activeCountKey, t]);
+  //   const activeCountLabel = useMemo(() => {
+  //     if (activeCountKey === "room") return t("reservation.fields.requiredRooms");
+  //     if (activeCountKey === "tent") return t("reservation.fields.requiredTents");
+  //     if (activeCountKey === "suite")
+  //       return t("reservation.fields.requiredSuites");
+  //     if (activeCountKey === "chalet")
+  //       return t("reservation.fields.requiredChalets");
+  //     if (activeCountKey === "bed") return t("reservation.fields.requiredBeds");
+  //     return "";
+  //   }, [activeCountKey, t]);
 
-  const activeCountValue = useMemo(() => {
-    if (activeCountKey === "room") return requiredRooms;
-    if (activeCountKey === "tent") return requiredTents;
-    if (activeCountKey === "suite") return requiredSuites;
-    if (activeCountKey === "chalet") return requiredChalets;
-    if (activeCountKey === "bed") return requiredBeds;
-    return "";
-  }, [
-    activeCountKey,
-    requiredRooms,
-    requiredTents,
-    requiredSuites,
-    requiredChalets,
-    requiredBeds,
-  ]);
+  //   const activeCountValue = useMemo(() => {
+  //     if (activeCountKey === "room") return requiredRooms;
+  //     if (activeCountKey === "tent") return requiredTents;
+  //     if (activeCountKey === "suite") return requiredSuites;
+  //     if (activeCountKey === "chalet") return requiredChalets;
+  //     if (activeCountKey === "bed") return requiredBeds;
+  //     return "";
+  //   }, [
+  //     activeCountKey,
+  //     requiredRooms,
+  //     requiredTents,
+  //     requiredSuites,
+  //     requiredChalets,
+  //     requiredBeds,
+  //   ]);
 
-  function setActiveCountValue(v: string) {
-    if (activeCountKey === "room") setRequiredRooms(v);
-    else if (activeCountKey === "tent") setRequiredTents(v);
-    else if (activeCountKey === "suite") setRequiredSuites(v);
-    else if (activeCountKey === "chalet") setRequiredChalets(v);
-    else if (activeCountKey === "bed") setRequiredBeds(v);
-  }
+  //   function setActiveCountValue(v: string) {
+  //     if (activeCountKey === "room") setRequiredRooms(v);
+  //     else if (activeCountKey === "tent") setRequiredTents(v);
+  //     else if (activeCountKey === "suite") setRequiredSuites(v);
+  //     else if (activeCountKey === "chalet") setRequiredChalets(v);
+  //     else if (activeCountKey === "bed") setRequiredBeds(v);
+  //   }
 
-  function resetFacilityCounts() {
-    setRequiredRooms("1");
-    setRequiredTents("1");
-    setRequiredSuites("1");
-    setRequiredChalets("1");
-  }
+  //   function resetFacilityCounts() {
+  //     setRequiredRooms("1");
+  //     setRequiredTents("1");
+  //     setRequiredSuites("1");
+  //     setRequiredChalets("1");
+  //   }
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -205,9 +236,11 @@ export default function ReservationForm({
             <Hotel className="h-8 w-8" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold">{t("reservation.title")}</h1>
+            <h1 className="text-2xl font-bold">
+              {t("reservation.sportsComplex.title")}
+            </h1>
             <p className="mt-1 text-sm opacity-90">
-              {t("reservation.subtitle")}
+              {t("reservation.sportsComplex.subtitle")}
             </p>
           </div>
         </div>
@@ -229,17 +262,17 @@ export default function ReservationForm({
 
               {/* First row */}
               <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Youth House */}
+                {/* complex type */}
                 <Field>
-                  <FieldLabel htmlFor="house">
-                    {t("reservation.fields.youthHouse")}{" "}
+                  <FieldLabel htmlFor="complexType">
+                    {t("reservation.sportsComplex.fields.complexType")}{" "}
                     <span className="text-red-500">*</span>
                   </FieldLabel>
                   <Select
-                    id="house"
-                    value={house}
-                    onChange={setHouse}
-                    options={houseOptions}
+                    id="complexType"
+                    value={complexType}
+                    onChange={(v) => setComplexType(v)}
+                    options={complexTypeOptions}
                     placeholder={t("reservation.placeholders.select")}
                   />
                 </Field>
@@ -255,15 +288,50 @@ export default function ReservationForm({
                     value={serviceType}
                     onChange={(v) => {
                       setServiceType(v);
-                      if (v !== "accommodation") {
-                        setFacility("");
-                        resetFacilityCounts();
-                      }
+                      //   if (v !== "accommodation") {
+                      //     setFacility("");
+                      //     resetFacilityCounts();
+                      //   }
                     }}
                     options={serviceOptions}
                     placeholder={t("reservation.placeholders.select")}
                   />
                 </Field>
+              </FieldGroup>
+
+              {/* complex type */}
+              <FieldGroup>
+                {complexType === "youthouse" && (
+                  <Field>
+                    <FieldLabel htmlFor="house">
+                      {t("reservation.fields.youthHouse")}{" "}
+                      <span className="text-red-500">*</span>
+                    </FieldLabel>
+                    <Select
+                      id="house"
+                      value={house}
+                      onChange={setHouse}
+                      options={houseOptions}
+                      placeholder={t("reservation.placeholders.select")}
+                    />
+                  </Field>
+                )}
+
+                {complexType === "sportComplex" && (
+                  <Field>
+                    <FieldLabel htmlFor="sportComplex">
+                      {t("reservation.sportsComplex.fields.sportsComplex")}{" "}
+                      <span className="text-red-500">*</span>
+                    </FieldLabel>
+                    <Select
+                      id="sportComplex"
+                      value={complex}
+                      onChange={setComplex}
+                      options={complexOptions}
+                      placeholder={t("reservation.placeholders.select")}
+                    />
+                  </Field>
+                )}
               </FieldGroup>
 
               {/* Second row */}
@@ -328,7 +396,7 @@ export default function ReservationForm({
               </FieldGroup>
 
               {/* SECTION: Facility */}
-              {showFacilitySection && (
+              {/* {showFacilitySection && (
                 <>
                   <hr className="border-border" />
                   <div className="flex items-center justify-between">
@@ -393,7 +461,7 @@ export default function ReservationForm({
                     </FieldGroup>
                   )}
                 </>
-              )}
+              )} */}
 
               {/* SECTION: Activity */}
               {showActivitySection && (
