@@ -6,18 +6,49 @@ import { Input } from "@/components/ui/input";
 import { User } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Checkbox } from "../ui/checkbox";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { Textarea } from "../ui/textarea";
 import { useNavigate } from "react-router-dom";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+type Option = { value: string; label: string };
 
 export default function PersonForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
   const { t } = useTranslation();
-  const [checked, setChecked] = useState(false);
   const [edit, setEdit] = useState(false);
   const navigate = useNavigate();
+
+  const [membershipCheck, setMembershipCheck] = useState(false);
+  const [employeeCheck, setEmployeeCheck] = useState(false);
+  const [discountCheck, setDiscountCheck] = useState(false);
+  const [employeeType, setEmployeeType] = useState("");
+  const [employeeNumber, setEmployeeNumber] = useState("");
+  const [IdFile, setIdFile] = useState<File | null>(null);
+  const [employeeIdFile, setEmployeeIdFile] = useState<File | null>(null);
+
+  const employeeTypeOptions: Option[] = useMemo(
+    () => [
+      {
+        value: "worker",
+        label: t("profile.individual.worker"),
+      },
+      {
+        value: "retired",
+        label: t("profile.individual.retired"),
+      },
+    ],
+    [t],
+  );
 
   const handleEdit = () => {
     setEdit(true);
@@ -91,21 +122,13 @@ export default function PersonForm({
                   <FieldLabel htmlFor="email">
                     {t("profile.individual.email")}
                   </FieldLabel>
-                  {edit ? (
-                    <Input
-                      id="email"
-                      type="email"
-                      value=""
-                      placeholder="example@gmail.com"
-                      className="dark:bg-slate-700"
-                    />
-                  ) : (
-                    <Input
-                      id="email"
-                      readOnly
-                      className="bg-muted cursor-not-allowed"
-                    />
-                  )}
+                  <Input
+                    id="email"
+                    type="email"
+                    value=""
+                    className={edit ? "dark:bg-slate-700" : ""}
+                    readOnly={!edit}
+                  />
                 </Field>
 
                 {/* phone number */}
@@ -113,64 +136,49 @@ export default function PersonForm({
                   <FieldLabel htmlFor="phone">
                     {t("profile.individual.phone")}
                   </FieldLabel>
-                  {edit ? (
-                    <Input
-                      id="phone"
-                      type="tel"
-                      placeholder="077 123 4567"
-                      className="dark:bg-slate-700"
-                    />
-                  ) : (
-                    <Input
-                      id="phone"
-                      readOnly
-                      className="bg-muted cursor-not-allowed"
-                    />
-                  )}
+                  <Input
+                    id="phone"
+                    type="tel"
+                    value=""
+                    className={edit ? "dark:bg-slate-700" : ""}
+                    readOnly={!edit}
+                  />
                 </Field>
               </FieldGroup>
 
               {/* 3rd row */}
               <FieldGroup>
                 <Field orientation="horizontal">
-                  {edit ? (
-                    <Checkbox
-                      id="member-checkbox"
-                      name="member"
-                      checked={checked}
-                      onCheckedChange={(value) => setChecked(value as boolean)}
-                      className="dark:bg-slate-700"
-                    />
-                  ) : (
-                    <Checkbox disabled />
-                  )}
+                  <Checkbox
+                    id="member-checkbox"
+                    name="member"
+                    checked={membershipCheck}
+                    onCheckedChange={(value) =>
+                      setMembershipCheck(value as boolean)
+                    }
+                    className="dark:bg-slate-700"
+                    disabled={!edit}
+                  />
                   <FieldLabel htmlFor="member-checkbox">
                     {t("profile.individual.membership")}
                   </FieldLabel>
                 </Field>
 
                 {/* membership number */}
-                <Field>
-                  <FieldLabel htmlFor="membership-number">
-                    {t("profile.individual.membershipNumber")}
-                  </FieldLabel>
-                  {checked ? (
+                {membershipCheck && (
+                  <Field>
+                    <FieldLabel htmlFor="membership-number">
+                      {t("profile.individual.membershipNumber")}
+                    </FieldLabel>
                     <Input
                       id="embership-number"
                       type="number"
-                      value=""
-                      placeholder="173543"
                       required
-                      className="dark:bg-slate-700"
+                      className={edit ? "dark:bg-slate-700" : ""}
+                      readOnly={!edit}
                     />
-                  ) : (
-                    <Input
-                      id="embership-number"
-                      readOnly
-                      className="bg-muted cursor-not-allowed"
-                    />
-                  )}
-                </Field>
+                  </Field>
+                )}
               </FieldGroup>
 
               <hr className="border-border" />
@@ -276,6 +284,195 @@ export default function PersonForm({
                     className="bg-muted cursor-not-allowed"
                   />
                 </Field>
+              </FieldGroup>
+
+              <hr className="border-border" />
+
+              {/* ministry employees */}
+              <FieldGroup>
+                <Field orientation="horizontal">
+                  <Checkbox
+                    id="employee-checkbox"
+                    name="employee"
+                    checked={employeeCheck}
+                    onCheckedChange={(value) =>
+                      setEmployeeCheck(value as boolean)
+                    }
+                    className="dark:bg-slate-700"
+                    disabled={!edit}
+                  />
+
+                  <FieldLabel htmlFor="employee-checkbox">
+                    {t("profile.individual.employee")}
+                  </FieldLabel>
+                </Field>
+
+                {/* membership number */}
+                {employeeCheck && (
+                  <FieldGroup>
+                    <Field>
+                      <FieldLabel htmlFor="employee-type">
+                        {t("profile.individual.employeeType")}{" "}
+                      </FieldLabel>
+                      <Select
+                        value={employeeType}
+                        onValueChange={setEmployeeType}
+                        dir={t("dir")}
+                        disabled={!edit}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue
+                            placeholder={t("reservation.placeholders.select")}
+                          />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            {employeeTypeOptions.map((option) => (
+                              <SelectItem
+                                key={option.value}
+                                value={option.value}
+                              >
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </Field>
+
+                    <Field>
+                      <FieldLabel htmlFor="employee-number">
+                        {t("profile.individual.employeeNumber")}
+                      </FieldLabel>
+                      <Input
+                        id="employee-number"
+                        type="number"
+                        value={employeeNumber}
+                        onChange={(e) => setEmployeeNumber(e.target.value)}
+                        required
+                        className={edit ? "dark:bg-slate-700" : ""}
+                        readOnly={!edit}
+                      />
+                    </Field>
+
+                    <Field>
+                      <label className="block space-y-2">
+                        <span className="text-sm font-medium block">
+                          {t("profile.individual.id")}
+                        </span>
+
+                        <span className="flex gap-2">
+                          <Button type="button" asChild>
+                            <label>
+                              {t("profile.chooseFile")}
+                              <input
+                                type="file"
+                                className="hidden"
+                                onChange={(e) =>
+                                  setIdFile(e.target.files?.[0] ?? null)
+                                }
+                                disabled={!edit}
+                              />
+                            </label>
+                          </Button>
+
+                          {IdFile && (
+                            <p className="text-sm text-muted-foreground">
+                              {IdFile.name}
+                            </p>
+                          )}
+                        </span>
+                      </label>
+                    </Field>
+
+                    <Field>
+                      <label className="block space-y-2">
+                        <span className="text-sm font-medium block">
+                          {t("profile.individual.ministryId")}
+                        </span>
+
+                        <span className="flex gap-2">
+                          <Button type="button" asChild>
+                            <label>
+                              {t("profile.chooseFile")}
+                              <input
+                                type="file"
+                                className="hidden"
+                                onChange={(e) =>
+                                  setEmployeeIdFile(e.target.files?.[0] ?? null)
+                                }
+                                disabled={!edit}
+                              />
+                            </label>
+                          </Button>
+
+                          {employeeIdFile && (
+                            <p className="text-sm text-muted-foreground">
+                              {employeeIdFile.name}
+                            </p>
+                          )}
+                        </span>
+                      </label>
+                    </Field>
+                  </FieldGroup>
+                )}
+              </FieldGroup>
+
+              <hr className="border-border" />
+
+              {/* Minister's discount */}
+              <FieldGroup>
+                <Field orientation="horizontal">
+                  <Checkbox
+                    id="discount-checkbox"
+                    name="employee"
+                    checked={discountCheck}
+                    onCheckedChange={(value) =>
+                      setDiscountCheck(value as boolean)
+                    }
+                    className="dark:bg-slate-700"
+                    disabled={!edit}
+                  />
+
+                  <FieldLabel htmlFor="discount-checkbox">
+                    {t("profile.individual.discount")}
+                  </FieldLabel>
+                </Field>
+
+                {/* membership number */}
+                {discountCheck && (
+                  <FieldGroup>
+                    <Field>
+                      <label className="block space-y-2">
+                        <span className="text-sm font-medium block">
+                          {t("profile.individual.discountFile")}
+                        </span>
+
+                        <span className="flex gap-2">
+                          <Button type="button" asChild>
+                            <label>
+                              {t("profile.chooseFile")}
+                              <input
+                                type="file"
+                                className="hidden"
+                                onChange={(e) =>
+                                  setIdFile(e.target.files?.[0] ?? null)
+                                }
+                                disabled={!edit}
+                              />
+                            </label>
+                          </Button>
+
+                          {IdFile && (
+                            <p className="text-sm text-muted-foreground">
+                              {IdFile.name}
+                            </p>
+                          )}
+                        </span>
+                      </label>
+                    </Field>
+                  </FieldGroup>
+                )}
               </FieldGroup>
             </FieldGroup>
           </form>

@@ -4,55 +4,62 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { CalendarDays, Hotel } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 type Option = { value: string; label: string };
 type compleType = "" | "youthCenter" | "sportComplex";
 
-function Select({
-  id,
-  value,
-  onChange,
-  options,
-  placeholder,
-  disabled,
-}: {
-  id: string;
-  value: string;
-  onChange: (v: string) => void;
-  options: Option[];
-  placeholder?: string;
-  disabled?: boolean;
-}) {
-  return (
-    <select
-      id={id}
-      value={value}
-      disabled={disabled}
-      onChange={(e) => onChange(e.target.value)}
-      className={cn(
-        "border-input dark:bg-input/30 h-9 w-full rounded-md border bg-transparent px-3 text-base shadow-xs outline-none transition-[color,box-shadow] md:text-sm",
-        "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
-        "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
-      )}
-    >
-      {placeholder ? (
-        <option value="" className="dark:text-black">
-          {placeholder}
-        </option>
-      ) : null}
-      {options.map((o) => (
-        <option key={o.value} value={o.value} className="dark:text-black">
-          {o.label}
-        </option>
-      ))}
-    </select>
-  );
-}
+// function Select({
+//   id,
+//   value,
+//   onChange,
+//   options,
+//   placeholder,
+//   disabled,
+// }: {
+//   id: string;
+//   value: string;
+//   onChange: (v: string) => void;
+//   options: Option[];
+//   placeholder?: string;
+//   disabled?: boolean;
+// }) {
+//   return (
+//     <select
+//       id={id}
+//       value={value}
+//       disabled={disabled}
+//       onChange={(e) => onChange(e.target.value)}
+//       className={cn(
+//         "border-input dark:bg-input/30 h-9 w-full rounded-md border bg-transparent px-3 text-base shadow-xs outline-none transition-[color,box-shadow] md:text-sm",
+//         "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
+//         "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
+//       )}
+//     >
+//       {placeholder ? (
+//         <option value="" className="dark:text-black">
+//           {placeholder}
+//         </option>
+//       ) : null}
+//       {options.map((o) => (
+//         <option key={o.value} value={o.value} className="dark:text-black">
+//           {o.label}
+//         </option>
+//       ))}
+//     </select>
+//   );
+// }
 
 function daysBetween(from: string, to: string) {
   if (!from || !to) return 0;
@@ -80,12 +87,6 @@ export default function SportComplex({
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [beneficiaries, setBeneficiaries] = useState("1");
-
-  const [activityPlan, setActivityPlan] = useState("");
-  const [groupLeader, setGroupLeader] = useState("");
-  const [participantsInfo, setParticipantsInfo] = useState("");
-
-  const showActivitySection = serviceType === "activity";
 
   const serviceOptions: Option[] = useMemo(
     () => [
@@ -219,13 +220,33 @@ export default function SportComplex({
                     {t("reservation.fields.complexType")}{" "}
                     <span className="text-red-500">*</span>
                   </FieldLabel>
-                  <Select
+                  {/* <Select
                     id="complexType"
                     value={complexType}
                     onChange={(v) => setComplexType(v)}
                     options={complexTypeOptions}
                     placeholder={t("reservation.placeholders.select")}
-                  />
+                  /> */}
+                  <Select
+                    value={complexType}
+                    onValueChange={setComplexType}
+                    dir={t("dir")}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue
+                        placeholder={t("reservation.placeholders.select")}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {complexTypeOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
                 </Field>
 
                 {/* Service Type */}
@@ -234,7 +255,7 @@ export default function SportComplex({
                     {t("reservation.fields.serviceType")}{" "}
                     <span className="text-red-500">*</span>
                   </FieldLabel>
-                  <Select
+                  {/* <Select
                     id="serviceType"
                     value={serviceType}
                     onChange={(v) => {
@@ -242,7 +263,27 @@ export default function SportComplex({
                     }}
                     options={serviceOptions}
                     placeholder={t("reservation.placeholders.select")}
-                  />
+                  /> */}
+                  <Select
+                    value={serviceType}
+                    onValueChange={setServiceType}
+                    dir={t("dir")}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue
+                        placeholder={t("reservation.placeholders.select")}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {serviceOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
                 </Field>
               </FieldGroup>
 
@@ -254,13 +295,33 @@ export default function SportComplex({
                       {t("reservation.fields.youtCenter")}{" "}
                       <span className="text-red-500">*</span>
                     </FieldLabel>
-                    <Select
+                    {/* <Select
                       id="center"
                       value={center}
                       onChange={setCenter}
                       options={centerOptions}
                       placeholder={t("reservation.placeholders.select")}
-                    />
+                    /> */}
+                    <Select
+                      value={center}
+                      onValueChange={setCenter}
+                      dir={t("dir")}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue
+                          placeholder={t("reservation.placeholders.select")}
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          {centerOptions.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
                   </Field>
                 )}
 
@@ -270,13 +331,33 @@ export default function SportComplex({
                       {t("reservation.fields.sportsComplex")}{" "}
                       <span className="text-red-500">*</span>
                     </FieldLabel>
-                    <Select
+                    {/* <Select
                       id="sportComplex"
                       value={complex}
                       onChange={setComplex}
                       options={complexOptions}
                       placeholder={t("reservation.placeholders.select")}
-                    />
+                    /> */}
+                    <Select
+                      value={complex}
+                      onValueChange={setComplex}
+                      dir={t("dir")}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue
+                          placeholder={t("reservation.placeholders.select")}
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          {complexOptions.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
                   </Field>
                 )}
               </FieldGroup>
@@ -289,13 +370,33 @@ export default function SportComplex({
                     {t("reservation.fields.facilityType")}{" "}
                     <span className="text-red-500">*</span>
                   </FieldLabel>
-                  <Select
+                  {/* <Select
                     id="facilityType"
                     value={facilityType}
                     onChange={(v) => setFacilityType(v)}
                     options={facilityTypeOptions}
                     placeholder={t("reservation.placeholders.select")}
-                  />
+                  /> */}
+                  <Select
+                    value={facilityType}
+                    onValueChange={setFacilityType}
+                    dir={t("dir")}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue
+                        placeholder={t("reservation.placeholders.select")}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {facilityTypeOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
                 </Field>
 
                 {/* facilitys */}
@@ -304,7 +405,7 @@ export default function SportComplex({
                     {t("reservation.fields.facilitys")}{" "}
                     <span className="text-red-500">*</span>
                   </FieldLabel>
-                  <Select
+                  {/* <Select
                     id="facilitys"
                     value={facilitys}
                     onChange={(v) => {
@@ -312,7 +413,27 @@ export default function SportComplex({
                     }}
                     options={facilityOptions}
                     placeholder={t("reservation.placeholders.select")}
-                  />
+                  /> */}
+                  <Select
+                    value={facilitys}
+                    onValueChange={setFacilitys}
+                    dir={t("dir")}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue
+                        placeholder={t("reservation.placeholders.select")}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {facilityOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
                 </Field>
               </FieldGroup>
 
@@ -376,69 +497,6 @@ export default function SportComplex({
                   />
                 </Field>
               </FieldGroup>
-
-              {/* SECTION: Activity */}
-              {showActivitySection && (
-                <>
-                  <hr className="border-border" />
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <CalendarDays className="h-5 w-5 text-primary" />
-                      <h2 className="text-lg font-semibold">
-                        {t("reservation.sections.activity")}
-                      </h2>
-                    </div>
-                  </div>
-
-                  <FieldGroup>
-                    <Field>
-                      <FieldLabel htmlFor="activityPlan">
-                        {t("reservation.fields.activityPlan")}{" "}
-                        <span className="text-red-500">*</span>
-                      </FieldLabel>
-                      <Textarea
-                        id="activityPlan"
-                        placeholder={t("reservation.placeholders.activityPlan")}
-                        value={activityPlan}
-                        onChange={(e) => setActivityPlan(e.target.value)}
-                      />
-                    </Field>
-                  </FieldGroup>
-
-                  <FieldGroup>
-                    <Field>
-                      <FieldLabel htmlFor="groupLeader">
-                        {t("reservation.fields.groupLeader")}{" "}
-                        <span className="text-red-500">*</span>
-                      </FieldLabel>
-                      <Input
-                        id="groupLeader"
-                        placeholder={t("reservation.placeholders.groupLeader")}
-                        value={groupLeader}
-                        onChange={(e) => setGroupLeader(e.target.value)}
-                        required
-                      />
-                    </Field>
-                  </FieldGroup>
-
-                  <FieldGroup>
-                    <Field>
-                      <FieldLabel htmlFor="participantsInfo">
-                        {t("reservation.fields.participantsInfo")}{" "}
-                        <span className="text-red-500">*</span>
-                      </FieldLabel>
-                      <Textarea
-                        id="participantsInfo"
-                        placeholder={t(
-                          "reservation.placeholders.participantsInfo",
-                        )}
-                        value={participantsInfo}
-                        onChange={(e) => setParticipantsInfo(e.target.value)}
-                      />
-                    </Field>
-                  </FieldGroup>
-                </>
-              )}
 
               {/* Buttons */}
               <Field>

@@ -58,6 +58,7 @@
   },
   "profile": {
     "personal": "الملف الشخصي",
+    "chooseFile": "اختر ملف",
     "individual": {
       "account": "حساب فردي",
       "name": "الاسم الرباعي",
@@ -75,7 +76,16 @@
       "PassportDetails": "بيانات جواز السفر",
       "edit": "تعديل البيانات",
       "finish": "إنهاء التعديل",
-      "service": "تقديم خدمة"
+      "service": "تقديم خدمة",
+      "employee": "هل المستفيد موظف وزارة الشباب؟",
+      "employeeNumber": "رقم الموظف",
+      "employeeType": "نوع الموظف",
+      "worker": "موظف",
+      "retired": "متقاعد",
+      "id": "الهوية الشخصية",
+      "ministryId": "هوية الوزارة",
+      "discount": "هل المستفيد لديه خصم الوزير؟",
+      "discountFile": "مرفق كتاب خصم الوزير"
     },
     "organization": {
       "account": "حساب مؤسسي",

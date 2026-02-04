@@ -58,6 +58,7 @@
   },
   "profile": {
     "personal": "Personal Profile",
+    "chooseFile": "Choose file",
     "individual": {
       "account": "Individual Account",
       "name": "Full name",
@@ -75,7 +76,16 @@
       "PassportDetails": "Passport Details",
       "edit": "Edit Information",
       "finish": "Finish Editing",
-      "service": "View Services"
+      "service": "View Services",
+      "employee": "Are you an employee of the Ministry of Youth?",
+      "employeeNumber": "Employee number",
+      "employeeType": "Employee type",
+      "worker": "Worker",
+      "retired": "Retired",
+      "id": "Upload ID document",
+      "ministryId": "Upload Ministry employee ID",
+      "discount": "Do you have the minister's discount?",
+      "discountFile": "Upload minister's discount document"
     },
     "organization": {
       "account": "Organization account",
