@@ -35,6 +35,7 @@ export default function PersonForm({
   const [employeeNumber, setEmployeeNumber] = useState("");
   const [IdFile, setIdFile] = useState<File | null>(null);
   const [employeeIdFile, setEmployeeIdFile] = useState<File | null>(null);
+  const [discountFile, setDiscountFile] = useState<File | null>(null);
 
   const employeeTypeOptions: Option[] = useMemo(
     () => [
@@ -307,9 +308,9 @@ export default function PersonForm({
                   </FieldLabel>
                 </Field>
 
-                {/* membership number */}
                 {employeeCheck && (
                   <FieldGroup>
+                    {/* emp;oyee type */}
                     <Field>
                       <FieldLabel htmlFor="employee-type">
                         {t("profile.individual.employeeType")}{" "}
@@ -340,6 +341,7 @@ export default function PersonForm({
                       </Select>
                     </Field>
 
+                    {/* emp;oyee number */}
                     <Field>
                       <FieldLabel htmlFor="employee-number">
                         {t("profile.individual.employeeNumber")}
@@ -355,6 +357,7 @@ export default function PersonForm({
                       />
                     </Field>
 
+                    {/* ID upload */}
                     <Field>
                       <label className="block space-y-2">
                         <span className="text-sm font-medium block">
@@ -385,6 +388,7 @@ export default function PersonForm({
                       </label>
                     </Field>
 
+                    {/* Ministry ID upload */}
                     <Field>
                       <label className="block space-y-2">
                         <span className="text-sm font-medium block">
@@ -456,16 +460,16 @@ export default function PersonForm({
                                 type="file"
                                 className="hidden"
                                 onChange={(e) =>
-                                  setIdFile(e.target.files?.[0] ?? null)
+                                  setDiscountFile(e.target.files?.[0] ?? null)
                                 }
                                 disabled={!edit}
                               />
                             </label>
                           </Button>
 
-                          {IdFile && (
+                          {discountFile && (
                             <p className="text-sm text-muted-foreground">
-                              {IdFile.name}
+                              {discountFile.name}
                             </p>
                           )}
                         </span>

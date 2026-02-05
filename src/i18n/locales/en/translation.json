@@ -115,10 +115,15 @@
     },
     "fields": {
       "serviceType": "Service type",
+      "houseOrCamp": "Complex Type",
       "youthHouse": "Youth house",
+      "camp": "Camp",
       "sportsComplex": "Sports Complex",
       "complexType": "Complex Type",
       "youtCenter": "Youth Center",
+      "sharedRoom": "Is the room shared?",
+      "sharedTent": "Is the tent shared?",
+      "capacity": "Capacity",
       "fromDate": "From date",
       "toDate": "To date",
       "durationDays": "Duration (days)",
@@ -155,6 +160,10 @@
         "ajloun": "Ajloun Youth House",
         "aqaba": "Aqaba Youth House"
       },
+      "camp": {
+        "southCamp": "South Camp",
+        "northCamp": "North Camp"
+      },
       "facility": {
         "room": "Room",
         "tent": "Tent",
@@ -162,15 +171,39 @@
         "chalet": "Chalet",
         "bed": "Bed"
       },
+      "capacity": {
+        "normal": "Normal",
+        "double": "Double",
+        "triple": "Triple",
+        "four": "Four",
+        "five": "Five"
+      },
       "ComplexFacilitys": {
-        "court": "Court",
-        "hall": "Hall",
-        "swimmingPool": "Swimming Pool"
+        "court": {
+          "name": "Court",
+          "tennis": "Tennis",
+          "basketball": "Basketball",
+          "football": "Football"
+        },
+        "hall": {
+          "name": "Hall",
+          "small": "Small hall",
+          "large": "Large hall"
+        },
+        "swimmingPool": {
+          "name": "Swimming Pool",
+          "pool": "Pool"
+        }
       },
       "complex": {
         "ammanSportsCity": "Amman Sports City",
         "irbidSportsCity": "Irbid Sports City",
         "aqabaSportsCity": "Aqaba Sports City"
+      },
+      "center": {
+        "petraWadiMusa": "Petra Youth House - Petra - Wadi Musa",
+        "ajloun": "Ajloun Youth House",
+        "aqaba": "Aqaba Youth House"
       }
     }
   },

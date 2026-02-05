@@ -9,50 +9,20 @@ import { CalendarDays, Users, Hotel } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Checkbox } from "../ui/checkbox";
 
 type Option = { value: string; label: string };
-type FacilityType = "" | "room" | "tent" | "suite" | "chalet" | "bed";
-
-function Select({
-  id,
-  value,
-  onChange,
-  options,
-  placeholder,
-  disabled,
-}: {
-  id: string;
-  value: string;
-  onChange: (v: string) => void;
-  options: Option[];
-  placeholder?: string;
-  disabled?: boolean;
-}) {
-  return (
-    <select
-      id={id}
-      value={value}
-      disabled={disabled}
-      onChange={(e) => onChange(e.target.value)}
-      className={cn(
-        "border-input dark:bg-input/30 h-9 w-full rounded-md border bg-transparent px-3 text-base shadow-xs outline-none transition-[color,box-shadow] md:text-sm",
-        "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
-        "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
-      )}
-    >
-      {placeholder ? (
-        <option value="" className="dark:text-black">
-          {placeholder}
-        </option>
-      ) : null}
-      {options.map((o) => (
-        <option key={o.value} value={o.value} className="dark:text-black">
-          {o.label}
-        </option>
-      ))}
-    </select>
-  );
-}
+type FacilityType = "" | "room" | "tent" | "suite" | "chalet";
+type houseOrCampType = "" | "house" | "camp";
+type capacityType = "" | "normal" | "double" | "triple" | "four" | "five";
 
 function daysBetween(from: string, to: string) {
   if (!from || !to) return 0;
@@ -72,10 +42,16 @@ export default function YouthHouse({
   const navigate = useNavigate();
 
   const [serviceType, setServiceType] = useState("");
+  const [houseOrCamp, setHouseOrCamp] = useState<houseOrCampType>("");
   const [house, setHouse] = useState("");
+  const [camp, setCamp] = useState("");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [beneficiaries, setBeneficiaries] = useState("1");
+
+  const [sharedRoom, setSharedRoom] = useState(false);
+  const [sharedTent, setSharedTent] = useState(false);
+  const [capacity, setCapacity] = useState<capacityType>("");
 
   const [facility, setFacility] = useState<FacilityType>("");
   const [availableCapacity] = useState("15");
@@ -84,7 +60,6 @@ export default function YouthHouse({
   const [requiredTents, setRequiredTents] = useState("1");
   const [requiredSuites, setRequiredSuites] = useState("1");
   const [requiredChalets, setRequiredChalets] = useState("1");
-  const [requiredBeds, setRequiredBeds] = useState("1");
 
   const [activityPlan, setActivityPlan] = useState("");
   const [groupLeader, setGroupLeader] = useState("");
@@ -120,13 +95,48 @@ export default function YouthHouse({
     [t],
   );
 
+  const campOptions: Option[] = useMemo(
+    () => [
+      {
+        value: "northCamp",
+        label: t("reservation.options.camp.northCamp"),
+      },
+      { value: "southCamp", label: t("reservation.options.camp.southCamp") },
+    ],
+    [t],
+  );
+
+  const houseOrCampOptions: Option[] = useMemo(
+    () => [
+      {
+        value: "house",
+        label: t("reservation.fields.youthHouse"),
+      },
+      { value: "camp", label: t("reservation.fields.camp") },
+    ],
+    [t],
+  );
+
+  const capacityptions: Option[] = useMemo(
+    () => [
+      {
+        value: "normal",
+        label: t("reservation.options.capacity.normal"),
+      },
+      { value: "double", label: t("reservation.options.capacity.double") },
+      { value: "triple", label: t("reservation.options.capacity.triple") },
+      { value: "four", label: t("reservation.options.capacity.four") },
+      { value: "five", label: t("reservation.options.capacity.five") },
+    ],
+    [t],
+  );
+
   const facilityOptions: Option[] = useMemo(
     () => [
       { value: "room", label: t("reservation.options.facility.room") },
       { value: "chalet", label: t("reservation.options.facility.chalet") },
       { value: "tent", label: t("reservation.options.facility.tent") },
       { value: "suite", label: t("reservation.options.facility.suite") },
-      { value: "bed", label: t("reservation.options.facility.bed") },
     ],
     [t],
   );
@@ -142,7 +152,6 @@ export default function YouthHouse({
     if (facility === "tent") return "tent";
     if (facility === "suite") return "suite";
     if (facility === "chalet") return "chalet";
-    if (facility === "bed") return "bed";
     return "";
   }, [facility, showFacilitySection]);
 
@@ -153,7 +162,6 @@ export default function YouthHouse({
       return t("reservation.fields.requiredSuites");
     if (activeCountKey === "chalet")
       return t("reservation.fields.requiredChalets");
-    if (activeCountKey === "bed") return t("reservation.fields.requiredBeds");
     return "";
   }, [activeCountKey, t]);
 
@@ -162,7 +170,6 @@ export default function YouthHouse({
     if (activeCountKey === "tent") return requiredTents;
     if (activeCountKey === "suite") return requiredSuites;
     if (activeCountKey === "chalet") return requiredChalets;
-    if (activeCountKey === "bed") return requiredBeds;
     return "";
   }, [
     activeCountKey,
@@ -170,7 +177,6 @@ export default function YouthHouse({
     requiredTents,
     requiredSuites,
     requiredChalets,
-    requiredBeds,
   ]);
 
   function setActiveCountValue(v: string) {
@@ -178,7 +184,6 @@ export default function YouthHouse({
     else if (activeCountKey === "tent") setRequiredTents(v);
     else if (activeCountKey === "suite") setRequiredSuites(v);
     else if (activeCountKey === "chalet") setRequiredChalets(v);
-    else if (activeCountKey === "bed") setRequiredBeds(v);
   }
 
   function resetFacilityCounts() {
@@ -231,19 +236,34 @@ export default function YouthHouse({
 
               {/* First row */}
               <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* Youth House */}
+                {/* House type */}
                 <Field>
-                  <FieldLabel htmlFor="house">
-                    {t("reservation.fields.youthHouse")}{" "}
+                  <FieldLabel htmlFor="houseOrCamp">
+                    {t("reservation.fields.houseOrCamp")}{" "}
                     <span className="text-red-500">*</span>
                   </FieldLabel>
                   <Select
-                    id="house"
-                    value={house}
-                    onChange={setHouse}
-                    options={houseOptions}
-                    placeholder={t("reservation.placeholders.select")}
-                  />
+                    value={houseOrCamp}
+                    onValueChange={(v: string) =>
+                      setHouseOrCamp(v as houseOrCampType)
+                    }
+                    dir={t("dir")}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue
+                        placeholder={t("reservation.placeholders.select")}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {houseOrCampOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
                 </Field>
 
                 {/* Service Type */}
@@ -253,19 +273,91 @@ export default function YouthHouse({
                     <span className="text-red-500">*</span>
                   </FieldLabel>
                   <Select
-                    id="serviceType"
                     value={serviceType}
-                    onChange={(v) => {
+                    onValueChange={(v) => {
                       setServiceType(v);
                       if (v !== "accommodation") {
                         setFacility("");
                         resetFacilityCounts();
                       }
                     }}
-                    options={serviceOptions}
-                    placeholder={t("reservation.placeholders.select")}
-                  />
+                    dir={t("dir")}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue
+                        placeholder={t("reservation.placeholders.select")}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {serviceOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
                 </Field>
+              </FieldGroup>
+
+              {/* house type */}
+              <FieldGroup>
+                {/* Youth House */}
+                {houseOrCamp === "house" && (
+                  <Field>
+                    <FieldLabel htmlFor="house">
+                      {t("reservation.fields.youthHouse")}{" "}
+                      <span className="text-red-500">*</span>
+                    </FieldLabel>
+                    <Select
+                      value={house}
+                      onValueChange={setHouse}
+                      dir={t("dir")}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue
+                          placeholder={t("reservation.placeholders.select")}
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          {houseOptions.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </Field>
+                )}
+
+                {/* camp */}
+                {houseOrCamp === "camp" && (
+                  <Field>
+                    <FieldLabel htmlFor="camp">
+                      {t("reservation.fields.camp")}{" "}
+                      <span className="text-red-500">*</span>
+                    </FieldLabel>
+                    <Select value={camp} onValueChange={setCamp} dir={t("dir")}>
+                      <SelectTrigger className="w-full">
+                        <SelectValue
+                          placeholder={t("reservation.placeholders.select")}
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          {campOptions.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </Field>
+                )}
               </FieldGroup>
 
               {/* Second row */}
@@ -342,58 +434,149 @@ export default function YouthHouse({
                     </div>
                   </div>
 
-                  <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <FieldGroup>
+                    {/* facility Type */}
                     <Field>
                       <FieldLabel htmlFor="facility">
                         {t("reservation.fields.facilityType")}{" "}
                         <span className="text-red-500">*</span>
                       </FieldLabel>
                       <Select
-                        id="facility"
                         value={facility}
-                        onChange={(v) => {
+                        onValueChange={(v) => {
                           const fv = v as FacilityType;
                           setFacility(fv);
                           if (!fv) resetFacilityCounts();
                         }}
-                        options={facilityOptions}
-                        placeholder={t("reservation.placeholders.select")}
-                      />
+                        dir={t("dir")}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue
+                            placeholder={t("reservation.placeholders.select")}
+                          />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectGroup>
+                            {facilityOptions.map((option) => (
+                              <SelectItem
+                                key={option.value}
+                                value={option.value}
+                              >
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
                     </Field>
 
-                    {showCapacity && (
-                      <Field>
-                        <FieldLabel htmlFor="availableCapacity">
-                          {t("reservation.fields.availableCapacity")}
-                        </FieldLabel>
-                        <Input
-                          id="availableCapacity"
-                          value={availableCapacity}
-                          readOnly
-                          className="bg-muted cursor-not-allowed"
-                        />
-                      </Field>
-                    )}
-                  </FieldGroup>
-
-                  {activeCountKey !== "" && (
+                    {/* capacity */}
                     <FieldGroup>
-                      <Field>
-                        <FieldLabel htmlFor="requiredCount">
-                          {activeCountLabel}{" "}
-                          <span className="text-red-500">*</span>
-                        </FieldLabel>
-                        <Input
-                          id="requiredCount"
-                          type="number"
-                          min={1}
-                          value={activeCountValue}
-                          onChange={(e) => setActiveCountValue(e.target.value)}
-                          required
-                        />
-                      </Field>
+                      {activeCountKey === "room" && (
+                        <Field orientation="horizontal">
+                          <Checkbox
+                            id="sharedRoom-checkbox"
+                            name="sharedRoom"
+                            checked={sharedRoom}
+                            onCheckedChange={(value) =>
+                              setSharedRoom(value as boolean)
+                            }
+                          />
+                          <FieldLabel htmlFor="sharedRoom-checkbox">
+                            {t("reservation.fields.sharedRoom")}
+                          </FieldLabel>
+                        </Field>
+                      )}
+
+                      {activeCountKey === "tent" && (
+                        <Field orientation="horizontal">
+                          <Checkbox
+                            id="sharedTent-checkbox"
+                            name="sharedTent"
+                            checked={sharedTent}
+                            onCheckedChange={(value) =>
+                              setSharedTent(value as boolean)
+                            }
+                          />
+                          <FieldLabel htmlFor="sharedTent-checkbox">
+                            {t("reservation.fields.sharedTent")}
+                          </FieldLabel>
+                        </Field>
+                      )}
+
+                      {showCapacity && (
+                        <Field>
+                          <FieldLabel htmlFor="capacity">
+                            {t("reservation.fields.capacity")}{" "}
+                            <span className="text-red-500">*</span>
+                          </FieldLabel>
+                          <Select
+                            value={capacity}
+                            onValueChange={(v: string) =>
+                              setCapacity(v as capacityType)
+                            }
+                            dir={t("dir")}
+                          >
+                            <SelectTrigger className="w-full">
+                              <SelectValue
+                                placeholder={t(
+                                  "reservation.placeholders.select",
+                                )}
+                              />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectGroup>
+                                {capacityptions.map((option) => (
+                                  <SelectItem
+                                    key={option.value}
+                                    value={option.value}
+                                  >
+                                    {option.label}
+                                  </SelectItem>
+                                ))}
+                              </SelectGroup>
+                            </SelectContent>
+                          </Select>
+                        </Field>
+                      )}
                     </FieldGroup>
-                  )}
+
+                    {/* number */}
+                    <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      {showCapacity && (
+                        <Field>
+                          <FieldLabel htmlFor="requiredCount">
+                            {activeCountLabel}{" "}
+                            <span className="text-red-500">*</span>
+                          </FieldLabel>
+                          <Input
+                            id="requiredCount"
+                            type="number"
+                            min={1}
+                            value={activeCountValue}
+                            onChange={(e) =>
+                              setActiveCountValue(e.target.value)
+                            }
+                            required
+                          />
+                        </Field>
+                      )}
+
+                      {showCapacity && (
+                        <Field>
+                          <FieldLabel htmlFor="availableCapacity">
+                            {t("reservation.fields.availableCapacity")}
+                          </FieldLabel>
+                          <Input
+                            id="availableCapacity"
+                            value={availableCapacity}
+                            readOnly
+                            className="bg-muted cursor-not-allowed"
+                          />
+                        </Field>
+                      )}
+                    </FieldGroup>
+                  </FieldGroup>
                 </>
               )}
 

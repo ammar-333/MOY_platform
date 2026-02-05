@@ -18,48 +18,8 @@ import {
 } from "@/components/ui/select";
 
 type Option = { value: string; label: string };
-type compleType = "" | "youthCenter" | "sportComplex";
-
-// function Select({
-//   id,
-//   value,
-//   onChange,
-//   options,
-//   placeholder,
-//   disabled,
-// }: {
-//   id: string;
-//   value: string;
-//   onChange: (v: string) => void;
-//   options: Option[];
-//   placeholder?: string;
-//   disabled?: boolean;
-// }) {
-//   return (
-//     <select
-//       id={id}
-//       value={value}
-//       disabled={disabled}
-//       onChange={(e) => onChange(e.target.value)}
-//       className={cn(
-//         "border-input dark:bg-input/30 h-9 w-full rounded-md border bg-transparent px-3 text-base shadow-xs outline-none transition-[color,box-shadow] md:text-sm",
-//         "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
-//         "disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50",
-//       )}
-//     >
-//       {placeholder ? (
-//         <option value="" className="dark:text-black">
-//           {placeholder}
-//         </option>
-//       ) : null}
-//       {options.map((o) => (
-//         <option key={o.value} value={o.value} className="dark:text-black">
-//           {o.label}
-//         </option>
-//       ))}
-//     </select>
-//   );
-// }
+type complexType = "" | "youthCenter" | "sportComplex";
+type facilityType = "" | "court" | "swimmingPool" | "hall";
 
 function daysBetween(from: string, to: string) {
   if (!from || !to) return 0;
@@ -78,15 +38,59 @@ export default function SportComplex({
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const [complexType, setComplexType] = useState<compleType>("");
+  const [complexType, setComplexType] = useState<complexType>("");
   const [serviceType, setServiceType] = useState("");
-  const [facilityType, setFacilityType] = useState("");
+  const [facilityType, setFacilityType] = useState<facilityType>("");
   const [facilitys, setFacilitys] = useState("");
   const [center, setCenter] = useState("");
   const [complex, setComplex] = useState("");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
   const [beneficiaries, setBeneficiaries] = useState("1");
+
+  const showFacilities = facilityType !== "";
+
+  const courtOptions: Option[] = useMemo(
+    () => [
+      {
+        value: "tennis",
+        label: t("reservation.options.ComplexFacilitys.court.tennis"),
+      },
+      {
+        value: "basketball",
+        label: t("reservation.options.ComplexFacilitys.court.basketball"),
+      },
+      {
+        value: "football",
+        label: t("reservation.options.ComplexFacilitys.court.football"),
+      },
+    ],
+    [t],
+  );
+
+  const hallOptions: Option[] = useMemo(
+    () => [
+      {
+        value: "smallHall",
+        label: t("reservation.options.ComplexFacilitys.hall.smallHall"),
+      },
+      {
+        value: "largeHall",
+        label: t("reservation.options.ComplexFacilitys.hall.largeHall"),
+      },
+    ],
+    [t],
+  );
+
+  const swimpoolOptions: Option[] = useMemo(
+    () => [
+      {
+        value: "pool",
+        label: t("reservation.options.ComplexFacilitys.swimmingPool.pool"),
+      },
+    ],
+    [t],
+  );
 
   const serviceOptions: Option[] = useMemo(
     () => [
@@ -99,40 +103,34 @@ export default function SportComplex({
     () => [
       {
         value: "court",
-        label: t("reservation.options.ComplexFacilitys.court"),
+        label: t("reservation.options.ComplexFacilitys.court.name"),
       },
-      { value: "hall", label: t("reservation.options.ComplexFacilitys.hall") },
+      {
+        value: "hall",
+        label: t("reservation.options.ComplexFacilitys.hall.name"),
+      },
       {
         value: "swimmingPool",
-        label: t("reservation.options.ComplexFacilitys.swimmingPool"),
+        label: t("reservation.options.ComplexFacilitys.swimmingPool.name"),
       },
     ],
     [t],
   );
 
-  const facilityOptions: Option[] = useMemo(
-    () => [
-      {
-        value: "court",
-        label: t("reservation.options.ComplexFacilitys.court"),
-      },
-      { value: "hall", label: t("reservation.options.ComplexFacilitys.hall") },
-      {
-        value: "swimmingPool",
-        label: t("reservation.options.ComplexFacilitys.swimmingPool"),
-      },
-    ],
-    [t],
-  );
+  const facilityOptions = useMemo(() => {
+    if (facilityType === "court") return courtOptions;
+    if (facilityType === "hall") return hallOptions;
+    if (facilityType === "swimmingPool") return swimpoolOptions;
+  }, [facilityType, courtOptions, swimpoolOptions, hallOptions]);
 
   const centerOptions: Option[] = useMemo(
     () => [
       {
         value: "petra-wadi-musa",
-        label: t("reservation.options.house.petraWadiMusa"),
+        label: t("reservation.options.center.petraWadiMusa"),
       },
-      { value: "ajloun", label: t("reservation.options.house.ajloun") },
-      { value: "aqaba", label: t("reservation.options.house.aqaba") },
+      { value: "ajloun", label: t("reservation.options.center.ajloun") },
+      { value: "aqaba", label: t("reservation.options.center.aqaba") },
     ],
     [t],
   );
@@ -220,16 +218,11 @@ export default function SportComplex({
                     {t("reservation.fields.complexType")}{" "}
                     <span className="text-red-500">*</span>
                   </FieldLabel>
-                  {/* <Select
-                    id="complexType"
-                    value={complexType}
-                    onChange={(v) => setComplexType(v)}
-                    options={complexTypeOptions}
-                    placeholder={t("reservation.placeholders.select")}
-                  /> */}
                   <Select
                     value={complexType}
-                    onValueChange={setComplexType}
+                    onValueChange={(v: string) =>
+                      setComplexType(v as complexType)
+                    }
                     dir={t("dir")}
                   >
                     <SelectTrigger className="w-full">
@@ -255,15 +248,6 @@ export default function SportComplex({
                     {t("reservation.fields.serviceType")}{" "}
                     <span className="text-red-500">*</span>
                   </FieldLabel>
-                  {/* <Select
-                    id="serviceType"
-                    value={serviceType}
-                    onChange={(v) => {
-                      setServiceType(v);
-                    }}
-                    options={serviceOptions}
-                    placeholder={t("reservation.placeholders.select")}
-                  /> */}
                   <Select
                     value={serviceType}
                     onValueChange={setServiceType}
@@ -295,13 +279,6 @@ export default function SportComplex({
                       {t("reservation.fields.youtCenter")}{" "}
                       <span className="text-red-500">*</span>
                     </FieldLabel>
-                    {/* <Select
-                      id="center"
-                      value={center}
-                      onChange={setCenter}
-                      options={centerOptions}
-                      placeholder={t("reservation.placeholders.select")}
-                    /> */}
                     <Select
                       value={center}
                       onValueChange={setCenter}
@@ -331,13 +308,6 @@ export default function SportComplex({
                       {t("reservation.fields.sportsComplex")}{" "}
                       <span className="text-red-500">*</span>
                     </FieldLabel>
-                    {/* <Select
-                      id="sportComplex"
-                      value={complex}
-                      onChange={setComplex}
-                      options={complexOptions}
-                      placeholder={t("reservation.placeholders.select")}
-                    /> */}
                     <Select
                       value={complex}
                       onValueChange={setComplex}
@@ -363,23 +333,18 @@ export default function SportComplex({
               </FieldGroup>
 
               {/* second row */}
-              <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FieldGroup>
                 {/* facilitys type */}
                 <Field>
                   <FieldLabel htmlFor="facilityType">
                     {t("reservation.fields.facilityType")}{" "}
                     <span className="text-red-500">*</span>
                   </FieldLabel>
-                  {/* <Select
-                    id="facilityType"
-                    value={facilityType}
-                    onChange={(v) => setFacilityType(v)}
-                    options={facilityTypeOptions}
-                    placeholder={t("reservation.placeholders.select")}
-                  /> */}
                   <Select
                     value={facilityType}
-                    onValueChange={setFacilityType}
+                    onValueChange={(v: string) =>
+                      setFacilityType(v as facilityType)
+                    }
                     dir={t("dir")}
                   >
                     <SelectTrigger className="w-full">
@@ -400,42 +365,37 @@ export default function SportComplex({
                 </Field>
 
                 {/* facilitys */}
-                <Field>
-                  <FieldLabel htmlFor="facilitys">
-                    {t("reservation.fields.facilitys")}{" "}
-                    <span className="text-red-500">*</span>
-                  </FieldLabel>
-                  {/* <Select
-                    id="facilitys"
-                    value={facilitys}
-                    onChange={(v) => {
-                      setFacilitys(v);
-                    }}
-                    options={facilityOptions}
-                    placeholder={t("reservation.placeholders.select")}
-                  /> */}
-                  <Select
-                    value={facilitys}
-                    onValueChange={setFacilitys}
-                    dir={t("dir")}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue
-                        placeholder={t("reservation.placeholders.select")}
-                      />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        {facilityOptions.map((option) => (
-                          <SelectItem key={option.value} value={option.value}>
-                            {option.label}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </Field>
+                {showFacilities && (
+                  <Field>
+                    <FieldLabel htmlFor="facilitys">
+                      {t("reservation.fields.facilitys")}{" "}
+                      <span className="text-red-500">*</span>
+                    </FieldLabel>
+                    <Select
+                      value={facilitys}
+                      onValueChange={setFacilitys}
+                      dir={t("dir")}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue
+                          placeholder={t("reservation.placeholders.select")}
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          {facilityOptions?.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </Field>
+                )}
               </FieldGroup>
+
+              <hr className="border-border" />
 
               {/* third row */}
               <FieldGroup className="grid grid-cols-1 md:grid-cols-3 gap-4">

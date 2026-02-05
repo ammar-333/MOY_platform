@@ -82,8 +82,8 @@
       "employeeType": "نوع الموظف",
       "worker": "موظف",
       "retired": "متقاعد",
-      "id": "الهوية الشخصية",
-      "ministryId": "هوية الوزارة",
+      "id": "مرفق الهوية الشخصية",
+      "ministryId": " مرفق هوية الوزارة",
       "discount": "هل المستفيد لديه خصم الوزير؟",
       "discountFile": "مرفق كتاب خصم الوزير"
     },
@@ -115,10 +115,15 @@
     },
     "fields": {
       "serviceType": "نوع الخدمة",
+      "houseOrCamp": "نوع المجمع",
       "youthHouse": "بيت الشباب",
+      "camp": "معسكر",
       "sportsComplex": "مجمع رياضي",
       "complexType": "نوع المجمع",
       "youtCenter": "مركز شباب",
+      "sharedRoom": "هل الغرفة مشتركة؟",
+      "sharedTent": "هل الخيمة مشتركة؟",
+      "capacity": "السعة",
       "fromDate": "من تاريخ",
       "toDate": "إلى تاريخ",
       "durationDays": "المدة (أيام)",
@@ -155,6 +160,10 @@
         "ajloun": "بيت شباب عجلون",
         "aqaba": "بيت شباب العقبة"
       },
+      "camp": {
+        "southCamp": "المعسكر الجنوبي",
+        "northCamp": "المعسكر الشمالي"
+      },
       "facility": {
         "room": "غرفة",
         "tent": "خيمة",
@@ -162,15 +171,39 @@
         "chalet": "شاليه",
         "bed": "سرير"
       },
+      "capacity": {
+        "normal": "عادي",
+        "double": "ثنائي",
+        "triple": "ثلاثي",
+        "four": "رباعي",
+        "five": "خماسي"
+      },
       "ComplexFacilitys": {
-        "court": "ملعب",
-        "hall": "صالة",
-        "swimmingPool": "مسبح"
+        "court": {
+          "name": "ملعب",
+          "tennis": "تنس",
+          "basketball": "كرة سلة",
+          "football": "كرة قدم"
+        },
+        "hall": {
+          "name": "قاعة",
+          "smallHall": "قاعة صغيرة",
+          "largeHall": "قاعة كبيرة"
+        },
+        "swimmingPool": {
+          "name": "مسبح",
+          "pool": "مسبح"
+        }
       },
       "complex": {
         "ammanSportsCity": "مدين الرياضة - عمان",
         "irbidSportsCity": "مدينة الرياضة - إربد",
         "aqabaSportsCity": "مدينة الرياضة - العقبة"
+      },
+      "center": {
+        "petraWadiMusa": "بيت شباب البترا - البترا - وادي موسى",
+        "ajloun": "بيت شباب عجلون",
+        "aqaba": "بيت شباب العقبة"
       }
     }
   },
