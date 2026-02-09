@@ -51,7 +51,7 @@
   },
   "form": {
     "gate": "Ministry of Youth portal",
-    "reservation": "Youth hostel booking and rental system",
+    "reservation": "booking and rental system",
     "userType": "Beneficiary type",
     "individual": "Individuals",
     "organization": "Organizations"
@@ -126,6 +126,10 @@
       "capacity": "Capacity",
       "fromDate": "From date",
       "toDate": "To date",
+      "dateRange": "Date Picker Range",
+      "PickDate": "Pick a date",
+      "startTime": "Start time",
+      "endTime": "End time",
       "durationDays": "Duration (days)",
       "beneficiaries": "Number of companions",
       "facilityType": "Facility type",

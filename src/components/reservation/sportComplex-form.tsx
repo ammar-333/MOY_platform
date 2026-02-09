@@ -16,19 +16,32 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
+import { addMonths, format } from "date-fns";
+import { CalendarIcon } from "lucide-react";
+import { type DateRange } from "react-day-picker";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupInput,
+} from "@/components/ui/input-group";
+import { Clock2Icon } from "lucide-react";
 
 type Option = { value: string; label: string };
 type complexType = "" | "youthCenter" | "sportComplex";
-type facilityType = "" | "court" | "swimmingPool" | "hall";
+type serviceType = "" | "activity";
 
-function daysBetween(from: string, to: string) {
+function daysBetween(from?: Date, to?: Date) {
   if (!from || !to) return 0;
-  const d1 = new Date(from);
-  const d2 = new Date(to);
-  const diff = d2.getTime() - d1.getTime();
+  const diff = to.getTime() - from.getTime();
   if (Number.isNaN(diff)) return 0;
   const days = Math.ceil(diff / (1000 * 60 * 60 * 24));
-  return days > 0 ? days : 0;
+  return days + 1;
 }
 
 export default function SportComplex({
@@ -39,16 +52,92 @@ export default function SportComplex({
   const navigate = useNavigate();
 
   const [complexType, setComplexType] = useState<complexType>("");
-  const [serviceType, setServiceType] = useState("");
-  const [facilityType, setFacilityType] = useState<facilityType>("");
-  const [facilitys, setFacilitys] = useState("");
+  const [serviceType, setServiceType] = useState<serviceType>("");
+
   const [center, setCenter] = useState("");
   const [complex, setComplex] = useState("");
-  const [fromDate, setFromDate] = useState("");
-  const [toDate, setToDate] = useState("");
+  const [facilityType, setFacilityType] = useState("");
+  const [facilitys, setFacilitys] = useState("");
   const [beneficiaries, setBeneficiaries] = useState("1");
 
+  const [dateRange, setDateRange] = useState<DateRange | undefined>();
+  const [startTime, setStartTime] = useState<string>("");
+  const [endTime, setEndTime] = useState<string>("");
+
+  const today = new Date();
+  const maxDate = addMonths(today, 2);
   const showFacilities = facilityType !== "";
+
+  const durationDays = useMemo(
+    () => daysBetween(dateRange?.from, dateRange?.to),
+    [dateRange],
+  );
+
+  const complexTypeOptions: Option[] = useMemo(
+    () => [
+      {
+        value: "youthCenter",
+        label: t("reservation.fields.youtCenter"),
+      },
+      { value: "sportComplex", label: t("reservation.fields.sportsComplex") },
+    ],
+    [t],
+  );
+
+  const serviceOptions: Option[] = useMemo(
+    () => [
+      { value: "activity", label: t("reservation.options.service.activity") },
+    ],
+    [t],
+  );
+
+  const centerOptions: Option[] = useMemo(
+    () => [
+      {
+        value: "petra-wadi-musa",
+        label: t("reservation.options.center.petraWadiMusa"),
+      },
+      { value: "ajloun", label: t("reservation.options.center.ajloun") },
+      { value: "aqaba", label: t("reservation.options.center.aqaba") },
+    ],
+    [t],
+  );
+
+  const complexOptions: Option[] = useMemo(
+    () => [
+      {
+        value: "petra-wadi-musa",
+        label: t("reservation.options.complex.ammanSportsCity"),
+      },
+      {
+        value: "ajloun",
+        label: t("reservation.options.complex.irbidSportsCity"),
+      },
+      {
+        value: "aqaba",
+        label: t("reservation.options.complex.aqabaSportsCity"),
+      },
+    ],
+    [t],
+  );
+
+  const facilityTypeOptions: Option[] = useMemo(
+    () => [
+      {
+        value: "court",
+        label: t("reservation.options.ComplexFacilitys.court.name"),
+      },
+      {
+        value: "hall",
+        label: t("reservation.options.ComplexFacilitys.hall.name"),
+      },
+      {
+        value: "swimmingPool",
+        label: t("reservation.options.ComplexFacilitys.swimmingPool.name"),
+      },
+    ],
+    [t],
+  );
 
   const courtOptions: Option[] = useMemo(
     () => [
@@ -72,11 +161,11 @@ export default function SportComplex({
     () => [
       {
         value: "smallHall",
-        label: t("reservation.options.ComplexFacilitys.hall.smallHall"),
+        label: t("reservation.options.ComplexFacilitys.hall.small"),
       },
       {
         value: "largeHall",
-        label: t("reservation.options.ComplexFacilitys.hall.largeHall"),
+        label: t("reservation.options.ComplexFacilitys.hall.large"),
       },
     ],
     [t],
@@ -92,82 +181,11 @@ export default function SportComplex({
     [t],
   );
 
-  const serviceOptions: Option[] = useMemo(
-    () => [
-      { value: "activity", label: t("reservation.options.service.activity") },
-    ],
-    [t],
-  );
-
-  const facilityTypeOptions: Option[] = useMemo(
-    () => [
-      {
-        value: "court",
-        label: t("reservation.options.ComplexFacilitys.court.name"),
-      },
-      {
-        value: "hall",
-        label: t("reservation.options.ComplexFacilitys.hall.name"),
-      },
-      {
-        value: "swimmingPool",
-        label: t("reservation.options.ComplexFacilitys.swimmingPool.name"),
-      },
-    ],
-    [t],
-  );
-
   const facilityOptions = useMemo(() => {
     if (facilityType === "court") return courtOptions;
     if (facilityType === "hall") return hallOptions;
     if (facilityType === "swimmingPool") return swimpoolOptions;
   }, [facilityType, courtOptions, swimpoolOptions, hallOptions]);
-
-  const centerOptions: Option[] = useMemo(
-    () => [
-      {
-        value: "petra-wadi-musa",
-        label: t("reservation.options.center.petraWadiMusa"),
-      },
-      { value: "ajloun", label: t("reservation.options.center.ajloun") },
-      { value: "aqaba", label: t("reservation.options.center.aqaba") },
-    ],
-    [t],
-  );
-
-  const complexTypeOptions: Option[] = useMemo(
-    () => [
-      {
-        value: "youthCenter",
-        label: t("reservation.fields.youtCenter"),
-      },
-      { value: "sportComplex", label: t("reservation.fields.sportsComplex") },
-    ],
-    [t],
-  );
-
-  const complexOptions: Option[] = useMemo(
-    () => [
-      {
-        value: "petra-wadi-musa",
-        label: t("reservation.options.complex.ammanSportsCity"),
-      },
-      {
-        value: "ajloun",
-        label: t("reservation.options.complex.irbidSportsCity"),
-      },
-      {
-        value: "aqaba",
-        label: t("reservation.options.complex.aqabaSportsCity"),
-      },
-    ],
-    [t],
-  );
-
-  const durationDays = useMemo(
-    () => daysBetween(fromDate, toDate),
-    [fromDate, toDate],
-  );
 
   function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -250,7 +268,7 @@ export default function SportComplex({
                   </FieldLabel>
                   <Select
                     value={serviceType}
-                    onValueChange={setServiceType}
+                    onValueChange={(v) => setServiceType(v as serviceType)}
                     dir={t("dir")}
                   >
                     <SelectTrigger className="w-full">
@@ -332,7 +350,7 @@ export default function SportComplex({
                 )}
               </FieldGroup>
 
-              {/* second row */}
+              {/* facilitys */}
               <FieldGroup>
                 {/* facilitys type */}
                 <Field>
@@ -342,9 +360,7 @@ export default function SportComplex({
                   </FieldLabel>
                   <Select
                     value={facilityType}
-                    onValueChange={(v: string) =>
-                      setFacilityType(v as facilityType)
-                    }
+                    onValueChange={(v: string) => setFacilityType(v)}
                     dir={t("dir")}
                   >
                     <SelectTrigger className="w-full">
@@ -397,34 +413,96 @@ export default function SportComplex({
 
               <hr className="border-border" />
 
-              {/* third row */}
-              <FieldGroup className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <Field>
-                  <FieldLabel htmlFor="fromDate">
-                    {t("reservation.fields.fromDate")}{" "}
-                    <span className="text-red-500">*</span>
+              {/* date */}
+              <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Field className="mx-auto">
+                  <FieldLabel htmlFor="date-picker-range">
+                    {t("reservation.fields.dateRange")}
                   </FieldLabel>
-                  <Input
-                    id="fromDate"
-                    type="date"
-                    value={fromDate}
-                    onChange={(e) => setFromDate(e.target.value)}
-                    required
-                  />
-                </Field>
-
-                <Field>
-                  <FieldLabel htmlFor="toDate">
-                    {t("reservation.fields.toDate")}{" "}
-                    <span className="text-red-500">*</span>
-                  </FieldLabel>
-                  <Input
-                    id="toDate"
-                    type="date"
-                    value={toDate}
-                    onChange={(e) => setToDate(e.target.value)}
-                    required
-                  />
+                  <Popover>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        id="date-picker-range"
+                        className="justify-start px-2.5 font-normal bg-accent"
+                      >
+                        <CalendarIcon />
+                        {dateRange?.from ? (
+                          dateRange.to ? (
+                            <>
+                              {format(dateRange.from, "LLL dd, y")} -{" "}
+                              {format(dateRange.to, "LLL dd, y")}
+                            </>
+                          ) : (
+                            format(dateRange.from, "LLL dd, y")
+                          )
+                        ) : (
+                          <span>{t("reservation.fields.PickDate")}</span>
+                        )}
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent
+                      className="w-auto p-0 max-h-[55vh] overflow-y-auto"
+                      align="start"
+                    >
+                      <Calendar
+                        mode="range"
+                        selected={dateRange}
+                        onSelect={setDateRange}
+                        fromMonth={today}
+                        toMonth={maxDate}
+                        numberOfMonths={2}
+                        disabled={{
+                          before: today,
+                          after: maxDate,
+                        }}
+                      />
+                      <FieldGroup className="bg-card border-t py-3 px-7">
+                        <Field>
+                          <FieldLabel htmlFor="time-from">
+                            {t("reservation.fields.startTime")}
+                          </FieldLabel>
+                          <InputGroup className="p-2">
+                            <InputGroupInput
+                              id="time-from"
+                              type="time"
+                              step={60}
+                              value={startTime}
+                              onChange={(e) => setStartTime(e.target.value)}
+                              className="appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+                              onClick={(e) =>
+                                (e.target as HTMLInputElement).showPicker()
+                              }
+                            />
+                            <InputGroupAddon>
+                              <Clock2Icon className="text-muted-foreground" />
+                            </InputGroupAddon>
+                          </InputGroup>
+                        </Field>
+                        <Field>
+                          <FieldLabel htmlFor="time-to">
+                            {t("reservation.fields.endTime")}
+                          </FieldLabel>
+                          <InputGroup className="p-2">
+                            <InputGroupInput
+                              id="time-to"
+                              type="time"
+                              step={60}
+                              className="appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+                              onClick={(e) =>
+                                (e.target as HTMLInputElement).showPicker()
+                              }
+                              value={endTime}
+                              onChange={(e) => setEndTime(e.target.value)}
+                            />
+                            <InputGroupAddon>
+                              <Clock2Icon className="text-muted-foreground" />
+                            </InputGroupAddon>
+                          </InputGroup>
+                        </Field>
+                      </FieldGroup>
+                    </PopoverContent>
+                  </Popover>
                 </Field>
 
                 <Field>
@@ -440,7 +518,7 @@ export default function SportComplex({
                 </Field>
               </FieldGroup>
 
-              {/* 4th row */}
+              {/* people number */}
               <FieldGroup>
                 <Field>
                   <FieldLabel htmlFor="beneficiaries">
@@ -460,7 +538,7 @@ export default function SportComplex({
 
               {/* Buttons */}
               <Field>
-                <div className="flex flex-wrap items-center gap-5">
+                <div className="flex flex-wrap items-center gap-5 mt-6">
                   <Button type="submit" className="flex-1 py-6 text-base">
                     {t("reservation.actions.submit")}
                   </Button>

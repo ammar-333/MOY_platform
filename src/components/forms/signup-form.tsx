@@ -25,6 +25,8 @@ export default function SignupForm({
   const navigate = useNavigate();
   const [companySector, setCompanySector] =
     useState<companySectorType>("government");
+  const [email, setEmail] = useState("");
+  const [Phone, setPhone] = useState("");
 
   useEffect(() => {
     console.log(companySector);
@@ -83,7 +85,9 @@ export default function SignupForm({
               {/* company sector */}
               <RadioGroup
                 defaultValue="goverment"
-                onValueChange={setCompanySector}
+                onValueChange={(value) =>
+                  setCompanySector(value as companySectorType)
+                }
                 dir={t("dir")}
               >
                 <div className="flex items-center gap-3">
@@ -95,6 +99,38 @@ export default function SignupForm({
                   <Label htmlFor="private">{t("auth.private")}</Label>
                 </div>
               </RadioGroup>
+
+              <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* email */}
+                <Field>
+                  <FieldLabel htmlFor="email">
+                    {t("profile.individual.email")}
+                  </FieldLabel>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder={t("auth.emailPlaceholder")}
+                    required
+                  />
+                </Field>
+
+                {/* phone number */}
+                <Field>
+                  <FieldLabel htmlFor="phone">
+                    {t("profile.individual.phone")}
+                  </FieldLabel>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    value={Phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder={t("auth.phoneNumberPlaceholder")}
+                    required
+                  />
+                </Field>
+              </FieldGroup>
 
               <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* PASSWORD */}
