@@ -151,7 +151,8 @@
       "participantsInfo": "معلومات عن المشاركين (الأعمار، الفئات، إلخ)"
     },
     "actions": {
-      "submit": "إرسال طلب الحجز"
+      "submit": "إرسال طلب الحجز",
+      "isSubmitting": "جاري إرسال الطلب..."
     },
     "options": {
       "service": {

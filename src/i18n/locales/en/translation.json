@@ -151,7 +151,8 @@
       "participantsInfo": "Details about participants (ages, categories, etc.)"
     },
     "actions": {
-      "submit": "Submit reservation request"
+      "submit": "Submit reservation request",
+      "isSubmitting": "Submitting..."
     },
     "options": {
       "service": {

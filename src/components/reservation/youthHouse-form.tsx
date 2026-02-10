@@ -25,7 +25,7 @@ import {
 import { Calendar } from "@/components/ui/calendar";
 import { addMonths, format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { type DateRange } from "react-day-picker";
+// import { type DateRange } from "react-day-picker";
 import {
   InputGroup,
   InputGroupAddon,
@@ -35,13 +35,32 @@ import { Clock2Icon } from "lucide-react";
 import { z } from "zod";
 
 type Option = { value: string; label: string };
-type houseOrCampType = "house" | "camp";
-type serviceType = "activity" | "accommodation" | "both";
-type FacilityType = "" | "room" | "tent" | "suite" | "chalet";
-type capacityType = "normal" | "double" | "triple" | "four" | "five";
+// type houseOrCampType = "" | "house" | "camp";
+// type serviceType = "" | "activity" | "accommodation" | "both";
+// type FacilityType = "" | "room" | "tent" | "suite" | "chalet";
+// type capacityType = "normal" | "double" | "triple" | "four" | "five";
 
 const formSchema = z.object({
-  name: z.string(),
+  serviceType: z.enum(["activity", "accommodation", "both"]),
+  houseOrCamp: z.enum(["house", "camp"]),
+
+  house: z.string().optional(),
+  camp: z.string().optional(),
+
+  dateRange: z.object({
+    from: z.date(),
+    to: z.date(),
+  }),
+  startTime: z.string().optional(),
+  endTime: z.string().optional(),
+
+  beneficiaries: z.string().min(1).max(50, "Too many beneficiaries"),
+
+  facility: z.enum(["room", "tent", "suite", "chalet"]).optional(),
+  capacity: z.enum(["normal", "double", "triple", "four", "five"]).optional(),
+  isShared: z.boolean().optional(),
+
+  activity: z.string().optional(),
 });
 type formType = z.infer<typeof formSchema>;
 type FormErrors = Partial<Record<keyof formType, string>>;
@@ -61,35 +80,54 @@ export default function YouthHouse({
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const [form, setForm] = useState<formType>({ name: "ammar" });
+  const [form, setForm] = useState<formType>({
+    serviceType: undefined,
+    houseOrCamp: undefined,
+
+    house: undefined,
+    camp: undefined,
+
+    dateRange: undefined,
+    startTime: undefined,
+    endTime: undefined,
+
+    beneficiaries: undefined,
+
+    facility: undefined,
+    capacity: undefined,
+    isShared: undefined,
+
+    activity: undefined,
+  });
   const [formErrors, setFormErrors] = useState<FormErrors>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const [serviceType, setServiceType] = useState<serviceType>();
-  const [houseOrCamp, setHouseOrCamp] = useState<houseOrCampType>();
-  const [house, setHouse] = useState<string>();
-  const [camp, setCamp] = useState<string>();
-  const [beneficiaries, setBeneficiaries] = useState<string>();
+  // const [serviceType, setServiceType] = useState<serviceType>();
+  // const [houseOrCamp, setHouseOrCamp] = useState<houseOrCampType>();
+  // const [house, setHouse] = useState<string>();
+  // const [camp, setCamp] = useState<string>();
+  // const [beneficiaries, setBeneficiaries] = useState<string>();
 
-  const [facility, setFacility] = useState<FacilityType>();
-  const [capacity, setCapacity] = useState<capacityType>();
-  const [isShared, setIsShared] = useState(false);
+  // const [facility, setFacility] = useState<FacilityType>();
+  // const [capacity, setCapacity] = useState<capacityType>();
+  // const [isShared, setIsShared] = useState(false);
 
-  const [activity, setActivity] = useState<string>();
+  // const [activity, setActivity] = useState<string>();
 
-  const [dateRange, setDateRange] = useState<DateRange | undefined>();
-  const [startTime, setStartTime] = useState<string>();
-  const [endTime, setEndTime] = useState<string>();
+  // const [dateRange, setDateRange] = useState<DateRange | undefined>();
+  // const [startTime, setStartTime] = useState<string>();
+  // const [endTime, setEndTime] = useState<string>();
 
   const today = new Date();
   const maxDate = addMonths(today, 2);
   const showFacilitySection =
-    serviceType === "accommodation" || serviceType === "both";
+    form.serviceType === "accommodation" || form.serviceType === "both";
   const showActivitySection =
-    serviceType === "activity" || serviceType === "both";
+    form.serviceType === "activity" || form.serviceType === "both";
 
   const durationDays = useMemo(
-    () => daysBetween(dateRange?.from, dateRange?.to),
-    [dateRange],
+    () => daysBetween(form.dateRange?.from, form.dateRange?.to),
+    [form.dateRange],
   );
 
   const houseOrCampOptions: Option[] = useMemo(
@@ -205,22 +243,7 @@ export default function YouthHouse({
     return true;
   }
 
-  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const { name, value } = e.target;
-
-    setForm((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-
-    // clear error while typing
-    setFormErrors((prev) => ({
-      ...prev,
-      [name]: undefined,
-    }));
-  }
-
-  function onSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
     if (!validate()) {
@@ -228,12 +251,17 @@ export default function YouthHouse({
       return;
     }
 
+    setIsSubmitting(true);
+
     try {
       // API call
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       console.log(form);
       navigate("/confirmation-message");
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -262,7 +290,7 @@ export default function YouthHouse({
       {/* FORM */}
       <Card className="rounded-none shadow-none dark:bg-slate-900">
         <CardContent className="p-6">
-          <form onSubmit={onSubmit}>
+          <form onSubmit={handleSubmit}>
             <FieldGroup>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -282,9 +310,14 @@ export default function YouthHouse({
                     <span className="text-red-500">*</span>
                   </FieldLabel>
                   <Select
-                    value={houseOrCamp}
-                    onValueChange={(v: string) =>
-                      setHouseOrCamp(v as houseOrCampType)
+                    value={form.houseOrCamp}
+                    onValueChange={(value) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        houseOrCamp: value as formType["houseOrCamp"],
+                        house: undefined,
+                        camp: undefined,
+                      }))
                     }
                     dir={t("dir")}
                     required
@@ -313,10 +346,17 @@ export default function YouthHouse({
                     <span className="text-red-500">*</span>
                   </FieldLabel>
                   <Select
-                    value={serviceType}
-                    onValueChange={(v: serviceType) => {
-                      setServiceType(v);
-                    }}
+                    value={form.serviceType}
+                    onValueChange={(value) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        serviceType: value as formType["serviceType"],
+                        facility: undefined,
+                        capacity: undefined,
+                        isShared: undefined,
+                        activity: undefined,
+                      }))
+                    }
                     dir={t("dir")}
                     required
                   >
@@ -341,15 +381,20 @@ export default function YouthHouse({
               {/* house type */}
               <FieldGroup>
                 {/* Youth House */}
-                {houseOrCamp === "house" && (
+                {form.houseOrCamp === "house" && (
                   <Field>
                     <FieldLabel htmlFor="house">
                       {t("reservation.fields.youthHouse")}{" "}
                       <span className="text-red-500">*</span>
                     </FieldLabel>
                     <Select
-                      value={house}
-                      onValueChange={setHouse}
+                      value={form.house}
+                      onValueChange={(value) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          house: value as formType["house"],
+                        }))
+                      }
                       dir={t("dir")}
                       required
                     >
@@ -372,15 +417,20 @@ export default function YouthHouse({
                 )}
 
                 {/* camp */}
-                {houseOrCamp === "camp" && (
+                {form.houseOrCamp === "camp" && (
                   <Field>
                     <FieldLabel htmlFor="camp">
                       {t("reservation.fields.camp")}{" "}
                       <span className="text-red-500">*</span>
                     </FieldLabel>
                     <Select
-                      value={camp}
-                      onValueChange={setCamp}
+                      value={form.camp}
+                      onValueChange={(value) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          camp: value as formType["camp"],
+                        }))
+                      }
                       dir={t("dir")}
                       required
                     >
@@ -417,14 +467,14 @@ export default function YouthHouse({
                         className="justify-start px-2.5 font-normal bg-accent"
                       >
                         <CalendarIcon />
-                        {dateRange?.from ? (
-                          dateRange.to ? (
+                        {form.dateRange?.from ? (
+                          form.dateRange.to ? (
                             <>
-                              {format(dateRange.from, "LLL dd, y")} -{" "}
-                              {format(dateRange.to, "LLL dd, y")}
+                              {format(form.dateRange.from, "LLL dd, y")} -{" "}
+                              {format(form.dateRange.to, "LLL dd, y")}
                             </>
                           ) : (
-                            format(dateRange.from, "LLL dd, y")
+                            format(form.dateRange.from, "LLL dd, y")
                           )
                         ) : (
                           <span>{t("reservation.fields.PickDate")}</span>
@@ -437,8 +487,13 @@ export default function YouthHouse({
                     >
                       <Calendar
                         mode="range"
-                        selected={dateRange}
-                        onSelect={setDateRange}
+                        selected={form.dateRange}
+                        onSelect={(value) =>
+                          setForm((prev) => ({
+                            ...prev,
+                            dateRange: value as formType["dateRange"],
+                          }))
+                        }
                         fromMonth={today}
                         toMonth={maxDate}
                         numberOfMonths={2}
@@ -457,8 +512,13 @@ export default function YouthHouse({
                               id="time-from"
                               type="time"
                               step={60}
-                              value={startTime}
-                              onChange={(e) => setStartTime(e.target.value)}
+                              value={form.startTime}
+                              onChange={(e) =>
+                                setForm((prev) => ({
+                                  ...prev,
+                                  startTime: e.target.value,
+                                }))
+                              }
                               className="appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
                               onClick={(e) =>
                                 (e.target as HTMLInputElement).showPicker()
@@ -482,8 +542,13 @@ export default function YouthHouse({
                               onClick={(e) =>
                                 (e.target as HTMLInputElement).showPicker()
                               }
-                              value={endTime}
-                              onChange={(e) => setEndTime(e.target.value)}
+                              value={form.endTime}
+                              onChange={(e) =>
+                                setForm((prev) => ({
+                                  ...prev,
+                                  endTime: e.target.value,
+                                }))
+                              }
                             />
                             <InputGroupAddon>
                               <Clock2Icon className="text-muted-foreground" />
@@ -518,8 +583,13 @@ export default function YouthHouse({
                   <Input
                     id="beneficiaries"
                     type="number"
-                    value={beneficiaries}
-                    onChange={(e) => setBeneficiaries(e.target.value)}
+                    value={form.beneficiaries}
+                    onChange={(e) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        beneficiaries: e.target.value,
+                      }))
+                    }
                     required
                   />
                 </Field>
@@ -546,10 +616,17 @@ export default function YouthHouse({
                         <span className="text-red-500">*</span>
                       </FieldLabel>
                       <Select
-                        value={facility}
-                        onValueChange={(v) => {
-                          setFacility(v as FacilityType);
-                        }}
+                        value={form.facility}
+                        onValueChange={(value) =>
+                          setForm((prev) => ({
+                            ...prev,
+                            facility: value as formType["facility"],
+                            isShared:
+                              value === "tent" || value === "room"
+                                ? false
+                                : undefined,
+                          }))
+                        }
                         dir={t("dir")}
                         required
                       >
@@ -575,14 +652,17 @@ export default function YouthHouse({
 
                     {/* capacity */}
                     <FieldGroup>
-                      {facility === "room" && (
+                      {form.facility === "room" && (
                         <Field orientation="horizontal">
                           <Checkbox
                             id="sharedRoom-checkbox"
                             name="sharedRoom"
-                            checked={isShared}
+                            checked={form.isShared}
                             onCheckedChange={(value) =>
-                              setIsShared(value as boolean)
+                              setForm((prev) => ({
+                                ...prev,
+                                isShared: value as formType["isShared"],
+                              }))
                             }
                           />
                           <FieldLabel htmlFor="sharedRoom-checkbox">
@@ -591,14 +671,17 @@ export default function YouthHouse({
                         </Field>
                       )}
 
-                      {facility === "tent" && (
+                      {form.facility === "tent" && (
                         <Field orientation="horizontal">
                           <Checkbox
                             id="sharedTent-checkbox"
                             name="sharedTent"
-                            checked={isShared}
+                            checked={form.isShared}
                             onCheckedChange={(value) =>
-                              setIsShared(value as boolean)
+                              setForm((prev) => ({
+                                ...prev,
+                                isShared: value as formType["isShared"],
+                              }))
                             }
                           />
                           <FieldLabel htmlFor="sharedTent-checkbox">
@@ -607,16 +690,19 @@ export default function YouthHouse({
                         </Field>
                       )}
 
-                      {facility && (
+                      {form.facility && (
                         <Field>
                           <FieldLabel htmlFor="capacity">
                             {t("reservation.fields.capacity")}{" "}
                             <span className="text-red-500">*</span>
                           </FieldLabel>
                           <Select
-                            value={capacity}
-                            onValueChange={(v: string) =>
-                              setCapacity(v as capacityType)
+                            value={form.capacity}
+                            onValueChange={(value) =>
+                              setForm((prev) => ({
+                                ...prev,
+                                capacity: value as formType["capacity"],
+                              }))
                             }
                             dir={t("dir")}
                             required
@@ -668,8 +754,13 @@ export default function YouthHouse({
                       <span className="text-red-500">*</span>
                     </FieldLabel>
                     <Select
-                      value={activity}
-                      onValueChange={setActivity}
+                      value={form.activity}
+                      onValueChange={(value) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          activity: value as formType["activity"],
+                        }))
+                      }
                       dir={t("dir")}
                       required
                     >
@@ -695,8 +786,14 @@ export default function YouthHouse({
               {/* Buttons */}
               <Field>
                 <div className="flex flex-wrap items-center gap-5 mt-6">
-                  <Button type="submit" className="flex-1 py-6 text-base">
-                    {t("reservation.actions.submit")}
+                  <Button
+                    type="submit"
+                    className="flex-1 py-6 text-base"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting
+                      ? t("reservation.actions.isSubmitting")
+                      : t("reservation.actions.submit")}
                   </Button>
                   <Button
                     type="button"
