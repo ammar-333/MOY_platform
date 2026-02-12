@@ -109,13 +109,14 @@
     },
     "subtitle": "املأ النموذج التالي لإتمام عملية الحجز",
     "sections": {
+      "personal": "بيانات مقدم الطلب",
       "booking": "بيانات الحجز",
       "facility": "بيانات المرفق",
       "activity": "بيانات النشاط"
     },
     "fields": {
       "serviceType": "نوع الخدمة",
-      "houseOrCamp": "نوع المجمع",
+      "houseOrCamp": "نوع البيت",
       "youthHouse": "بيت الشباب",
       "camp": "معسكر",
       "sportsComplex": "مجمع رياضي",

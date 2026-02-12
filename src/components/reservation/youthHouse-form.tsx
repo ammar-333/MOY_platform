@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { CalendarDays, Users, Hotel } from "lucide-react";
+import { CalendarDays, Hotel, User, House, Volleyball } from "lucide-react";
 import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -25,7 +25,6 @@ import {
 import { Calendar } from "@/components/ui/calendar";
 import { addMonths, format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-// import { type DateRange } from "react-day-picker";
 import {
   InputGroup,
   InputGroupAddon,
@@ -33,6 +32,7 @@ import {
 } from "@/components/ui/input-group";
 import { Clock2Icon } from "lucide-react";
 import { z } from "zod";
+import { Textarea } from "../ui/textarea";
 
 type Option = { value: string; label: string };
 // type houseOrCampType = "" | "house" | "camp";
@@ -47,14 +47,20 @@ const formSchema = z.object({
   house: z.string().optional(),
   camp: z.string().optional(),
 
-  dateRange: z.object({
-    from: z.date(),
-    to: z.date(),
-  }),
+  dateRange: z.object(
+    {
+      from: z.date(),
+      to: z.date(),
+    },
+    "please pick a date",
+  ),
   startTime: z.string().optional(),
   endTime: z.string().optional(),
 
-  beneficiaries: z.string().min(1).max(50, "Too many beneficiaries"),
+  beneficiaries: z
+    .number()
+    .min(1, "minumum number is 1")
+    .max(50, "maximum number is 50"),
 
   facility: z.enum(["room", "tent", "suite", "chalet"]).optional(),
   capacity: z.enum(["normal", "double", "triple", "four", "five"]).optional(),
@@ -62,6 +68,7 @@ const formSchema = z.object({
 
   activity: z.string().optional(),
 });
+
 type formType = z.infer<typeof formSchema>;
 type FormErrors = Partial<Record<keyof formType, string>>;
 
@@ -91,7 +98,7 @@ export default function YouthHouse({
     startTime: undefined,
     endTime: undefined,
 
-    beneficiaries: undefined,
+    beneficiaries: 0,
 
     facility: undefined,
     capacity: undefined,
@@ -101,22 +108,6 @@ export default function YouthHouse({
   });
   const [formErrors, setFormErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // const [serviceType, setServiceType] = useState<serviceType>();
-  // const [houseOrCamp, setHouseOrCamp] = useState<houseOrCampType>();
-  // const [house, setHouse] = useState<string>();
-  // const [camp, setCamp] = useState<string>();
-  // const [beneficiaries, setBeneficiaries] = useState<string>();
-
-  // const [facility, setFacility] = useState<FacilityType>();
-  // const [capacity, setCapacity] = useState<capacityType>();
-  // const [isShared, setIsShared] = useState(false);
-
-  // const [activity, setActivity] = useState<string>();
-
-  // const [dateRange, setDateRange] = useState<DateRange | undefined>();
-  // const [startTime, setStartTime] = useState<string>();
-  // const [endTime, setEndTime] = useState<string>();
 
   const today = new Date();
   const maxDate = addMonths(today, 2);
@@ -165,10 +156,6 @@ export default function YouthHouse({
 
   const capacityptions: Option[] = useMemo(
     () => [
-      {
-        value: "normal",
-        label: t("reservation.options.capacity.normal"),
-      },
       { value: "double", label: t("reservation.options.capacity.double") },
       { value: "triple", label: t("reservation.options.capacity.triple") },
       { value: "four", label: t("reservation.options.capacity.four") },
@@ -294,14 +281,173 @@ export default function YouthHouse({
             <FieldGroup>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
+                  <User className="h-5 w-5 text-primary" />
+                  <h2 className="text-lg font-semibold">
+                    {t("reservation.sections.personal")}
+                  </h2>
+                </div>
+              </div>
+              {/* user Data from API */}
+              <FieldGroup>
+                <FieldGroup className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                  {/* name */}
+                  <Field>
+                    <FieldLabel htmlFor="name">
+                      {t("profile.individual.name")}
+                    </FieldLabel>
+                    <Input
+                      id="name"
+                      value="name"
+                      readOnly
+                      className="bg-muted dark:bg-muted cursor-not-allowed"
+                    />
+                  </Field>
+
+                  {/* email */}
+                  <Field>
+                    <FieldLabel htmlFor="email">
+                      {t("profile.individual.email")}
+                    </FieldLabel>
+                    <Input
+                      id="email"
+                      value="example@gmail.com"
+                      readOnly
+                      className="bg-muted dark:bg-muted cursor-not-allowed"
+                    />
+                  </Field>
+
+                  {/* phone number */}
+                  <Field>
+                    <FieldLabel htmlFor="phone">
+                      {t("profile.individual.phone")}
+                    </FieldLabel>
+                    <Input
+                      id="phone"
+                      value="077"
+                      readOnly
+                      className="bg-muted dark:bg-muted cursor-not-allowed"
+                    />
+                  </Field>
+
+                  {/* birth date */}
+                  <Field>
+                    <FieldLabel htmlFor="birth">
+                      {t("profile.individual.birth")}
+                    </FieldLabel>
+                    <Input
+                      id="birth"
+                      value="11/03/1995"
+                      readOnly
+                      className="bg-muted dark:bg-muted cursor-not-allowed"
+                    />
+                  </Field>
+
+                  {/* Social status */}
+                  <Field>
+                    <FieldLabel htmlFor="socialStatus">
+                      {t("profile.individual.socialStatus")}
+                    </FieldLabel>
+                    <Input
+                      id="socialStatus"
+                      value="single"
+                      readOnly
+                      className="bg-muted dark:bg-muted cursor-not-allowed"
+                    />
+                  </Field>
+
+                  {/* gender */}
+                  <Field>
+                    <FieldLabel htmlFor="gender">
+                      {t("profile.individual.gender")}
+                    </FieldLabel>
+                    <Input
+                      id="gender"
+                      value="male"
+                      readOnly
+                      className="bg-muted dark:bg-muted cursor-not-allowed"
+                    />
+                  </Field>
+
+                  {/* ID number */}
+                  <Field>
+                    <FieldLabel htmlFor="id">
+                      {t("profile.individual.idNumber")}
+                    </FieldLabel>
+                    <Input
+                      id="id"
+                      value="123"
+                      readOnly
+                      className="bg-muted dark:bg-muted cursor-not-allowed"
+                    />
+                  </Field>
+
+                  {/* civil number */}
+                  <Field>
+                    <FieldLabel htmlFor="civil">
+                      {t("profile.individual.civil")}
+                    </FieldLabel>
+                    <Input
+                      id="civil"
+                      value="12312"
+                      readOnly
+                      className="bg-muted dark:bg-muted cursor-not-allowed"
+                    />
+                  </Field>
+                </FieldGroup>
+
+                <FieldGroup>
+                  {/* Residence validity */}
+                  <Field>
+                    <FieldLabel htmlFor="residenceValidity">
+                      {t("profile.individual.residenceValidity")}
+                    </FieldLabel>
+                    <Input
+                      id="residenceValidity"
+                      value="13/12/2025"
+                      readOnly
+                      className="bg-muted dark:bg-muted cursor-not-allowed"
+                    />
+                  </Field>
+
+                  {/* Residence details */}
+                  <Field>
+                    <FieldLabel htmlFor="ResidenceDetails">
+                      {t("profile.individual.ResidenceDetails")}
+                    </FieldLabel>
+                    <Textarea
+                      id="ResidenceDetails"
+                      value=". . ."
+                      readOnly
+                      className="bg-muted dark:bg-muted cursor-not-allowed"
+                    />
+                  </Field>
+
+                  {/* Passport details */}
+                  <Field>
+                    <FieldLabel htmlFor="PassportDetails">
+                      {t("profile.individual.PassportDetails")}
+                    </FieldLabel>
+                    <Textarea
+                      id="PassportDetails"
+                      value=". . ."
+                      readOnly
+                      className="bg-muted dark:bg-muted cursor-not-allowed"
+                    />
+                  </Field>
+                </FieldGroup>
+              </FieldGroup>
+
+              <hr className="border-primary" />
+
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
                   <CalendarDays className="h-5 w-5 text-primary" />
                   <h2 className="text-lg font-semibold">
                     {t("reservation.sections.booking")}
                   </h2>
                 </div>
               </div>
-
-              {/* First row */}
+              {/* Types */}
               <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* House type */}
                 <Field>
@@ -432,9 +578,13 @@ export default function YouthHouse({
                         }))
                       }
                       dir={t("dir")}
-                      required
                     >
-                      <SelectTrigger className="w-full">
+                      <SelectTrigger
+                        className={cn(
+                          formErrors.camp && "border-red-500",
+                          "w-full",
+                        )}
+                      >
                         <SelectValue
                           placeholder={t("reservation.placeholders.select")}
                         />
@@ -449,6 +599,11 @@ export default function YouthHouse({
                         </SelectGroup>
                       </SelectContent>
                     </Select>
+                    {formErrors.camp && (
+                      <p className="text-sm text-red-500 mt-1">
+                        {formErrors.camp}
+                      </p>
+                    )}
                   </Field>
                 )}
               </FieldGroup>
@@ -464,7 +619,7 @@ export default function YouthHouse({
                       <Button
                         variant="outline"
                         id="date-picker-range"
-                        className="justify-start px-2.5 font-normal bg-accent"
+                        className="justify-start px-2.5 font-normal not-dark:bg-white"
                       >
                         <CalendarIcon />
                         {form.dateRange?.from ? (
@@ -482,7 +637,7 @@ export default function YouthHouse({
                       </Button>
                     </PopoverTrigger>
                     <PopoverContent
-                      className="w-auto p-0 max-h-[55vh] overflow-y-auto"
+                      className="w-auto p-0 max-h-[60vh] overflow-y-auto"
                       align="start"
                     >
                       <Calendar
@@ -501,6 +656,7 @@ export default function YouthHouse({
                           before: today,
                           after: maxDate,
                         }}
+                        required
                       />
                       <FieldGroup className="bg-card border-t py-3 px-7">
                         <Field>
@@ -558,6 +714,11 @@ export default function YouthHouse({
                       </FieldGroup>
                     </PopoverContent>
                   </Popover>
+                  {formErrors.dateRange && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {formErrors.dateRange}
+                    </p>
+                  )}
                 </Field>
 
                 <Field>
@@ -568,7 +729,7 @@ export default function YouthHouse({
                     id="duration"
                     value={String(durationDays)}
                     readOnly
-                    className="bg-muted cursor-not-allowed"
+                    className="bg-muted dark:bg-muted cursor-not-allowed"
                   />
                 </Field>
               </FieldGroup>
@@ -587,21 +748,26 @@ export default function YouthHouse({
                     onChange={(e) =>
                       setForm((prev) => ({
                         ...prev,
-                        beneficiaries: e.target.value,
+                        beneficiaries: Number(e.target.value),
                       }))
                     }
                     required
                   />
+                  {formErrors.beneficiaries && (
+                    <p className="text-sm text-red-500 mt-1">
+                      {formErrors.beneficiaries}
+                    </p>
+                  )}
                 </Field>
               </FieldGroup>
 
               {/* SECTION: Facility */}
               {showFacilitySection && (
                 <>
-                  <hr className="border-border" />
+                  <hr className="border-primary" />
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <Users className="h-5 w-5 text-primary" />
+                      <House className="h-5 w-5 text-primary" />
                       <h2 className="text-lg font-semibold">
                         {t("reservation.sections.facility")}
                       </h2>
@@ -737,10 +903,10 @@ export default function YouthHouse({
               {/* SECTION: Activity */}
               {showActivitySection && (
                 <>
-                  <hr className="border-border" />
+                  <hr className="border-primary" />
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-2">
-                      <CalendarDays className="h-5 w-5 text-primary" />
+                      <Volleyball className="h-5 w-5 text-primary" />
                       <h2 className="text-lg font-semibold">
                         {t("reservation.sections.activity")}
                       </h2>

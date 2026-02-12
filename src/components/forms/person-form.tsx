@@ -114,7 +114,7 @@ export default function PersonForm({
                 </Field>
               </FieldGroup>
 
-              {/* 4th row */}
+              {/* birth and reg number */}
               <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* birth date */}
                 <Field>
@@ -143,7 +143,7 @@ export default function PersonForm({
                 </Field>
               </FieldGroup>
 
-              {/* 5th row */}
+              {/* gender and social state */}
               <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* gender */}
                 <Field>

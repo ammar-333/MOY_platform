@@ -109,13 +109,14 @@
     },
     "subtitle": "Fill the form below to complete the reservation request",
     "sections": {
+      "personal": "Applicant Information",
       "booking": "Booking Details",
       "facility": "Facility Details",
       "activity": "Activity Details"
     },
     "fields": {
       "serviceType": "Service type",
-      "houseOrCamp": "Complex Type",
+      "houseOrCamp": "House Type",
       "youthHouse": "Youth house",
       "camp": "Camp",
       "sportsComplex": "Sports Complex",
