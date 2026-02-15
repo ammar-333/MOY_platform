@@ -66,6 +66,16 @@ const formSchema = z.object({
   capacity: z.enum(["normal", "double", "triple", "four", "five"]).optional(),
   isShared: z.boolean().optional(),
 
+  membershipCheck: z.boolean().optional(),
+  membershipType: z.enum(["jordanian", "arabic", "international"]).optional(),
+  memberNumber: z.string().optional(),
+  employeeCheck: z.boolean().optional(),
+  employeeType: z.enum(["worker", "retired"]).optional(),
+  employeeNumber: z.string().optional(),
+  discountCheck: z.boolean().optional(),
+  discountNumber: z.string().optional(),
+  discountDate: z.date().optional(),
+
   activity: z.string().optional(),
 });
 
@@ -101,8 +111,18 @@ export default function YouthHouse({
     beneficiaries: 0,
 
     facility: undefined,
+    isShared: false,
     capacity: undefined,
-    isShared: undefined,
+
+    membershipCheck: false,
+    membershipType: undefined,
+    memberNumber: undefined,
+    employeeCheck: false,
+    employeeType: undefined,
+    employeeNumber: undefined,
+    discountCheck: false,
+    discountNumber: undefined,
+    discountDate: undefined,
 
     activity: undefined,
   });
@@ -154,12 +174,44 @@ export default function YouthHouse({
     [t],
   );
 
+  const membershipTypeOptions: Option[] = useMemo(
+    () => [
+      {
+        value: "jordanian",
+        label: t("reservation.options.membershipType.jordanian"),
+      },
+      {
+        value: "arabic",
+        label: t("reservation.options.membershipType.arabic"),
+      },
+      {
+        value: "international",
+        label: t("reservation.options.membershipType.international"),
+      },
+    ],
+    [t],
+  );
+
   const capacityptions: Option[] = useMemo(
     () => [
       { value: "double", label: t("reservation.options.capacity.double") },
       { value: "triple", label: t("reservation.options.capacity.triple") },
       { value: "four", label: t("reservation.options.capacity.four") },
       { value: "five", label: t("reservation.options.capacity.five") },
+    ],
+    [t],
+  );
+
+  const employeeTypeOptions: Option[] = useMemo(
+    () => [
+      {
+        value: "worker",
+        label: t("profile.individual.worker"),
+      },
+      {
+        value: "retired",
+        label: t("profile.individual.retired"),
+      },
     ],
     [t],
   );
@@ -499,8 +551,17 @@ export default function YouthHouse({
                         serviceType: value as formType["serviceType"],
                         facility: undefined,
                         capacity: undefined,
-                        isShared: undefined,
+                        isShared: false,
                         activity: undefined,
+                        membershipCheck: false,
+                        membershipType: undefined,
+                        memberNumber: undefined,
+                        employeeCheck: false,
+                        employeeType: undefined,
+                        employeeNumber: undefined,
+                        discountCheck: false,
+                        discountNumber: undefined,
+                        discountDate: undefined,
                       }))
                     }
                     dir={t("dir")}
@@ -761,6 +822,55 @@ export default function YouthHouse({
                 </Field>
               </FieldGroup>
 
+              {/* SECTION: Activity */}
+              {showActivitySection && (
+                <>
+                  <hr className="border-primary" />
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <Volleyball className="h-5 w-5 text-primary" />
+                      <h2 className="text-lg font-semibold">
+                        {t("reservation.sections.activity")}
+                      </h2>
+                    </div>
+                  </div>
+
+                  {/* activities type */}
+                  <Field>
+                    <FieldLabel htmlFor="facilityType">
+                      {t("reservation.fields.facilityType")}{" "}
+                      <span className="text-red-500">*</span>
+                    </FieldLabel>
+                    <Select
+                      value={form.activity}
+                      onValueChange={(value) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          activity: value as formType["activity"],
+                        }))
+                      }
+                      dir={t("dir")}
+                      required
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue
+                          placeholder={t("reservation.placeholders.select")}
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          {activityOptions.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </Field>
+                </>
+              )}
+
               {/* SECTION: Facility */}
               {showFacilitySection && (
                 <>
@@ -896,56 +1006,255 @@ export default function YouthHouse({
                         </Field>
                       )}
                     </FieldGroup>
+
+                    <hr className="border-primary" />
+
+                    {/* ckeckboxes */}
+                    <FieldGroup>
+                      {/* membership */}
+                      <FieldGroup>
+                        <Field orientation="horizontal">
+                          <Checkbox
+                            id="member-checkbox"
+                            name="member"
+                            checked={form.membershipCheck}
+                            onCheckedChange={(value) => {
+                              setForm((prev) => ({
+                                ...prev,
+                                membershipCheck:
+                                  value as formType["membershipCheck"],
+                              }));
+                            }}
+                            className="dark:bg-slate-700"
+                          />
+                          <FieldLabel htmlFor="member-checkbox">
+                            {t("profile.individual.membership")}
+                          </FieldLabel>
+                        </Field>
+
+                        {form.membershipCheck && (
+                          <FieldGroup>
+                            {/* mempersip number */}
+                            <Field>
+                              <FieldLabel htmlFor="membership-number">
+                                {t("profile.individual.membershipNumber")}
+                              </FieldLabel>
+                              <Input
+                                id="membership-number"
+                                type="number"
+                                value={form.memberNumber}
+                                onChange={(e) =>
+                                  setForm((prev) => ({
+                                    ...prev,
+                                    memberNumber: e.target.value,
+                                  }))
+                                }
+                                placeholder="087712"
+                                required
+                              />
+                            </Field>
+
+                            {/* mempership type */}
+                            <Field>
+                              <FieldLabel htmlFor="membershipType">
+                                {t("reservation.fields.membershipType")}{" "}
+                                <span className="text-red-500">*</span>
+                              </FieldLabel>
+                              <Select
+                                value={form.membershipType}
+                                onValueChange={(value) =>
+                                  setForm((prev) => ({
+                                    ...prev,
+                                    membershipType:
+                                      value as formType["membershipType"],
+                                  }))
+                                }
+                                dir={t("dir")}
+                                required
+                              >
+                                <SelectTrigger className="w-full">
+                                  <SelectValue
+                                    placeholder={t(
+                                      "reservation.placeholders.select",
+                                    )}
+                                  />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectGroup>
+                                    {membershipTypeOptions.map((option) => (
+                                      <SelectItem
+                                        key={option.value}
+                                        value={option.value}
+                                      >
+                                        {option.label}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectGroup>
+                                </SelectContent>
+                              </Select>
+                            </Field>
+                          </FieldGroup>
+                        )}
+                      </FieldGroup>
+
+                      {/* ministry employees */}
+                      <FieldGroup>
+                        <Field orientation="horizontal">
+                          <Checkbox
+                            id="employee-checkbox"
+                            name="employee"
+                            checked={form.employeeCheck}
+                            onCheckedChange={(value) => {
+                              setForm((prev) => ({
+                                ...prev,
+                                employeeCheck:
+                                  value as formType["employeeCheck"],
+                              }));
+                            }}
+                            className="dark:bg-slate-700"
+                          />
+
+                          <FieldLabel htmlFor="employee-checkbox">
+                            {t("profile.individual.employee")}
+                          </FieldLabel>
+                        </Field>
+
+                        {form.employeeCheck && (
+                          <FieldGroup>
+                            {/* employee number */}
+                            <Field>
+                              <FieldLabel htmlFor="employee-number">
+                                {t("profile.individual.employeeNumber")}
+                              </FieldLabel>
+                              <Input
+                                id="employee-number"
+                                type="number"
+                                value={form.employeeNumber}
+                                onChange={(e) =>
+                                  setForm((prev) => ({
+                                    ...prev,
+                                    employeeNumber: e.target.value,
+                                  }))
+                                }
+                                placeholder="676322"
+                                required
+                              />
+                            </Field>
+
+                            {/* employee type */}
+                            <Field>
+                              <FieldLabel htmlFor="employee-type">
+                                {t("profile.individual.employeeType")}{" "}
+                              </FieldLabel>
+                              <Select
+                                value={form.employeeType}
+                                onValueChange={(value) =>
+                                  setForm((prev) => ({
+                                    ...prev,
+                                    employeeType:
+                                      value as formType["employeeType"],
+                                  }))
+                                }
+                                dir={t("dir")}
+                              >
+                                <SelectTrigger className="w-full">
+                                  <SelectValue
+                                    placeholder={t(
+                                      "reservation.placeholders.select",
+                                    )}
+                                  />
+                                </SelectTrigger>
+                                <SelectContent>
+                                  <SelectGroup>
+                                    {employeeTypeOptions.map((option) => (
+                                      <SelectItem
+                                        key={option.value}
+                                        value={option.value}
+                                      >
+                                        {option.label}
+                                      </SelectItem>
+                                    ))}
+                                  </SelectGroup>
+                                </SelectContent>
+                              </Select>
+                            </Field>
+                          </FieldGroup>
+                        )}
+                      </FieldGroup>
+
+                      {/* Minister's discount */}
+                      <FieldGroup>
+                        <Field orientation="horizontal">
+                          <Checkbox
+                            id="discount-checkbox"
+                            name="employee"
+                            checked={form.discountCheck}
+                            onCheckedChange={(value) => {
+                              setForm((prev) => ({
+                                ...prev,
+                                discountCheck:
+                                  value as formType["discountCheck"],
+                              }));
+                            }}
+                            className="dark:bg-slate-700"
+                          />
+
+                          <FieldLabel htmlFor="discount-checkbox">
+                            {t("profile.individual.discount")}
+                          </FieldLabel>
+                        </Field>
+
+                        {form.discountCheck && (
+                          <FieldGroup>
+                            <Field>
+                              <FieldLabel htmlFor="discount-number">
+                                {t("profile.individual.discountNumber")}
+                              </FieldLabel>
+                              <Input
+                                id="discount-number"
+                                type="number"
+                                value={form.discountNumber}
+                                onChange={(e) =>
+                                  setForm((prev) => ({
+                                    ...prev,
+                                    discountNumber: e.target.value,
+                                  }))
+                                }
+                                placeholder="676322"
+                                required
+                              />
+                            </Field>
+
+                            <Field className="w-full md:w-1/3">
+                              <FieldLabel htmlFor="discounfDate">
+                                {t("reservation.fields.discountDate")}
+                              </FieldLabel>
+                              <Input
+                                id="discounfDate"
+                                type="date"
+                                name="discountDate"
+                                value={
+                                  form.discountDate
+                                    ? format(form.discountDate, "yyyy-MM-dd")
+                                    : ""
+                                }
+                                onChange={(e) => {
+                                  const selectedDate = e.target.value
+                                    ? new Date(e.target.value)
+                                    : undefined;
+                                  setForm((prev) => ({
+                                    ...prev,
+                                    discountDate: selectedDate,
+                                  }));
+                                }}
+                                required
+                              />
+                            </Field>
+                          </FieldGroup>
+                        )}
+                      </FieldGroup>
+                    </FieldGroup>
                   </FieldGroup>
-                </>
-              )}
-
-              {/* SECTION: Activity */}
-              {showActivitySection && (
-                <>
-                  <hr className="border-primary" />
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Volleyball className="h-5 w-5 text-primary" />
-                      <h2 className="text-lg font-semibold">
-                        {t("reservation.sections.activity")}
-                      </h2>
-                    </div>
-                  </div>
-
-                  {/* activities type */}
-                  <Field>
-                    <FieldLabel htmlFor="facilityType">
-                      {t("reservation.fields.facilityType")}{" "}
-                      <span className="text-red-500">*</span>
-                    </FieldLabel>
-                    <Select
-                      value={form.activity}
-                      onValueChange={(value) =>
-                        setForm((prev) => ({
-                          ...prev,
-                          activity: value as formType["activity"],
-                        }))
-                      }
-                      dir={t("dir")}
-                      required
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue
-                          placeholder={t("reservation.placeholders.select")}
-                        />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          {activityOptions.map((option) => (
-                            <SelectItem key={option.value} value={option.value}>
-                              {option.label}
-                            </SelectItem>
-                          ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </Field>
                 </>
               )}
 
