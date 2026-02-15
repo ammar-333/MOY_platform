@@ -19,22 +19,27 @@
     "passwordPlaceholder": "ادخل كلمة المرور",
     "login": "تسجيل الدخول",
     "password": "كلمة المرور",
-    "noaccount": "ليس لديك حساب؟",
     "account": "لديك حساب؟",
-    "email": "البريد الالكتروني",
-    "emailPlaceholder": "ادخل بريدك الالكتروني",
+    "noaccount": "ليس لديك حساب؟",
     "forgotPassword": "نسيت كلمة المرور؟",
     "signup": "إنشاء حساب",
     "fullName": "الاسم الكامل",
     "fullNamePlaceholder": "ادخل اسمك الكامل",
     "confirmPassword": "تأكيد كلمة المرور",
     "confirmPasswordPlaceholder": "أعد إدخال كلمة المرور",
-    "phoneNumber": "رقم الهاتف",
-    "phoneNumberPlaceholder": "ادخل رقم هاتفك",
     "organizationName": "اسم المنشأة",
     "organizationNamePlaceholder": "ادخل اسم منشأتك",
     "government": "القطاع الحكومي",
-    "private": "القطاع الخاص"
+    "private": "القطاع الخاص",
+    "capacity": "صفة المفوض",
+    "nationality": "جنسية المفوض",
+    "commissionerID": "الرقم الوطني للمفوض",
+    "commissionerIDPlaceholder": "ادخل الرقم الوطني للمفوض",
+    "email": "البريد الالكتروني للمفوض",
+    "emailPlaceholder": "ادخل البريد الالكتروني للمفوض",
+    "phoneNumber": "رقم هاتف المفوض",
+    "phoneNumberPlaceholder": "ادخل رقم هاتف المفوض",
+    "file": "ارفق كتاب التفويض"
   },
   "buttons": {
     "save": "حفظ",
@@ -85,7 +90,8 @@
       "id": "مرفق الهوية الشخصية",
       "ministryId": " مرفق هوية الوزارة",
       "discount": "هل لديك خصم الوزير؟",
-      "discountFile": "مرفق كتاب خصم الوزير"
+      "discountFile": "مرفق كتاب خصم الوزير",
+      "discountNumber": "رقم كتاب خصم الوزير"
     },
     "organization": {
       "account": "حساب مؤسسي",
@@ -143,7 +149,9 @@
       "requiredBeds": "عدد الأسرّة المطلوبة",
       "activityPlan": "خطة النشاط",
       "groupLeader": "مسؤول المجموعة",
-      "participantsInfo": "تصنيف المشاركين"
+      "participantsInfo": "تصنيف المشاركين",
+      "membershipType": "نوع العضوية",
+      "discountDate": "تاريخ كتاب خصم الوزير"
     },
     "placeholders": {
       "select": "اختر...",
@@ -210,6 +218,20 @@
         "petraWadiMusa": "بيت شباب البترا - البترا - وادي موسى",
         "ajloun": "بيت شباب عجلون",
         "aqaba": "بيت شباب العقبة"
+      },
+      "commissionerCapicity": {
+        "owner": "مالك",
+        "Written": "مفوض خطي",
+        "register": "مفوض على السجل"
+      },
+      "nationality": {
+        "jordanian": "أردني",
+        "non-jordanian": "غير أردني"
+      },
+      "membershipType": {
+        "jordanian": "بيوت الشباب الأردنية",
+        "arabic": "بيوت الشباب العربية",
+        "international": "بيوت الشباب الدولية"
       }
     }
   },

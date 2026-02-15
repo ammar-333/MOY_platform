@@ -21,20 +21,25 @@
     "password": "Password",
     "noaccount": "Don't have an account?",
     "account": "Already have an account?",
-    "email": "Email",
-    "emailPlaceholder": "Enter your email",
     "forgotPassword": "Forgot password?",
     "signup": "Create Account",
     "fullName": "Full Name",
     "fullNamePlaceholder": "Enter your full name",
     "confirmPassword": "Confirm Password",
     "confirmPasswordPlaceholder": "Re-enter your password",
-    "phoneNumber": "Phone Number",
-    "phoneNumberPlaceholder": "Enter your phone number",
     "organizationName": "Organization Name",
     "organizationNamePlaceholder": "Enter your organization name",
     "government": "Government Sector",
-    "private": "Private Sector"
+    "private": "Private Sector",
+    "capacity": "Capacity of the commissioner",
+    "nationality": "Nationality of the commissioner",
+    "commissionerID": "Commissioner national ID",
+    "commissionerIDPlaceholder": "Enter the national ID",
+    "email": "Commissioner Email",
+    "emailPlaceholder": "Enter the email",
+    "phoneNumber": "Commissioner Phone Number",
+    "phoneNumberPlaceholder": "Enter the phone number",
+    "file": "Upload the delegation"
   },
   "buttons": {
     "save": "Save",
@@ -85,7 +90,8 @@
       "id": "Upload ID document",
       "ministryId": "Upload Ministry employee ID",
       "discount": "Do you have the minister's discount?",
-      "discountFile": "Upload minister's discount document"
+      "discountFile": "Upload minister's discount document",
+      "discountNumber": "Minister's discount number"
     },
     "organization": {
       "account": "Organization account",
@@ -143,7 +149,9 @@
       "requiredBeds": "Required beds",
       "activityPlan": "Activity plan",
       "groupLeader": "Group leader",
-      "participantsInfo": "Participants classification"
+      "participantsInfo": "Participants classification",
+      "membershipType": "Membership type",
+      "discountDate": "Discount book date"
     },
     "placeholders": {
       "select": "Select...",
@@ -210,6 +218,20 @@
         "petraWadiMusa": "Petra Youth House - Petra - Wadi Musa",
         "ajloun": "Ajloun Youth House",
         "aqaba": "Aqaba Youth House"
+      },
+      "CommissionerCapicity": {
+        "owner": "Owner",
+        "Written": "Written commissioner",
+        "register": "Register commissioner"
+      },
+      "nationality": {
+        "jordanian": "Jordanian",
+        "non-jordanian": "Non-Jordanian"
+      },
+      "membershipType": {
+        "jordanian": "Jordanian Youth Houses",
+        "arabic": "Arabic Youth Houses",
+        "international": "International Youth Houses"
       }
     }
   },
