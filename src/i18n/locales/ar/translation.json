@@ -17,15 +17,14 @@
     "orgNationalId": "الرقم الوطني للمنشأة",
     "login": "تسجيل الدخول",
     "password": "كلمة المرور",
-    "noaccount": "ليس لديك حساب؟",
     "account": "لديك حساب؟",
-    "email": "البريد الالكتروني",
-    "emailPlaceholder": "ادخل بريدك الالكتروني",
+    "noaccount": "ليس لديك حساب؟",
     "forgotPassword": "نسيت كلمة المرور؟",
     "signup": "إنشاء حساب",
     "fullName": "الاسم الكامل",
     "fullNamePlaceholder": "ادخل اسمك الكامل",
     "confirmPassword": "تأكيد كلمة المرور",
+    "confirmPasswordPlaceholder": "أعد إدخال كلمة المرور",
     "phoneNumber": "رقم الهاتف",
     "phoneNumberPlaceholder": "ادخل رقم هاتفك",
     "organizationName": "اسم المنشأة",
@@ -62,7 +61,7 @@
   },
   "form": {
     "gate": "بوابة وزارة الشباب",
-    "reservation": "نظام حجز وتأجير بيوت الشباب",
+    "reservation": "نظام حجز وتأجير",
     "userType": "نوع المستفيد",
     "individual": "أفراد",
     "organization": "مؤسسات"
@@ -88,15 +87,16 @@
       "edit": "تعديل البيانات",
       "finish": "إنهاء التعديل",
       "service": "تقديم خدمة",
-      "employee": "هل المستفيد موظف وزارة الشباب؟",
+      "employee": "هل أنت موظف وزارة الشباب؟",
       "employeeNumber": "رقم الموظف",
       "employeeType": "نوع الموظف",
       "worker": "موظف",
       "retired": "متقاعد",
       "id": "مرفق الهوية الشخصية",
-      "ministryId": " مرفق هوية الوزارة",
-      "discount": "هل المستفيد لديه خصم الوزير؟",
-      "discountFile": "مرفق كتاب خصم الوزير"
+      "ministryId": "مرفق هوية الوزارة",
+      "discount": "هل لديك خصم الوزير؟",
+      "discountFile": "مرفق كتاب خصم الوزير",
+      "discountNumber": "رقم كتاب خصم الوزير"
     },
     "organization": {
       "account": "حساب مؤسسي",
@@ -120,13 +120,14 @@
     },
     "subtitle": "املأ النموذج التالي لإتمام عملية الحجز",
     "sections": {
+      "personal": "بيانات مقدم الطلب",
       "booking": "بيانات الحجز",
       "facility": "بيانات المرفق",
       "activity": "بيانات النشاط"
     },
     "fields": {
       "serviceType": "نوع الخدمة",
-      "houseOrCamp": "نوع المجمع",
+      "houseOrCamp": "نوع البيت",
       "youthHouse": "بيت الشباب",
       "camp": "معسكر",
       "sportsComplex": "مجمع رياضي",
@@ -137,6 +138,10 @@
       "capacity": "السعة",
       "fromDate": "من تاريخ",
       "toDate": "إلى تاريخ",
+      "dateRange": "التاريخ",
+      "PickDate": "اختر",
+      "startTime": "وقت البدء",
+      "endTime": "وقت الانتهاء",
       "durationDays": "المدة (أيام)",
       "beneficiaries": "عدد المرافقين",
       "facilityType": "نوع المرفق",
@@ -149,7 +154,9 @@
       "requiredBeds": "عدد الأسرّة المطلوبة",
       "activityPlan": "خطة النشاط",
       "groupLeader": "مسؤول المجموعة",
-      "participantsInfo": "تصنيف المشاركين"
+      "participantsInfo": "تصنيف المشاركين",
+      "membershipType": "نوع العضوية",
+      "discountDate": "تاريخ كتاب خصم الوزير"
     },
     "placeholders": {
       "select": "اختر...",
@@ -158,7 +165,8 @@
       "participantsInfo": "معلومات عن المشاركين (الأعمار، الفئات، إلخ)"
     },
     "actions": {
-      "submit": "إرسال طلب الحجز"
+      "submit": "إرسال طلب الحجز",
+      "isSubmitting": "جاري إرسال الطلب..."
     },
     "options": {
       "service": {
@@ -198,8 +206,8 @@
         },
         "hall": {
           "name": "قاعة",
-          "smallHall": "قاعة صغيرة",
-          "largeHall": "قاعة كبيرة"
+          "small": "قاعة صغيرة",
+          "large": "قاعة كبيرة"
         },
         "swimmingPool": {
           "name": "مسبح",
@@ -215,6 +223,20 @@
         "petraWadiMusa": "بيت شباب البترا - البترا - وادي موسى",
         "ajloun": "بيت شباب عجلون",
         "aqaba": "بيت شباب العقبة"
+      },
+      "commissionerCapicity": {
+        "owner": "مالك",
+        "Written": "مفوض خطي",
+        "register": "مفوض على السجل"
+      },
+      "nationality": {
+        "jordanian": "أردني",
+        "non-jordanian": "غير أردني"
+      },
+      "membershipType": {
+        "jordanian": "بيوت الشباب الأردنية",
+        "arabic": "بيوت الشباب العربية",
+        "international": "بيوت الشباب الدولية"
       }
     }
   },
@@ -291,72 +313,6 @@
           "title": "بيت الشباب - وادي موسى",
           "location": "البترا - وادي موسى",
           "serviceType": "إقامة"
-        }
-      ],
-      "approved": [
-        {
-          "title": "بيت شباب عجلون",
-          "location": "عجلون",
-          "serviceType": "إقامة"
-        },
-        {
-          "title": "بيت شباب العقبة",
-          "location": "العقبة",
-          "serviceType": "نشاط"
-        },
-        {
-          "title": "بيت الشباب - وادي موسى",
-          "location": "البترا - وادي موسى",
-          "serviceType": "نشاط"
-        },
-        {
-          "title": "بيت شباب عجلون",
-          "location": "عجلون",
-          "serviceType": "إقامة"
-        }
-      ],
-      "rejected": [
-        {
-          "title": "بيت شباب العقبة",
-          "location": "العقبة",
-          "serviceType": "نشاط"
-        },
-        {
-          "title": "بيت شباب عجلون",
-          "location": "عجلون",
-          "serviceType": "إقامة"
-        },
-        {
-          "title": "بيت الشباب - وادي موسى",
-          "location": "البترا - وادي موسى",
-          "serviceType": "نشاط"
-        },
-        {
-          "title": "بيت شباب العقبة",
-          "location": "العقبة",
-          "serviceType": "إقامة"
-        }
-      ],
-      "canceled": [
-        {
-          "title": "بيت الشباب - وادي موسى",
-          "location": "البترا - وادي موسى",
-          "serviceType": "إقامة"
-        },
-        {
-          "title": "بيت شباب عجلون",
-          "location": "عجلون",
-          "serviceType": "نشاط"
-        },
-        {
-          "title": "بيت شباب العقبة",
-          "location": "العقبة",
-          "serviceType": "إقامة"
-        },
-        {
-          "title": "بيت الشباب - وادي موسى",
-          "location": "البترا - وادي موسى",
-          "serviceType": "نشاط"
         }
       ]
     }

@@ -49,7 +49,7 @@ export default function Message({
         </CardContent>
 
         {/* Buttons */}
-        <CardFooter className="flex justify-center items-center gap-5">
+        <CardFooter className="flex flex-wrap justify-center items-center gap-5">
           <Button
             className="px-5 sm:px-10 flex-1"
             onClick={() => navigate("/Service-Requests")}
