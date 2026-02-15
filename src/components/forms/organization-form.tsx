@@ -15,14 +15,11 @@ export default function OrganizationForm({
 }: React.ComponentProps<"div">) {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [edit, setEdit] = useState(false);
 
   const handleEdit = () => {
     setEdit(true);
-  };
-
-  const handleEditFinish = () => {
-    setEdit(false);
   };
 
   const handeleServiceBtn = () => {
@@ -146,23 +143,15 @@ export default function OrganizationForm({
         </CardContent>
         {/* Buttons */}
         <CardFooter className="flex gap-5">
-          {edit ? (
-            <Button className="px-5 sm:px-10" onClick={handleEditFinish}>
-              {t("profile.organization.finish")}
-            </Button>
-          ) : (
-            <>
-              <Button className="px-5 sm:px-10" onClick={handleEdit}>
-                {t("profile.organization.edit")}
-              </Button>
-              <Button
-                className="px-5 sm:px-10 bg-green-700 hover:bg-green-600"
-                onClick={handeleServiceBtn}
-              >
-                {t("profile.organization.service")}
-              </Button>
-            </>
-          )}
+          <Button className="px-5 sm:px-10" onClick={handleEdit}>
+            {t("profile.organization.edit")}
+          </Button>
+          <Button
+            className="px-5 sm:px-10 bg-green-700 hover:bg-green-600"
+            onClick={handeleServiceBtn}
+          >
+            {t("profile.organization.service")}
+          </Button>
         </CardFooter>
       </Card>
     </div>

@@ -25,9 +25,9 @@ export default function PersonForm({
   ...props
 }: React.ComponentProps<"div">) {
   const { t } = useTranslation();
-  const [edit, setEdit] = useState(false);
   const navigate = useNavigate();
 
+  const [edit, setEdit] = useState(false);
   const [membershipCheck, setMembershipCheck] = useState(false);
   const [employeeCheck, setEmployeeCheck] = useState(false);
   const [discountCheck, setDiscountCheck] = useState(false);
@@ -36,6 +36,8 @@ export default function PersonForm({
   const [IdFile, setIdFile] = useState<File | null>(null);
   const [employeeIdFile, setEmployeeIdFile] = useState<File | null>(null);
   const [discountFile, setDiscountFile] = useState<File | null>(null);
+  const [email, setEmail] = useState("");
+  const [Phone, setPhone] = useState("");
 
   const employeeTypeOptions: Option[] = useMemo(
     () => [
@@ -53,10 +55,6 @@ export default function PersonForm({
 
   const handleEdit = () => {
     setEdit(true);
-  };
-
-  const handleEditFinish = () => {
-    setEdit(false);
   };
 
   const handeleServiceBtn = () => {
@@ -87,7 +85,7 @@ export default function PersonForm({
         <CardContent className="p-6">
           <form>
             <FieldGroup>
-              {/* first row */}
+              {/* user Data from API */}
               <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* name */}
                 <Field>
@@ -116,75 +114,7 @@ export default function PersonForm({
                 </Field>
               </FieldGroup>
 
-              {/* second row */}
-              <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* email */}
-                <Field>
-                  <FieldLabel htmlFor="email">
-                    {t("profile.individual.email")}
-                  </FieldLabel>
-                  <Input
-                    id="email"
-                    type="email"
-                    value=""
-                    className={edit ? "dark:bg-slate-700" : ""}
-                    readOnly={!edit}
-                  />
-                </Field>
-
-                {/* phone number */}
-                <Field>
-                  <FieldLabel htmlFor="phone">
-                    {t("profile.individual.phone")}
-                  </FieldLabel>
-                  <Input
-                    id="phone"
-                    type="tel"
-                    value=""
-                    className={edit ? "dark:bg-slate-700" : ""}
-                    readOnly={!edit}
-                  />
-                </Field>
-              </FieldGroup>
-
-              {/* 3rd row */}
-              <FieldGroup>
-                <Field orientation="horizontal">
-                  <Checkbox
-                    id="member-checkbox"
-                    name="member"
-                    checked={membershipCheck}
-                    onCheckedChange={(value) =>
-                      setMembershipCheck(value as boolean)
-                    }
-                    className="dark:bg-slate-700"
-                    disabled={!edit}
-                  />
-                  <FieldLabel htmlFor="member-checkbox">
-                    {t("profile.individual.membership")}
-                  </FieldLabel>
-                </Field>
-
-                {/* membership number */}
-                {membershipCheck && (
-                  <Field>
-                    <FieldLabel htmlFor="membership-number">
-                      {t("profile.individual.membershipNumber")}
-                    </FieldLabel>
-                    <Input
-                      id="embership-number"
-                      type="number"
-                      required
-                      className={edit ? "dark:bg-slate-700" : ""}
-                      readOnly={!edit}
-                    />
-                  </Field>
-                )}
-              </FieldGroup>
-
-              <hr className="border-border" />
-
-              {/* 4th row */}
+              {/* birth and reg number */}
               <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* birth date */}
                 <Field>
@@ -213,7 +143,7 @@ export default function PersonForm({
                 </Field>
               </FieldGroup>
 
-              {/* 5th row */}
+              {/* gender and social state */}
               <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* gender */}
                 <Field>
@@ -289,6 +219,76 @@ export default function PersonForm({
 
               <hr className="border-border" />
 
+              {/* email and pass */}
+              <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* email */}
+                <Field>
+                  <FieldLabel htmlFor="email">
+                    {t("profile.individual.email")}
+                  </FieldLabel>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder={t("auth.emailPlaceholder")}
+                    disabled={!edit}
+                    required
+                  />
+                </Field>
+
+                {/* phone number */}
+                <Field>
+                  <FieldLabel htmlFor="phone">
+                    {t("profile.individual.phone")}
+                  </FieldLabel>
+                  <Input
+                    id="phone"
+                    type="tel"
+                    value={Phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    placeholder={t("auth.phoneNumberPlaceholder")}
+                    disabled={!edit}
+                    required
+                  />
+                </Field>
+              </FieldGroup>
+
+              {/* membership check */}
+              <FieldGroup>
+                <Field orientation="horizontal">
+                  <Checkbox
+                    id="member-checkbox"
+                    name="member"
+                    checked={membershipCheck}
+                    onCheckedChange={(value) =>
+                      setMembershipCheck(value as boolean)
+                    }
+                    className="dark:bg-slate-700"
+                    disabled={!edit}
+                  />
+                  <FieldLabel htmlFor="member-checkbox">
+                    {t("profile.individual.membership")}
+                  </FieldLabel>
+                </Field>
+
+                {/* membership number */}
+                {membershipCheck && (
+                  <Field>
+                    <FieldLabel htmlFor="membership-number">
+                      {t("profile.individual.membershipNumber")}
+                    </FieldLabel>
+                    <Input
+                      id="embership-number"
+                      type="number"
+                      required
+                      className={edit ? "dark:bg-slate-700" : ""}
+                      readOnly={!edit}
+                    />
+                  </Field>
+                )}
+              </FieldGroup>
+
               {/* ministry employees */}
               <FieldGroup>
                 <Field orientation="horizontal">
@@ -351,9 +351,10 @@ export default function PersonForm({
                         type="number"
                         value={employeeNumber}
                         onChange={(e) => setEmployeeNumber(e.target.value)}
-                        required
+                        placeholder="676322"
                         className={edit ? "dark:bg-slate-700" : ""}
                         readOnly={!edit}
+                        required
                       />
                     </Field>
 
@@ -422,8 +423,6 @@ export default function PersonForm({
                 )}
               </FieldGroup>
 
-              <hr className="border-border" />
-
               {/* Minister's discount */}
               <FieldGroup>
                 <Field orientation="horizontal">
@@ -483,23 +482,17 @@ export default function PersonForm({
         </CardContent>
         {/* Buttons */}
         <CardFooter className="flex gap-5">
-          {edit ? (
-            <Button className="px-5 sm:px-10" onClick={handleEditFinish}>
-              {t("profile.individual.finish")}
+          <>
+            <Button className="px-5 sm:px-10" onClick={handleEdit}>
+              {t("profile.individual.edit")}
             </Button>
-          ) : (
-            <>
-              <Button className="px-5 sm:px-10" onClick={handleEdit}>
-                {t("profile.individual.edit")}
-              </Button>
-              <Button
-                className="px-5 sm:px-10 bg-green-700 hover:bg-green-600"
-                onClick={handeleServiceBtn}
-              >
-                {t("profile.individual.service")}
-              </Button>
-            </>
-          )}
+            <Button
+              className="px-5 sm:px-10 bg-green-700 hover:bg-green-600"
+              onClick={handeleServiceBtn}
+            >
+              {t("profile.individual.service")}
+            </Button>
+          </>
         </CardFooter>
       </Card>
     </div>

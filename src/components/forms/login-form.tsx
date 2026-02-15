@@ -24,8 +24,7 @@ export function LoginForm({
   const navigate = useNavigate();
 
   const handleSubmit = () => {
-    if (userType === "individual") navigate("/person-profile");
-    else if (userType === "organization") navigate("/organization-profile");
+    navigate("/services");
   };
 
   return (
