@@ -47,7 +47,15 @@
     "govOrganizationName": "اسم المؤسسة الحكومية",
     "chooseFile": "اضغط لاختيار ملف",
     "orgNationalIdPlaceholder": "ادخل الرقم الوطني للمنشأة",
-    "passwordPlaceholder": "ادخل كلمة المرور"
+    "passwordPlaceholder": "ادخل كلمة المرور",
+    "confirmPasswordPlaceholder": "أعد إدخال كلمة المرور",
+    "orgPhone": "رقم هاتف المنشأة",
+    "orgEmail": "البريد الإلكتروني للمنشأة",
+    "govOrgPhone": "رقم هاتف المؤسسة",
+    "govOrgEmail": "البريد الإلكتروني للمؤسسة",
+    "orgAddress": "عنوان المنشأة",
+    "govOrgAddress": "عنوان المؤسسة",
+    "sanadSignOn": "الدخول الموحد"
   },
   "buttons": {
     "save": "حفظ",
@@ -64,7 +72,7 @@
   },
   "form": {
     "gate": "بوابة وزارة الشباب",
-    "reservation": "نظام حجز وتأجير بيوت الشباب",
+    "reservation": "نظام حجز وتأجير",
     "userType": "نوع المستفيد",
     "individual": "أفراد",
     "organization": "مؤسسات"
@@ -90,15 +98,15 @@
       "edit": "تعديل البيانات",
       "finish": "إنهاء التعديل",
       "service": "تقديم خدمة",
-      "employee": "هل المستفيد موظف وزارة الشباب؟",
+      "employee": "هل أنت موظف وزارة الشباب؟",
       "employeeNumber": "رقم الموظف",
       "employeeType": "نوع الموظف",
       "worker": "موظف",
       "retired": "متقاعد",
-      "id": "مرفق الهوية الشخصية",
-      "ministryId": " مرفق هوية الوزارة",
-      "discount": "هل المستفيد لديه خصم الوزير؟",
-      "discountFile": "مرفق كتاب خصم الوزير"
+      "ministryId": "مرفق هوية الوزارة",
+      "discount": "هل لديك خصم الوزير؟",
+      "discountFile": "مرفق كتاب خصم الوزير",
+      "discountNumber": "رقم كتاب خصم الوزير"
     },
     "organization": {
       "account": "حساب مؤسسي",
@@ -122,13 +130,14 @@
     },
     "subtitle": "املأ النموذج التالي لإتمام عملية الحجز",
     "sections": {
+      "personal": "بيانات مقدم الطلب",
       "booking": "بيانات الحجز",
       "facility": "بيانات المرفق",
       "activity": "بيانات النشاط"
     },
     "fields": {
       "serviceType": "نوع الخدمة",
-      "houseOrCamp": "نوع المجمع",
+      "houseOrCamp": "نوع البيت",
       "youthHouse": "بيت الشباب",
       "camp": "معسكر",
       "sportsComplex": "مجمع رياضي",
@@ -139,19 +148,20 @@
       "capacity": "السعة",
       "fromDate": "من تاريخ",
       "toDate": "إلى تاريخ",
+      "dateRange": "التاريخ",
+      "PickDate": "اختر",
+      "startTime": "وقت البدء",
+      "endTime": "وقت الانتهاء",
       "durationDays": "المدة (أيام)",
       "beneficiaries": "عدد المرافقين",
       "facilityType": "نوع المرفق",
       "facilitys": "المرافق",
       "availableCapacity": "الطاقة الاستيعابية المتاحة",
-      "requiredRooms": "عدد الغرف المطلوبة",
-      "requiredTents": "عدد الخيم المطلوبة",
-      "requiredSuites": "عدد السويتات المطلوبة",
-      "requiredChalets": "عدد الشاليهات المطلوبة",
-      "requiredBeds": "عدد الأسرّة المطلوبة",
       "activityPlan": "خطة النشاط",
       "groupLeader": "مسؤول المجموعة",
-      "participantsInfo": "تصنيف المشاركين"
+      "participantsInfo": "تصنيف المشاركين",
+      "membershipType": "نوع العضوية",
+      "discountDate": "تاريخ كتاب خصم الوزير"
     },
     "placeholders": {
       "select": "اختر...",
@@ -160,7 +170,8 @@
       "participantsInfo": "معلومات عن المشاركين (الأعمار، الفئات، إلخ)"
     },
     "actions": {
-      "submit": "إرسال طلب الحجز"
+      "submit": "إرسال طلب الحجز",
+      "isSubmitting": "جاري إرسال الطلب..."
     },
     "options": {
       "service": {
@@ -200,8 +211,8 @@
         },
         "hall": {
           "name": "قاعة",
-          "smallHall": "قاعة صغيرة",
-          "largeHall": "قاعة كبيرة"
+          "small": "قاعة صغيرة",
+          "large": "قاعة كبيرة"
         },
         "swimmingPool": {
           "name": "مسبح",
@@ -217,6 +228,20 @@
         "petraWadiMusa": "بيت شباب البترا - البترا - وادي موسى",
         "ajloun": "بيت شباب عجلون",
         "aqaba": "بيت شباب العقبة"
+      },
+      "commissionerCapicity": {
+        "owner": "مالك",
+        "Written": "مفوض خطي",
+        "register": "مفوض على السجل"
+      },
+      "nationality": {
+        "jordanian": "أردني",
+        "non-jordanian": "غير أردني"
+      },
+      "membershipType": {
+        "jordanian": "بيوت الشباب الأردنية",
+        "arabic": "بيوت الشباب العربية",
+        "international": "بيوت الشباب الدولية"
       }
     }
   },
