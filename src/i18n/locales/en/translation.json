@@ -45,16 +45,13 @@
     "govOrgNationalId": "Government Organization ID",
     "govOrganizationName": "Government Organization Name",
     "chooseFile": "Click to upload a file",
-
     "orgNationalIdPlaceholder": "Enter organization national ID",
     "passwordPlaceholder": "Enter password"
-
     "commissionerID": "Commissioner national ID",
     "commissionerIDPlaceholder": "Enter the national ID",
     "email": "Commissioner Email",
     "emailPlaceholder": "Enter the email",
     "file": "Upload the delegation"
-
   },
   "buttons": {
     "save": "Save",
