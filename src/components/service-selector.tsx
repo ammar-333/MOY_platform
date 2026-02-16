@@ -72,8 +72,9 @@ export default function ServiceSelector({
             </h3>
 
             {/* MAIN SERVICE */}
-            {services.map((service) => (
+            {services.map((service, index) => (
               <button
+                key={index}
                 type="button"
                 onClick={service.action}
                 className={cn(
