@@ -47,6 +47,15 @@
     "govOrganizationName": "Government Organization Name",
     "chooseFile": "Click to upload a file",
     "orgNationalIdPlaceholder": "Enter organization national ID",
+    "passwordPlaceholder": "Enter password",
+    "confirmPasswordPlaceholder": "Re-enter your password",
+    "orgPhone": "Organization Phone Number",
+    "orgEmail": "Organization Email",
+    "govOrgPhone": "Government Organization Phone Number",
+    "govOrgEmail": "Government Organization Email",
+    "orgAddress": "Organization Address",
+    "govOrgAddress": "Government Organization Address",
+    "sanadSignOn": "Single sign-on"
     "passwordPlaceholder": "Enter password"
     "commissionerID": "Commissioner national ID",
     "commissionerIDPlaceholder": "Enter the national ID",
@@ -69,7 +78,7 @@
   },
   "form": {
     "gate": "Ministry of Youth portal",
-    "reservation": "Youth hostel booking and rental system",
+    "reservation": "booking and rental system",
     "userType": "Beneficiary type",
     "individual": "Individuals",
     "organization": "Organizations"
@@ -103,7 +112,8 @@
       "id": "Upload ID document",
       "ministryId": "Upload Ministry employee ID",
       "discount": "Do you have the minister's discount?",
-      "discountFile": "Upload minister's discount document"
+      "discountFile": "Upload minister's discount document",
+      "discountNumber": "Minister's discount number"
     },
     "organization": {
       "account": "Organization account",
@@ -112,7 +122,7 @@
       "capital": "Company Capital",
       "title": "The Title",
       "mail": "Official mail",
-      "signature": "Name of the authorized signatory ",
+      "signature": "Name of the authorized signatory",
       "edit": "Edit Information",
       "finish": "Finish Editing",
       "service": "View Services"
@@ -127,13 +137,14 @@
     },
     "subtitle": "Fill the form below to complete the reservation request",
     "sections": {
+      "personal": "Applicant Information",
       "booking": "Booking Details",
       "facility": "Facility Details",
       "activity": "Activity Details"
     },
     "fields": {
       "serviceType": "Service type",
-      "houseOrCamp": "Complex Type",
+      "houseOrCamp": "House Type",
       "youthHouse": "Youth house",
       "camp": "Camp",
       "sportsComplex": "Sports Complex",
@@ -144,6 +155,10 @@
       "capacity": "Capacity",
       "fromDate": "From date",
       "toDate": "To date",
+      "dateRange": "Date Picker Range",
+      "PickDate": "Pick a date",
+      "startTime": "Start time",
+      "endTime": "End time",
       "durationDays": "Duration (days)",
       "beneficiaries": "Number of companions",
       "facilityType": "Facility type",
@@ -156,7 +171,9 @@
       "requiredBeds": "Required beds",
       "activityPlan": "Activity plan",
       "groupLeader": "Group leader",
-      "participantsInfo": "Participants classification"
+      "participantsInfo": "Participants classification",
+      "membershipType": "Membership type",
+      "discountDate": "Discount book date"
     },
     "placeholders": {
       "select": "Select...",
@@ -165,7 +182,8 @@
       "participantsInfo": "Details about participants (ages, categories, etc.)"
     },
     "actions": {
-      "submit": "Submit reservation request"
+      "submit": "Submit reservation request",
+      "isSubmitting": "Submitting..."
     },
     "options": {
       "service": {
@@ -231,6 +249,20 @@
     "aboutTitle": "About the Ministry of Youth",
     "aboutDesc": "The Ministry of Youth supports and empowers young people by providing opportunities and services that help them grow and develop through youth houses, skills development programs, and support for initiatives and youth activities across the Kingdom.",
     "availableTitle": "Available Services",
+    "CommissionerCapicity": {
+      "owner": "Owner",
+      "Written": "Written commissioner",
+      "register": "Register commissioner"
+    },
+    "nationality": {
+      "jordanian": "Jordanian",
+      "non-jordanian": "Non-Jordanian"
+    },
+    "membershipType": {
+      "jordanian": "Jordanian Youth Houses",
+      "arabic": "Arabic Youth Houses",
+      "international": "International Youth Houses"
+    },
     "cards": {
       "youthHouse": {
         "title": "Youth House and Camps Booking & Rental Service",

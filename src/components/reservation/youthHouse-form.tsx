@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { CalendarDays, Hotel, User, House, Volleyball } from "lucide-react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import {
@@ -304,6 +304,28 @@ export default function YouthHouse({
     }
   }
 
+  const [data, setData] = useState(null);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    fetch("http://10.0.82.105:1125/api/SanadSignleSignon/me/", {
+      credentials: "include",
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return res.json();
+      })
+      .then((json) => {
+        setData(json);
+        console.log(json);
+      })
+      .catch((err) => {
+        setError(err.message);
+      });
+  }, []);
+
   return (
     <div
       className={cn("rounded-2xl shadow-lg overflow-hidden", className)}
@@ -345,7 +367,7 @@ export default function YouthHouse({
                   {/* name */}
                   <Field>
                     <FieldLabel htmlFor="name">
-                      {t("profile.individual.name")}
+                      {t("profile.individual.name")} {data?.mail}
                     </FieldLabel>
                     <Input
                       id="name"

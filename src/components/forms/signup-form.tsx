@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { LogIn } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -20,11 +20,41 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { z } from "zod";
 
 type companySectorType = "government" | "private";
 type delegateRoleType = "owner" | "authorizedOnRegistry" | "written";
 type delegateNationalityType = "jordanian" | "nonJordanian";
 type Option<T extends string> = { value: T; label: string };
+
+const formSchema = z.object({
+  delegatePhone: z.string().optional(),
+  delegateEmail: z.string().email().optional(),
+  delegateNationality: z.enum(["jordanian", "nonJordanian"]).optional(),
+  delegateRole: z.enum(["owner", "authorizedOnRegistry", "written"]).optional(),
+  delegateNationalId: z.string().optional(),
+
+  companySector: z.enum(["government", "private"]).optional(),
+  orgNationalName: z.string().optional(),
+  orgNationalId: z.string().optional(),
+  orgEmail: z.string().email().optional(),
+  orgPhone: z.string().optional(),
+  orgAddress: z.string().optional(),
+
+  password: z.string().min(6).optional(),
+
+  file: z
+    .instanceof(File)
+    .refine((file) => file.size <= 5_000_000, "Max size is 5MB")
+    .refine(
+      (file) =>
+        ["image/png", "image/jpeg", "application/pdf"].includes(file.type),
+      "Only PNG, JPG, JPEG, or PDF files are allowed",
+    )
+    .optional(),
+});
+type formType = z.infer<typeof formSchema>;
+type FormErrors = Partial<Record<keyof formType, string>>;
 
 export default function SignupForm({
   className,
@@ -32,6 +62,55 @@ export default function SignupForm({
 }: React.ComponentProps<"div">) {
   const { t } = useTranslation();
   const navigate = useNavigate();
+
+  const [form, setForm] = useState<formType>({
+    delegatePhone: undefined,
+    delegateEmail: undefined,
+    delegateNationality: undefined,
+    delegateRole: undefined,
+    delegateNationalId: undefined,
+
+    companySector: "government",
+    orgNationalName: undefined,
+    orgNationalId: undefined,
+    orgEmail: undefined,
+    orgPhone: undefined,
+    orgAddress: undefined,
+
+    password: undefined,
+
+    file: undefined,
+  });
+  const [formErrors, setFormErrors] = useState<FormErrors>({});
+
+  const showDelegateNationalId = form.delegateNationality === "jordanian";
+  const showWrittenAttachment = form.delegateRole === "written";
+
+  // Dynamic labels based on sector
+  const orgIdLabel =
+    form.companySector === "government"
+      ? t("auth.govOrgNationalId")
+      : t("auth.orgNationalId");
+
+  const orgNameLabel =
+    form.companySector === "government"
+      ? t("auth.govOrganizationName")
+      : t("auth.organizationName");
+
+  const orgEmailLabel =
+    form.companySector === "government"
+      ? t("auth.govOrgEmail")
+      : t("auth.orgEmail");
+
+  const orgPhoneLabel =
+    form.companySector === "government"
+      ? t("auth.govOrgPhone")
+      : t("auth.orgPhone");
+
+  const orgAddressLabel =
+    form.companySector === "government"
+      ? t("auth.govOrgAddress")
+      : t("auth.orgAddress");
 
   const sectorOptions: Option<companySectorType>[] = useMemo(
     () => [
@@ -58,33 +137,43 @@ export default function SignupForm({
     [t],
   );
 
-  const [companySector, setCompanySector] =
-    useState<companySectorType>("government");
-  const [delegateRole, setDelegateRole] = useState<delegateRoleType>("owner");
-  const [delegateNationality, setDelegateNationality] =
-    useState<delegateNationalityType>("jordanian");
+  {
+    /* Submit */
+  }
+  function validate(): boolean {
+    const result = formSchema.safeParse(form);
 
-  useEffect(() => {
-    console.log({ companySector, delegateRole, delegateNationality });
-  }, [companySector, delegateRole, delegateNationality]);
+    if (!result.success) {
+      const fieldErrors: FormErrors = {};
 
-  const showDelegateNationalId = delegateNationality === "jordanian";
-  const showWrittenAttachment = delegateRole === "written";
+      result.error.issues.forEach((issue) => {
+        const field = issue.path[0] as keyof formType;
+        fieldErrors[field] = issue.message;
+      });
 
-  // Dynamic labels based on sector
-  const orgIdLabel =
-    companySector === "government"
-      ? t("auth.govOrgNationalId")
-      : t("auth.orgNationalId");
+      setFormErrors(fieldErrors);
+      return false;
+    }
 
-  const orgNameLabel =
-    companySector === "government"
-      ? t("auth.govOrganizationName")
-      : t("auth.organizationName");
+    setFormErrors({});
+    return true;
+  }
 
-  const handleSubmit = () => {
-    navigate("/organization-profile");
-  };
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+
+    if (!validate()) {
+      console.log(formErrors);
+      return;
+    }
+    try {
+      // API call
+      console.log(form);
+      navigate("/services");
+    } catch (error) {
+      console.error(error);
+    }
+  }
 
   return (
     <div
@@ -111,125 +200,221 @@ export default function SignupForm({
         <Card className="rounded-none shadow-none dark:bg-slate-900">
           <CardContent className="p-6 md:p-8">
             <form onSubmit={handleSubmit}>
-              <div className="mb-6">
-                <h2 className="text-lg font-semibold">{t("auth.signup")}</h2>
-              </div>
-
-              {/* Company Sector */}
-              <Field>
-                <FieldLabel>
-                  {t("auth.companySector")}{" "}
-                  <span className="text-red-500">*</span>
-                </FieldLabel>
-                <Select
-                  value={companySector}
-                  onValueChange={(v) =>
-                    setCompanySector(v as companySectorType)
-                  }
-                  dir={t("dir")}
-                >
-                  <SelectTrigger className="w-full">
-                    <SelectValue
-                      placeholder={t("reservation.placeholders.select")}
-                    />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectGroup>
-                      {sectorOptions.map((o) => (
-                        <SelectItem key={o.value} value={o.value}>
-                          {o.label}
-                        </SelectItem>
-                      ))}
-                    </SelectGroup>
-                  </SelectContent>
-                </Select>
-              </Field>
-              <br></br>
-
-              <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                {/* Organization National ID */}
+              <FieldGroup>
+                {/* Company Sector */}
                 <Field>
-                  <FieldLabel htmlFor="orgNationalId">
-                    {orgIdLabel} <span className="text-red-500">*</span>
+                  <FieldLabel>
+                    {t("auth.companySector")}{" "}
+                    <span className="text-red-500">*</span>
                   </FieldLabel>
-                  <Input id="orgNationalId" required />
+                  <Select
+                    value={form.companySector}
+                    onValueChange={(value) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        companySector: value as companySectorType,
+                      }))
+                    }
+                    dir={t("dir")}
+                    required
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue
+                        placeholder={t("reservation.placeholders.select")}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {sectorOptions.map((o) => (
+                          <SelectItem key={o.value} value={o.value}>
+                            {o.label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
                 </Field>
 
-                {/* Organization Name */}
+                <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  {/* Organization Name */}
+                  <Field>
+                    <FieldLabel htmlFor="orgNationalName">
+                      {orgNameLabel}
+                      <span className="text-red-500">*</span>
+                    </FieldLabel>
+                    <Input
+                      id="orgNationalName"
+                      type="string"
+                      value={form.orgNationalName}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          orgNationalName: e.target.value,
+                        }))
+                      }
+                      required
+                    />
+                  </Field>
+
+                  {/* Organization National ID */}
+                  <Field>
+                    <FieldLabel htmlFor="orgNationalId">
+                      {orgIdLabel}
+                      <span className="text-red-500">*</span>
+                    </FieldLabel>
+                    <Input
+                      id="orgNationalId"
+                      type="number"
+                      value={form.orgNationalId}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          orgNationalId: e.target.value,
+                        }))
+                      }
+                      required
+                    />
+                  </Field>
+                </FieldGroup>
+
+                <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  {/* Email */}
+                  <Field>
+                    <FieldLabel htmlFor="orgEmail">
+                      {orgEmailLabel}
+                      <span className="text-red-500">*</span>
+                    </FieldLabel>
+                    <Input
+                      id="orgEmail"
+                      type="email"
+                      value={form.orgEmail}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          orgEmail: e.target.value,
+                        }))
+                      }
+                      required
+                    />
+                    {formErrors.orgEmail && (
+                      <p className="text-red-500">{formErrors.orgEmail}</p>
+                    )}
+                  </Field>
+
+                  {/* Phone */}
+                  <Field>
+                    <FieldLabel htmlFor="orgPhone">
+                      {orgPhoneLabel}
+                      <span className="text-red-500">*</span>
+                    </FieldLabel>
+                    <Input
+                      id="orgPhone"
+                      type="tel"
+                      value={form.orgPhone}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          orgPhone: e.target.value,
+                        }))
+                      }
+                      required
+                    />
+                  </Field>
+                </FieldGroup>
+
+                {/* address */}
                 <Field>
-                  <FieldLabel htmlFor="orgNationalName">
-                    {orgNameLabel} <span className="text-red-500">*</span>
+                  <FieldLabel htmlFor="orgAddress">
+                    {orgAddressLabel}
+                    <span className="text-red-500">*</span>
                   </FieldLabel>
-                  <Input id="orgNationalName" required />
+                  <Input
+                    id="orgAddress"
+                    type="string"
+                    value={form.orgAddress}
+                    onChange={(e) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        orgAddress: e.target.value,
+                      }))
+                    }
+                    required
+                  />
                 </Field>
 
                 {/* Divider */}
-                <div className="md:col-span-2">
-                  <div className="my-2 h-px w-full bg-border" />
-                  <h3 className="mb-3 text-sm font-semibold text-muted-foreground">
-                    {t("auth.delegateRole")}
-                  </h3>
-                </div>
+                <hr className="border-primary" />
 
-                {/* Delegate Role */}
-                <Field>
-                  <FieldLabel>
-                    {t("auth.delegateRole")}{" "}
-                    <span className="text-red-500">*</span>
-                  </FieldLabel>
-                  <Select
-                    value={delegateRole}
-                    onValueChange={(v) =>
-                      setDelegateRole(v as delegateRoleType)
-                    }
-                    dir={t("dir")}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue
-                        placeholder={t("reservation.placeholders.select")}
-                      />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        {roleOptions.map((o) => (
-                          <SelectItem key={o.value} value={o.value}>
-                            {o.label}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </Field>
+                <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  {/* Delegate Role */}
+                  <Field>
+                    <FieldLabel>
+                      {t("auth.delegateRole")}{" "}
+                      <span className="text-red-500">*</span>
+                    </FieldLabel>
+                    <Select
+                      value={form.delegateRole}
+                      onValueChange={(value) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          delegateRole: value as formType["delegateRole"],
+                        }))
+                      }
+                      dir={t("dir")}
+                      required
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue
+                          placeholder={t("reservation.placeholders.select")}
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          {roleOptions.map((o) => (
+                            <SelectItem key={o.value} value={o.value}>
+                              {o.label}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </Field>
 
-                {/* Nationality */}
-                <Field>
-                  <FieldLabel>
-                    {t("auth.delegateNationality")}{" "}
-                    <span className="text-red-500">*</span>
-                  </FieldLabel>
-                  <Select
-                    value={delegateNationality}
-                    onValueChange={(v) =>
-                      setDelegateNationality(v as delegateNationalityType)
-                    }
-                    dir={t("dir")}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue
-                        placeholder={t("reservation.placeholders.select")}
-                      />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectGroup>
-                        {nationalityOptions.map((o) => (
-                          <SelectItem key={o.value} value={o.value}>
-                            {o.label}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </Field>
+                  {/* Nationality */}
+                  <Field>
+                    <FieldLabel>
+                      {t("auth.delegateNationality")}{" "}
+                      <span className="text-red-500">*</span>
+                    </FieldLabel>
+                    <Select
+                      value={form.delegateNationality}
+                      onValueChange={(value) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          delegateNationality:
+                            value as formType["delegateNationality"],
+                        }))
+                      }
+                      dir={t("dir")}
+                      required
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue
+                          placeholder={t("reservation.placeholders.select")}
+                        />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectGroup>
+                          {nationalityOptions.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </Field>
+                </FieldGroup>
 
                 {/* Delegate National ID */}
                 {showDelegateNationalId && (
@@ -240,38 +425,73 @@ export default function SignupForm({
                     </FieldLabel>
                     <Input
                       id="delegateNationalId"
+                      type="number"
+                      value={form.delegateNationalId}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          delegateNationalId: e.target.value,
+                        }))
+                      }
                       required
-                      inputMode="numeric"
                     />
                   </Field>
                 )}
 
-                {/* Phone */}
-                <Field
-                  className={
-                    delegateNationality === "nonJordanian"
-                      ? "md:col-span-2"
-                      : ""
-                  }
-                >
-                  <FieldLabel htmlFor="delegatePhone">
-                    {t("auth.delegatePhone")}{" "}
-                    <span className="text-red-500">*</span>
-                  </FieldLabel>
-                  <Input id="delegatePhone" required inputMode="numeric" />
-                </Field>
+                <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  {/* Email */}
+                  <FieldGroup>
+                    <Field>
+                      <FieldLabel htmlFor="delegateEmail">
+                        {t("auth.delegateEmail")}
+                        <span className="text-red-500">*</span>
+                      </FieldLabel>
+                      <Input
+                        id="delegateEmail"
+                        type="email"
+                        value={form.delegateEmail}
+                        onChange={(e) =>
+                          setForm((prev) => ({
+                            ...prev,
+                            delegateEmail: e.target.value,
+                          }))
+                        }
+                        required
+                      />
+                      {formErrors.delegateEmail && (
+                        <p className="text-red-500">
+                          {formErrors.delegateEmail}
+                        </p>
+                      )}
+                    </Field>
+                  </FieldGroup>
 
-                {/* Email */}
-                <Field className="md:col-span-2">
-                  <FieldLabel htmlFor="delegateEmail">
-                    {t("auth.delegateEmail")}
-                  </FieldLabel>
-                  <Input id="delegateEmail" type="email" />
-                </Field>
+                  {/* Phone */}
+                  <FieldGroup>
+                    <Field>
+                      <FieldLabel htmlFor="delegatePhone">
+                        {t("auth.delegatePhone")}{" "}
+                        <span className="text-red-500">*</span>
+                      </FieldLabel>
+                      <Input
+                        id="delegatePhone"
+                        type="tel"
+                        value={form.delegatePhone}
+                        onChange={(e) =>
+                          setForm((prev) => ({
+                            ...prev,
+                            delegatePhone: e.target.value,
+                          }))
+                        }
+                        required
+                      />
+                    </Field>
+                  </FieldGroup>
+                </FieldGroup>
 
                 {/* Attachment */}
                 {showWrittenAttachment && (
-                  <Field className="md:col-span-2">
+                  <Field>
                     <FieldLabel htmlFor="writtenAuthorizationFile">
                       {t("auth.powerOfAttorney")}{" "}
                       <span className="text-red-500">*</span>
@@ -303,41 +523,57 @@ export default function SignupForm({
                         <span className="text-xs text-muted-foreground">
                           PDF, JPG, PNG
                         </span>
+                        {form.file && (
+                          <p className="mt-2 text-sm text-gray-700">
+                            Selected file: <strong>{form.file.name}</strong>
+                          </p>
+                        )}
                       </div>
                     </label>
 
                     <Input
                       id="writtenAuthorizationFile"
                       type="file"
+                      accept=".png,.jpg,.jpeg,.pdf"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+
+                        if (!file) return;
+
+                        setForm((prev) => ({
+                          ...prev,
+                          file,
+                        }));
+                      }}
                       className="hidden"
                       required
                     />
+                    {formErrors.file && (
+                      <p className="text-red-500">{formErrors.file}</p>
+                    )}
                   </Field>
                 )}
-
-                {/* Divider */}
-                <div className="md:col-span-2">
-                  <div className="my-2 h-px w-full bg-border" />
-                  <h3 className="mb-3 text-sm font-semibold text-muted-foreground">
-                    {t("auth.password")}
-                  </h3>
-                </div>
 
                 {/* Password */}
                 <Field>
                   <FieldLabel htmlFor="password">
                     {t("auth.password")} <span className="text-red-500">*</span>
                   </FieldLabel>
-                  <Input id="password" type="password" required />
-                </Field>
-
-                {/* Confirm Password */}
-                <Field>
-                  <FieldLabel htmlFor="confirmPassword">
-                    {t("auth.confirmPassword")}{" "}
-                    <span className="text-red-500">*</span>
-                  </FieldLabel>
-                  <Input id="confirmPassword" type="password" required />
+                  <Input
+                    id="password"
+                    type="password"
+                    value={form.password}
+                    onChange={(e) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        password: e.target.value,
+                      }))
+                    }
+                    required
+                  />
+                  {formErrors.password && (
+                    <p className="text-red-500">{formErrors.password}</p>
+                  )}
                 </Field>
 
                 {/* Submit */}
