@@ -19,12 +19,13 @@
     "password": "Password",
     "noaccount": "Don't have an account?",
     "account": "Already have an account?",
+    "email": "Email",
+    "emailPlaceholder": "Enter your email",
     "forgotPassword": "Forgot password?",
     "signup": "Create Account",
     "fullName": "Full Name",
     "fullNamePlaceholder": "Enter your full name",
     "confirmPassword": "Confirm Password",
-    "confirmPasswordPlaceholder": "Re-enter your password",
     "phoneNumber": "Phone Number",
     "phoneNumberPlaceholder": "Enter your phone number",
     "organizationName": "Organization Name",
@@ -68,7 +69,7 @@
   },
   "form": {
     "gate": "Ministry of Youth portal",
-    "reservation": "booking and rental system",
+    "reservation": "Youth hostel booking and rental system",
     "userType": "Beneficiary type",
     "individual": "Individuals",
     "organization": "Organizations"
@@ -102,8 +103,7 @@
       "id": "Upload ID document",
       "ministryId": "Upload Ministry employee ID",
       "discount": "Do you have the minister's discount?",
-      "discountFile": "Upload minister's discount document",
-      "discountNumber": "Minister's discount number"
+      "discountFile": "Upload minister's discount document"
     },
     "organization": {
       "account": "Organization account",
@@ -112,7 +112,7 @@
       "capital": "Company Capital",
       "title": "The Title",
       "mail": "Official mail",
-      "signature": "Name of the authorized signatory",
+      "signature": "Name of the authorized signatory ",
       "edit": "Edit Information",
       "finish": "Finish Editing",
       "service": "View Services"
@@ -127,14 +127,13 @@
     },
     "subtitle": "Fill the form below to complete the reservation request",
     "sections": {
-      "personal": "Applicant Information",
       "booking": "Booking Details",
       "facility": "Facility Details",
       "activity": "Activity Details"
     },
     "fields": {
       "serviceType": "Service type",
-      "houseOrCamp": "House Type",
+      "houseOrCamp": "Complex Type",
       "youthHouse": "Youth house",
       "camp": "Camp",
       "sportsComplex": "Sports Complex",
@@ -145,10 +144,6 @@
       "capacity": "Capacity",
       "fromDate": "From date",
       "toDate": "To date",
-      "dateRange": "Date Picker Range",
-      "PickDate": "Pick a date",
-      "startTime": "Start time",
-      "endTime": "End time",
       "durationDays": "Duration (days)",
       "beneficiaries": "Number of companions",
       "facilityType": "Facility type",
@@ -161,9 +156,7 @@
       "requiredBeds": "Required beds",
       "activityPlan": "Activity plan",
       "groupLeader": "Group leader",
-      "participantsInfo": "Participants classification",
-      "membershipType": "Membership type",
-      "discountDate": "Discount book date"
+      "participantsInfo": "Participants classification"
     },
     "placeholders": {
       "select": "Select...",
@@ -172,8 +165,7 @@
       "participantsInfo": "Details about participants (ages, categories, etc.)"
     },
     "actions": {
-      "submit": "Submit reservation request",
-      "isSubmitting": "Submitting..."
+      "submit": "Submit reservation request"
     },
     "options": {
       "service": {
@@ -230,21 +222,150 @@
         "petraWadiMusa": "Petra Youth House - Petra - Wadi Musa",
         "ajloun": "Ajloun Youth House",
         "aqaba": "Aqaba Youth House"
-      },
-      "CommissionerCapicity": {
-        "owner": "Owner",
-        "Written": "Written commissioner",
-        "register": "Register commissioner"
-      },
-      "nationality": {
-        "jordanian": "Jordanian",
-        "non-jordanian": "Non-Jordanian"
-      },
-      "membershipType": {
-        "jordanian": "Jordanian Youth Houses",
-        "arabic": "Arabic Youth Houses",
-        "international": "International Youth Houses"
       }
+    }
+  },
+  "services": {
+    "pageTitle": "E-Services",
+    "pageSubtitle": "Choose the service you want to apply for",
+    "aboutTitle": "About the Ministry of Youth",
+    "aboutDesc": "The Ministry of Youth supports and empowers young people by providing opportunities and services that help them grow and develop through youth houses, skills development programs, and support for initiatives and youth activities across the Kingdom.",
+    "availableTitle": "Available Services",
+    "cards": {
+      "youthHouse": {
+        "title": "Youth House and Camps Booking & Rental Service",
+        "desc": "Book accommodation at a youth houses and camps or rent a facility to host activities and events"
+      },
+      "sportsComplex": {
+        "title": "Sports Complex Booking & Rental Service",
+        "desc": "Book facilities at a sports complex for training, matches, or events"
+      },
+      "other": {
+        "title": "Other Services",
+        "desc": "More services coming soon"
+      }
+    }
+  },
+  "confirmationMassage": {
+    "title": "Your request has been successfully received!",
+    "desc": "Thank you for using the Youth Hostel Booking Service",
+    "nextSteps": "Next steps:",
+    "step1": "Your request will be reviewed by the youth hostel supervisors",
+    "step2": "You will be notified once the service price is determined",
+    "step3": "You can track the status of your request through the \"Service Requests\" page",
+    "newReservation": "New Reservation",
+    "showApplications": "Show My Applications"
+  },
+  "requests": {
+    "pageTitle": "Service Requests",
+    "pageSubtitle": "View all submitted requests",
+    "searchPlaceholder": "Search...",
+    "newRequest": "Create New Request",
+    "requestNo": "Booking No.",
+    "submittedAt": "Submitted Date",
+    "fromDate": "From",
+    "toDate": "To",
+    "days": "Days",
+    "day": "Days",
+    "serviceType": "Service Type",
+    "requestBy": "Requested By",
+    "noResults": "No results found",
+    "canceledNote": "This request has been canceled.",
+    "status": {
+      "pending": "Under Review",
+      "approved": "Approved",
+      "rejected": "Rejected",
+      "canceled": "Canceled"
+    },
+    "samples": {
+      "pending": [
+        {
+          "title": "Petra Youth House - Wadi Musa",
+          "location": "Petra - Wadi Musa",
+          "serviceType": "Activity"
+        },
+        {
+          "title": "Ajloun Youth House",
+          "location": "Ajloun",
+          "serviceType": "Accommodation"
+        },
+        {
+          "title": "Aqaba Youth House",
+          "location": "Aqaba",
+          "serviceType": "Activity"
+        },
+        {
+          "title": "Petra Youth House - Wadi Musa",
+          "location": "Petra - Wadi Musa",
+          "serviceType": "Accommodation"
+        }
+      ],
+      "approved": [
+        {
+          "title": "Ajloun Youth House",
+          "location": "Ajloun",
+          "serviceType": "Accommodation"
+        },
+        {
+          "title": "Aqaba Youth House",
+          "location": "Aqaba",
+          "serviceType": "Activity"
+        },
+        {
+          "title": "Petra Youth House - Wadi Musa",
+          "location": "Petra - Wadi Musa",
+          "serviceType": "Activity"
+        },
+        {
+          "title": "Ajloun Youth House",
+          "location": "Ajloun",
+          "serviceType": "Accommodation"
+        }
+      ],
+      "rejected": [
+        {
+          "title": "Aqaba Youth House",
+          "location": "Aqaba",
+          "serviceType": "Activity"
+        },
+        {
+          "title": "Ajloun Youth House",
+          "location": "Ajloun",
+          "serviceType": "Accommodation"
+        },
+        {
+          "title": "Petra Youth House - Wadi Musa",
+          "location": "Petra - Wadi Musa",
+          "serviceType": "Activity"
+        },
+        {
+          "title": "Aqaba Youth House",
+          "location": "Aqaba",
+          "serviceType": "Accommodation"
+        }
+      ],
+      "canceled": [
+        {
+          "title": "Petra Youth House - Wadi Musa",
+          "location": "Petra - Wadi Musa",
+          "serviceType": "Accommodation"
+        },
+        {
+          "title": "Ajloun Youth House",
+          "location": "Ajloun",
+          "serviceType": "Activity"
+        },
+        {
+          "title": "Aqaba Youth House",
+          "location": "Aqaba",
+          "serviceType": "Accommodation"
+        },
+        {
+          "title": "Petra Youth House - Wadi Musa",
+          "location": "Petra - Wadi Musa",
+          "serviceType": "Activity"
+        }
+      ]
     }
   }
 }
