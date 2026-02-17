@@ -44,6 +44,22 @@ function daysBetween(from?: Date, to?: Date) {
   return days + 1;
 }
 
+function hoursBetween(startTime: string, endTime: string) {
+  if (!startTime || !endTime) return 0;
+  const [sh, sm] = startTime.split(":").map(Number);
+  const [eh, em] = endTime.split(":").map(Number);
+
+  const start = sh * 60 + sm; // minutes
+  const end = eh * 60 + em;
+
+  const diff = end - start;
+
+  const hours = Math.floor(diff / 60);
+
+  if (hours < 0) return 0;
+  return hours;
+}
+
 export default function SportComplex({
   className,
   ...props
@@ -71,6 +87,11 @@ export default function SportComplex({
   const durationDays = useMemo(
     () => daysBetween(dateRange?.from, dateRange?.to),
     [dateRange],
+  );
+
+  const durationHours = useMemo(
+    () => hoursBetween(startTime, endTime),
+    [startTime, endTime],
   );
 
   const complexTypeOptions: Option[] = useMemo(
@@ -419,7 +440,7 @@ export default function SportComplex({
               <hr className="border-border" />
 
               {/* date */}
-              <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FieldGroup className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <Field className="mx-auto">
                   <FieldLabel htmlFor="date-picker-range">
                     {t("reservation.fields.dateRange")}
@@ -517,6 +538,18 @@ export default function SportComplex({
                   <Input
                     id="duration"
                     value={String(durationDays)}
+                    readOnly
+                    className="bg-muted cursor-not-allowed"
+                  />
+                </Field>
+
+                <Field>
+                  <FieldLabel htmlFor="durationHours">
+                    {t("reservation.fields.durationHours")}
+                  </FieldLabel>
+                  <Input
+                    id="durationHours"
+                    value={String(durationHours)}
                     readOnly
                     className="bg-muted cursor-not-allowed"
                   />

@@ -41,6 +41,7 @@
     "jordanian": "Jordanian",
     "nonJordanian": "Non-Jordanian",
     "delegateNationalId": "Delegate National ID",
+    "delegatePersonalId": "Delegate Personal ID",
     "delegatePhone": "Delegate Phone Number",
     "delegateEmail": "Delegate Email",
     "powerOfAttorney": "Power of Attorney Document",
@@ -53,11 +54,9 @@
     "orgEmail": "Organization Email",
     "orgAddress": "Organization Address",
     "sanadSignOn": "Single sign-on",
-    "commissionerID": "Commissioner national ID",
-    "commissionerIDPlaceholder": "Enter the national ID",
-    "email": "Commissioner Email",
     "file": "Upload the delegation",
-    "Name": "Delegate name"
+    "delegateName": "Delegate name",
+    "required": "this Field is required"
   },
   "buttons": {
     "save": "Save",
@@ -156,6 +155,7 @@
       "startTime": "Start time",
       "endTime": "End time",
       "durationDays": "Duration (days)",
+      "durationHours": "Duration (hours)",
       "beneficiaries": "Number of companions",
       "facilityType": "Facility type",
       "facilitys": "Facilitys",
@@ -236,6 +236,11 @@
         "petraWadiMusa": "Petra Youth House - Petra - Wadi Musa",
         "ajloun": "Ajloun Youth House",
         "aqaba": "Aqaba Youth House"
+      },
+      "membershipType": {
+        "jordanian": "Jordanian Youth Houses",
+        "arabic": "Arabic Youth Houses",
+        "international": "International Youth Houses"
       }
     }
   },
@@ -305,7 +310,9 @@
       "pending": "Under Review",
       "approved": "Approved",
       "rejected": "Rejected",
-      "canceled": "Canceled"
+      "canceled": "Canceled",
+      "pendingPayment": "Pending Payment",
+      "notAttended": "Not Attended"
     },
     "samples": {
       "pending": [
@@ -313,39 +320,9 @@
           "title": "Petra Youth House - Wadi Musa",
           "location": "Petra - Wadi Musa",
           "serviceType": "Activity"
-        },
-        {
-          "title": "Ajloun Youth House",
-          "location": "Ajloun",
-          "serviceType": "Accommodation"
-        },
-        {
-          "title": "Aqaba Youth House",
-          "location": "Aqaba",
-          "serviceType": "Activity"
-        },
-        {
-          "title": "Petra Youth House - Wadi Musa",
-          "location": "Petra - Wadi Musa",
-          "serviceType": "Accommodation"
         }
       ],
       "approved": [
-        {
-          "title": "Ajloun Youth House",
-          "location": "Ajloun",
-          "serviceType": "Accommodation"
-        },
-        {
-          "title": "Aqaba Youth House",
-          "location": "Aqaba",
-          "serviceType": "Activity"
-        },
-        {
-          "title": "Petra Youth House - Wadi Musa",
-          "location": "Petra - Wadi Musa",
-          "serviceType": "Activity"
-        },
         {
           "title": "Ajloun Youth House",
           "location": "Ajloun",
@@ -357,21 +334,6 @@
           "title": "Aqaba Youth House",
           "location": "Aqaba",
           "serviceType": "Activity"
-        },
-        {
-          "title": "Ajloun Youth House",
-          "location": "Ajloun",
-          "serviceType": "Accommodation"
-        },
-        {
-          "title": "Petra Youth House - Wadi Musa",
-          "location": "Petra - Wadi Musa",
-          "serviceType": "Activity"
-        },
-        {
-          "title": "Aqaba Youth House",
-          "location": "Aqaba",
-          "serviceType": "Accommodation"
         }
       ],
       "canceled": [
@@ -379,21 +341,6 @@
           "title": "Petra Youth House - Wadi Musa",
           "location": "Petra - Wadi Musa",
           "serviceType": "Accommodation"
-        },
-        {
-          "title": "Ajloun Youth House",
-          "location": "Ajloun",
-          "serviceType": "Activity"
-        },
-        {
-          "title": "Aqaba Youth House",
-          "location": "Aqaba",
-          "serviceType": "Accommodation"
-        },
-        {
-          "title": "Petra Youth House - Wadi Musa",
-          "location": "Petra - Wadi Musa",
-          "serviceType": "Activity"
         }
       ]
     }

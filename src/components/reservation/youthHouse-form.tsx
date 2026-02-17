@@ -90,6 +90,22 @@ function daysBetween(from?: Date, to?: Date) {
   return days + 1;
 }
 
+function hoursBetween(startTime?: string, endTime?: string) {
+  if (!startTime || !endTime) return 0;
+  const [sh, sm] = startTime.split(":").map(Number);
+  const [eh, em] = endTime.split(":").map(Number);
+
+  const start = sh * 60 + sm; // minutes
+  const end = eh * 60 + em;
+
+  const diff = end - start;
+
+  const hours = Math.floor(diff / 60);
+
+  if (hours < 0) return 0;
+  return hours;
+}
+
 export default function YouthHouse({
   className,
   ...props
@@ -139,6 +155,11 @@ export default function YouthHouse({
   const durationDays = useMemo(
     () => daysBetween(form.dateRange?.from, form.dateRange?.to),
     [form.dateRange],
+  );
+
+  const durationHours = useMemo(
+    () => hoursBetween(form.startTime, form.endTime),
+    [form.startTime, form.endTime],
   );
 
   const houseOrCampOptions: Option[] = useMemo(
@@ -309,11 +330,8 @@ export default function YouthHouse({
     }
   }
 
-  const [data, setData] = useState(null);
-  const [error, setError] = useState(null);
-
   useEffect(() => {
-    fetch("http://10.0.82.105:1125/api/SanadSignleSignon/me/", {
+    fetch("http://10.0.82.105:1125/api/SanadSignleSignon/test/", {
       credentials: "include",
     })
       .then((res) => {
@@ -323,11 +341,10 @@ export default function YouthHouse({
         return res.json();
       })
       .then((json) => {
-        setData(json);
         console.log(json);
       })
       .catch((err) => {
-        setError(err.message);
+        console.log(err.message);
       });
   }, []);
 
@@ -372,7 +389,7 @@ export default function YouthHouse({
                   {/* name */}
                   <Field>
                     <FieldLabel htmlFor="name">
-                      {t("profile.individual.name")} {data?.mail}
+                      {t("profile.individual.name")}
                     </FieldLabel>
                     <Input
                       id="name"
@@ -400,12 +417,14 @@ export default function YouthHouse({
                     <FieldLabel htmlFor="phone">
                       {t("profile.individual.phone")}
                     </FieldLabel>
-                    <Input
-                      id="phone"
-                      value="077"
-                      readOnly
-                      className="bg-muted dark:bg-muted cursor-not-allowed"
-                    />
+                    <div dir="ltr">
+                      <Input
+                        id="phone"
+                        value="+962 719878548"
+                        readOnly
+                        className="bg-muted dark:bg-muted cursor-not-allowed"
+                      />
+                    </div>
                   </Field>
 
                   {/* birth date */}
@@ -697,7 +716,12 @@ export default function YouthHouse({
               </FieldGroup>
 
               {/* Date row */}
-              <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <FieldGroup
+                className={cn(
+                  "grid grid-cols-1 md:grid-cols-2 gap-4",
+                  form.serviceType === "activity" && "md:grid-cols-3",
+                )}
+              >
                 <Field className="mx-auto">
                   <FieldLabel htmlFor="date-picker-range">
                     {t("reservation.fields.dateRange")}
@@ -817,9 +841,23 @@ export default function YouthHouse({
                     id="duration"
                     value={String(durationDays)}
                     readOnly
-                    className="bg-muted dark:bg-muted cursor-not-allowed"
+                    className="bg-muted cursor-not-allowed"
                   />
                 </Field>
+
+                {form.serviceType === "activity" && (
+                  <Field>
+                    <FieldLabel htmlFor="durationHours">
+                      {t("reservation.fields.durationHours")}
+                    </FieldLabel>
+                    <Input
+                      id="durationHours"
+                      value={String(durationHours)}
+                      readOnly
+                      className="bg-muted cursor-not-allowed"
+                    />
+                  </Field>
+                )}
               </FieldGroup>
 
               {/* people number */}

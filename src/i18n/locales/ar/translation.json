@@ -41,6 +41,7 @@
     "jordanian": "أردني",
     "nonJordanian": "غير أردني",
     "delegateNationalId": "الرقم الوطني للمفوض",
+    "delegatePersonalId": "الرقم الشخصي للمفوض",
     "delegatePhone": "رقم الهاتف للمفوض",
     "delegateEmail": "البريد الإلكتروني للمفوض",
     "powerOfAttorney": "تفويض خطي",
@@ -53,7 +54,8 @@
     "orgEmail": "البريد الإلكتروني للمنشأة",
     "orgAddress": "عنوان المنشأة",
     "sanadSignOn": "الدخول الموحد",
-    "Name": "اسم المفوض"
+    "delegateName": "اسم المفوض",
+    "required": "هذا الحقل مطلوب"
   },
   "buttons": {
     "save": "حفظ",
@@ -151,6 +153,7 @@
       "startTime": "وقت البدء",
       "endTime": "وقت الانتهاء",
       "durationDays": "المدة (أيام)",
+      "durationHours": "المدة (ساعات)",
       "beneficiaries": "عدد المرافقين",
       "facilityType": "نوع المرفق",
       "facilitys": "المرافق",
@@ -293,9 +296,11 @@
     "canceledNote": "تم إلغاء هذا الطلب.",
     "status": {
       "pending": "قيد المراجعة",
-      "approved": "مقبول",
+      "approved": "معتمد",
       "rejected": "مرفوض",
-      "canceled": "ملغي"
+      "canceled": "ملغي",
+      "pendingPayment": "قيد الدفع",
+      "notAttended": "لم يحضر"
     },
     "samples": {
       "pending": [

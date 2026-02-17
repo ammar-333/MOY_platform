@@ -32,6 +32,7 @@ type delegateNationalityType = "jordanian" | "nonJordanian";
 type Option<T extends string> = { value: T; label: string };
 
 const formSchema = z.object({
+  delegateName: z.string().optional(),
   delegatePhone: z.string().optional(),
   delegateEmail: z.string().email().optional(),
   delegateNationality: z.enum(["jordanian", "nonJordanian"]).optional(),
@@ -48,8 +49,6 @@ const formSchema = z.object({
   orgAddress: z.string().optional(),
 
   password: z.string().min(6).optional(),
-
-  name: z.string().optional(),
 
   file: z
     .instanceof(File)
@@ -72,6 +71,7 @@ export default function SignupForm({
   const navigate = useNavigate();
 
   const [form, setForm] = useState<formType>({
+    delegateName: undefined,
     delegatePhone: undefined,
     delegateEmail: undefined,
     delegateNationality: undefined,
@@ -88,31 +88,19 @@ export default function SignupForm({
     password: undefined,
 
     file: undefined,
-
-    name: undefined,
   });
   const [formErrors, setFormErrors] = useState<FormErrors>({});
 
-  const showDelegateNationalId = form.delegateNationality === "jordanian";
   const showWrittenAttachment = form.delegateRole === "written";
-
-  // Dynamic labels based on sector
-  const orgIdLabel = t("auth.orgNationalId");
-
-  const orgNameLabel = t("auth.organizationName");
-
-  const orgEmailLabel = t("auth.orgEmail");
-
-  const orgPhoneLabel = t("auth.orgPhone");
-
-  const orgAddressLabel = t("auth.orgAddress");
+  const showCharityRole =
+    form.companySector === "charity" || form.companySector === "cooperative";
 
   const sectorOptions: Option<companySectorType>[] = useMemo(
     () => [
-      { value: "charity", label: t("auth.charity") },
-      { value: "cooperative", label: t("auth.cooperative") },
-      { value: "sole_establishment", label: t("auth.sole_establishment") },
       { value: "company", label: t("auth.company") },
+      { value: "sole_establishment", label: t("auth.sole_establishment") },
+      { value: "cooperative", label: t("auth.cooperative") },
+      { value: "charity", label: t("auth.charity") },
     ],
     [t],
   );
@@ -123,6 +111,11 @@ export default function SignupForm({
       { value: "authorizedOnRegistry", label: t("auth.authorizedOnRegistry") },
       { value: "written", label: t("auth.writtenDelegate") },
     ],
+    [t],
+  );
+
+  const charityRoleOptions: Option<delegateRoleType>[] = useMemo(
+    () => [{ value: "written", label: t("auth.writtenDelegate") }],
     [t],
   );
 
@@ -137,6 +130,8 @@ export default function SignupForm({
   {
     /* Submit */
   }
+  const formatPhone = (num: string | undefined) => `+962${num}`;
+
   function validate(): boolean {
     const result = formSchema.safeParse(form);
 
@@ -163,9 +158,23 @@ export default function SignupForm({
       console.log(formErrors);
       return;
     }
+    if (form.file === undefined && showWrittenAttachment) {
+      setFormErrors((prev) => ({
+        ...prev,
+        file: t("auth.required"),
+      }));
+      return;
+    }
+
+    const payload = {
+      ...form,
+      orgPhone: formatPhone(form.orgPhone),
+      delegatePhone: formatPhone(form.delegatePhone),
+    };
+
     try {
       // API call
-      console.log(form);
+      console.log(payload);
       navigate("/services");
     } catch (error) {
       console.error(error);
@@ -180,7 +189,7 @@ export default function SignupForm({
       <div className="overflow-hidden rounded-2xl border bg-background shadow-sm">
         {/* HEADER */}
         <div className="bg-primary text-white px-6 md:px-8 py-7">
-          <div className="flex items-center gap-4">
+          <div className="flex flex-col items-center justify-center text-center gap-4">
             <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/20">
               <LogIn className="h-6 w-6" />
             </div>
@@ -210,6 +219,7 @@ export default function SignupForm({
                       setForm((prev) => ({
                         ...prev,
                         companySector: value as companySectorType,
+                        delegateRole: undefined,
                       }))
                     }
                     dir={t("dir")}
@@ -236,7 +246,7 @@ export default function SignupForm({
                   {/* Organization Name */}
                   <Field>
                     <FieldLabel htmlFor="orgNationalName">
-                      {orgNameLabel}
+                      {t("auth.organizationName")}
                       <span className="text-red-500">*</span>
                     </FieldLabel>
                     <Input
@@ -256,7 +266,7 @@ export default function SignupForm({
                   {/* Organization National ID */}
                   <Field>
                     <FieldLabel htmlFor="orgNationalId">
-                      {orgIdLabel}
+                      {t("auth.orgNationalId")}
                       <span className="text-red-500">*</span>
                     </FieldLabel>
                     <Input
@@ -278,7 +288,7 @@ export default function SignupForm({
                   {/* Email */}
                   <Field>
                     <FieldLabel htmlFor="orgEmail">
-                      {orgEmailLabel}
+                      {t("auth.orgEmail")}
                       <span className="text-red-500">*</span>
                     </FieldLabel>
                     <Input
@@ -301,28 +311,38 @@ export default function SignupForm({
                   {/* Phone */}
                   <Field>
                     <FieldLabel htmlFor="orgPhone">
-                      {orgPhoneLabel}
+                      {t("auth.orgPhone")}
                       <span className="text-red-500">*</span>
                     </FieldLabel>
-                    <Input
-                      id="orgPhone"
-                      type="tel"
-                      value={form.orgPhone}
-                      onChange={(e) =>
-                        setForm((prev) => ({
-                          ...prev,
-                          orgPhone: e.target.value,
-                        }))
-                      }
-                      required
-                    />
+                    <div dir="ltr" className="flex items-center">
+                      <span className="px-3 py-1 border border-r-0 rounded-l-md">
+                        +962
+                      </span>
+                      <Input
+                        id="orgPhone"
+                        type="tel"
+                        value={form.orgPhone}
+                        onChange={(e) =>
+                          setForm((prev) => ({
+                            ...prev,
+                            orgPhone: e.target.value,
+                          }))
+                        }
+                        maxLength={9}
+                        placeholder="7XXXXXXXX"
+                        required
+                      />
+                    </div>
+                    {formErrors.orgPhone && (
+                      <p className="text-red-500">{formErrors.orgPhone}</p>
+                    )}
                   </Field>
                 </FieldGroup>
 
                 {/* address */}
                 <Field>
                   <FieldLabel htmlFor="orgAddress">
-                    {orgAddressLabel}
+                    {t("auth.orgAddress")}
                     <span className="text-red-500">*</span>
                   </FieldLabel>
                   <Input
@@ -341,25 +361,27 @@ export default function SignupForm({
 
                 {/* Divider */}
                 <hr className="border-primary" />
+
                 {/* Name */}
                 <Field>
-                  <FieldLabel htmlFor="Name">
-                    {t("auth.Name")} <span className="text-red-500">*</span>
+                  <FieldLabel htmlFor="delegateName">
+                    {t("auth.delegateName")}{" "}
+                    <span className="text-red-500">*</span>
                   </FieldLabel>
                   <Input
-                    id="Name"
+                    id="delegateName"
                     type="text"
-                    value={form.name}
+                    value={form.delegateName}
                     onChange={(e) =>
                       setForm((prev) => ({
                         ...prev,
-                        name: e.target.value,
+                        delegateName: e.target.value,
                       }))
                     }
                     required
                   />
-                  {formErrors.name && (
-                    <p className="text-red-500">{formErrors.name}</p>
+                  {formErrors.delegateName && (
+                    <p className="text-red-500">{formErrors.delegateName}</p>
                   )}
                 </Field>
 
@@ -388,11 +410,17 @@ export default function SignupForm({
                       </SelectTrigger>
                       <SelectContent>
                         <SelectGroup>
-                          {roleOptions.map((o) => (
-                            <SelectItem key={o.value} value={o.value}>
-                              {o.label}
-                            </SelectItem>
-                          ))}
+                          {showCharityRole
+                            ? charityRoleOptions.map((o) => (
+                                <SelectItem key={o.value} value={o.value}>
+                                  {o.label}
+                                </SelectItem>
+                              ))
+                            : roleOptions.map((o) => (
+                                <SelectItem key={o.value} value={o.value}>
+                                  {o.label}
+                                </SelectItem>
+                              ))}
                         </SelectGroup>
                       </SelectContent>
                     </Select>
@@ -435,26 +463,26 @@ export default function SignupForm({
                 </FieldGroup>
 
                 {/* Delegate National ID */}
-                {showDelegateNationalId && (
-                  <Field>
-                    <FieldLabel htmlFor="delegateNationalId">
-                      {t("auth.delegateNationalId")}{" "}
-                      <span className="text-red-500">*</span>
-                    </FieldLabel>
-                    <Input
-                      id="delegateNationalId"
-                      type="number"
-                      value={form.delegateNationalId}
-                      onChange={(e) =>
-                        setForm((prev) => ({
-                          ...prev,
-                          delegateNationalId: e.target.value,
-                        }))
-                      }
-                      required
-                    />
-                  </Field>
-                )}
+                <Field>
+                  <FieldLabel htmlFor="delegateNationalId">
+                    {form.delegateNationality === "nonJordanian"
+                      ? t("auth.delegatePersonalId")
+                      : t("auth.delegateNationalId")}
+                    <span className="text-red-500">*</span>
+                  </FieldLabel>
+                  <Input
+                    id="delegateNationalId"
+                    type="number"
+                    value={form.delegateNationalId}
+                    onChange={(e) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        delegateNationalId: e.target.value,
+                      }))
+                    }
+                    required
+                  />
+                </Field>
 
                 <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   {/* Email */}
@@ -491,18 +519,30 @@ export default function SignupForm({
                         {t("auth.delegatePhone")}{" "}
                         <span className="text-red-500">*</span>
                       </FieldLabel>
-                      <Input
-                        id="delegatePhone"
-                        type="tel"
-                        value={form.delegatePhone}
-                        onChange={(e) =>
-                          setForm((prev) => ({
-                            ...prev,
-                            delegatePhone: e.target.value,
-                          }))
-                        }
-                        required
-                      />
+                      <div dir="ltr" className="flex items-center">
+                        <span className="px-3 py-1 border border-r-0 rounded-l-md">
+                          +962
+                        </span>
+                        <Input
+                          id="delegatePhone"
+                          type="tel"
+                          value={form.delegatePhone}
+                          onChange={(e) =>
+                            setForm((prev) => ({
+                              ...prev,
+                              delegatePhone: e.target.value,
+                            }))
+                          }
+                          maxLength={9}
+                          placeholder="7XXXXXXXX"
+                          required
+                        />
+                      </div>
+                      {formErrors.delegatePhone && (
+                        <p className="text-red-500">
+                          {formErrors.delegatePhone}
+                        </p>
+                      )}
                     </Field>
                   </FieldGroup>
                 </FieldGroup>
@@ -564,7 +604,6 @@ export default function SignupForm({
                         }));
                       }}
                       className="hidden"
-                      required
                     />
                     {formErrors.file && (
                       <p className="text-red-500">{formErrors.file}</p>

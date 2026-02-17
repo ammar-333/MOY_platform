@@ -122,7 +122,7 @@ export function LoginForm({
                     />
                   </div>
                   <button
-                    className="flex items-center justify-center gap-2 bg-gray-800 dark:bg-slate-600 text-white py-3 px-6 rounded-lg hover:bg-gray-700 transition-colors w-full mt-6"
+                    className="flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 dark:bg-primary dark:hover:bg-blue-800  text-white py-3 px-6 rounded-lg transition-colors w-full mt-6"
                     type="button"
                     onClick={handleSanad}
                   >
@@ -133,9 +133,7 @@ export function LoginForm({
                         alt="sanad-logo"
                       />
                     </span>
-                    <span className="dark:text-slate-800">
-                      {t("auth.sanadSignOn")}
-                    </span>
+                    <span>{t("auth.sanadSignOn")}</span>
                   </button>
                 </div>
               ) : (

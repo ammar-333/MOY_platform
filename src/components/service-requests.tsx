@@ -14,7 +14,13 @@ import {
   ClipboardList,
 } from "lucide-react";
 
-type RequestStatus = "PENDING" | "APPROVED" | "REJECTED" | "CANCELED";
+type RequestStatus =
+  | "PENDING"
+  | "APPROVED"
+  | "REJECTED"
+  | "CANCELED"
+  | "PENDING_PAYMENT"
+  | "NOT_ATTENDED";
 
 type ServiceRequestItem = {
   id: string;
@@ -39,7 +45,7 @@ function StatusBadge({
   const map: Record<RequestStatus, { label: string; cls: string }> = {
     PENDING: {
       label: t("requests.status.pending"),
-      cls: "bg-[#F7F0C8] text-[#7A5B00] border-[#E8DFA7]",
+      cls: "bg-yellow-100 text-yellow-800 border-yellow-200",
     },
     APPROVED: {
       label: t("requests.status.approved"),
@@ -47,11 +53,19 @@ function StatusBadge({
     },
     REJECTED: {
       label: t("requests.status.rejected"),
-      cls: "bg-rose-100 text-rose-800 border-rose-200",
+      cls: "bg-red-200 text-red-800 border-red-200",
     },
     CANCELED: {
       label: t("requests.status.canceled"),
-      cls: "bg-slate-100 text-slate-700 border-slate-200",
+      cls: "bg-slate-100 text-slate-800 border-slate-200",
+    },
+    PENDING_PAYMENT: {
+      label: t("requests.status.pendingPayment"),
+      cls: "bg-yellow-100 text-yellow-800 border-yellow-200",
+    },
+    NOT_ATTENDED: {
+      label: t("requests.status.notAttended"),
+      cls: "bg-stone-300 text-stone-800 border-stone-200",
     },
   };
   const it = map[status];
@@ -162,6 +176,30 @@ export default function ServiceRequests({
       days: 2,
       serviceType: t("requests.samples.canceled.0.serviceType"),
       status: "CANCELED",
+    },
+    {
+      id: "Y1",
+      title: t("requests.samples.canceled.0.title"),
+      location: t("requests.samples.canceled.0.location"),
+      requestNo: "BK-20251212-443",
+      submittedAt: "2025/12/12",
+      fromDate: "2025/12/20",
+      toDate: "2025/12/21",
+      days: 2,
+      serviceType: t("requests.samples.canceled.0.serviceType"),
+      status: "PENDING_PAYMENT",
+    },
+    {
+      id: "N1",
+      title: t("requests.samples.canceled.0.title"),
+      location: t("requests.samples.canceled.0.location"),
+      requestNo: "BK-20251212-443",
+      submittedAt: "2025/12/12",
+      fromDate: "2025/12/20",
+      toDate: "2025/12/21",
+      days: 2,
+      serviceType: t("requests.samples.canceled.0.serviceType"),
+      status: "NOT_ATTENDED",
     },
   ];
 
