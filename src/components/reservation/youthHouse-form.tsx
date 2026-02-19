@@ -2,7 +2,12 @@
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+} from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { CalendarDays, Hotel, User, House, Volleyball } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
@@ -41,19 +46,21 @@ type Option = { value: string; label: string };
 // type capacityType = "normal" | "double" | "triple" | "four" | "five";
 
 const formSchema = z.object({
-  serviceType: z.enum(["activity", "accommodation", "both"]),
-  houseOrCamp: z.enum(["house", "camp"]),
+  serviceType: z.enum(["activity", "accommodation", "both"]).optional(),
+  houseOrCamp: z.enum(["house", "camp"]).optional(),
 
   house: z.string().optional(),
   camp: z.string().optional(),
 
-  dateRange: z.object(
-    {
-      from: z.date(),
-      to: z.date(),
-    },
-    "please pick a date",
-  ),
+  dateRange: z
+    .object(
+      {
+        from: z.date(),
+        to: z.date(),
+      },
+      "please pick a date",
+    )
+    .optional(),
   startTime: z.string().optional(),
   endTime: z.string().optional(),
 
@@ -115,7 +122,7 @@ export default function YouthHouse({
 
   const [form, setForm] = useState<formType>({
     serviceType: undefined,
-    houseOrCamp: undefined,
+    houseOrCamp: "house",
 
     house: undefined,
     camp: undefined,
@@ -330,9 +337,14 @@ export default function YouthHouse({
     }
   }
 
+  const token = localStorage.getItem("authToken");
   useEffect(() => {
     fetch("http://10.0.82.105:1125/api/SanadSignleSignon/test/", {
-      credentials: "include",
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
     })
       .then((res) => {
         if (!res.ok) {
@@ -346,6 +358,7 @@ export default function YouthHouse({
       .catch((err) => {
         console.log(err.message);
       });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -528,6 +541,91 @@ export default function YouthHouse({
                     <Textarea
                       id="PassportDetails"
                       value=". . ."
+                      readOnly
+                      className="bg-muted dark:bg-muted cursor-not-allowed"
+                    />
+                  </Field>
+                </FieldGroup>
+
+                <FieldGroup>
+                  {/* first row */}
+                  <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* Commercial name */}
+                    <Field>
+                      <FieldLabel htmlFor="commercial">
+                        {t("profile.organization.commercial")}
+                      </FieldLabel>
+                      <Input
+                        id="commercial"
+                        value=""
+                        readOnly
+                        className="bg-muted dark:bg-muted cursor-not-allowed"
+                      />
+                    </Field>
+
+                    {/* type */}
+                    <Field>
+                      <FieldLabel htmlFor="type">
+                        {t("profile.organization.type")}
+                      </FieldLabel>
+                      <Input
+                        id="type"
+                        value=""
+                        readOnly
+                        className="bg-muted dark:bg-muted cursor-not-allowed"
+                      />
+                    </Field>
+                  </FieldGroup>
+
+                  <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* company capital */}
+                    <Field>
+                      <FieldLabel htmlFor="capital">
+                        {t("profile.organization.capital")}
+                      </FieldLabel>
+                      <Input
+                        id="capital"
+                        value=""
+                        readOnly
+                        className="bg-muted dark:bg-muted cursor-not-allowed"
+                      />
+                    </Field>
+
+                    {/* mail */}
+                    <Field>
+                      <FieldLabel htmlFor="mail">
+                        {t("profile.organization.mail")}
+                      </FieldLabel>
+                      <Input
+                        id="mail"
+                        value=""
+                        readOnly
+                        className="bg-muted dark:bg-muted cursor-not-allowed"
+                      />
+                    </Field>
+                  </FieldGroup>
+
+                  {/* signature */}
+                  <Field>
+                    <FieldLabel htmlFor="signature">
+                      {t("profile.organization.signature")}
+                    </FieldLabel>
+                    <Input
+                      id="signature"
+                      value=""
+                      readOnly
+                      className="bg-muted dark:bg-muted cursor-not-allowed"
+                    />
+                  </Field>
+
+                  {/* the address */}
+                  <Field>
+                    <FieldLabel htmlFor="adress">
+                      {t("profile.organization.title")}
+                    </FieldLabel>
+                    <Textarea
+                      id="adress"
+                      value=""
                       readOnly
                       className="bg-muted dark:bg-muted cursor-not-allowed"
                     />
@@ -879,11 +977,7 @@ export default function YouthHouse({
                     }
                     required
                   />
-                  {formErrors.beneficiaries && (
-                    <p className="text-sm text-red-500 mt-1">
-                      {formErrors.beneficiaries}
-                    </p>
-                  )}
+                  <FieldError>{formErrors.beneficiaries}</FieldError>
                 </Field>
               </FieldGroup>
 

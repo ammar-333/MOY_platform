@@ -4,6 +4,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import {
   Field,
   FieldDescription,
+  FieldError,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
@@ -74,7 +75,7 @@ export default function SignupForm({
     delegateName: undefined,
     delegatePhone: undefined,
     delegateEmail: undefined,
-    delegateNationality: undefined,
+    delegateNationality: "jordanian",
     delegateRole: undefined,
     delegateNationalId: undefined,
 
@@ -539,9 +540,7 @@ export default function SignupForm({
                         />
                       </div>
                       {formErrors.delegatePhone && (
-                        <p className="text-red-500">
-                          {formErrors.delegatePhone}
-                        </p>
+                        <FieldError>{formErrors.delegatePhone}</FieldError>
                       )}
                     </Field>
                   </FieldGroup>

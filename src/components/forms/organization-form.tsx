@@ -61,7 +61,7 @@ export default function OrganizationForm({
                     id="commercial"
                     value=""
                     readOnly
-                    className="bg-muted cursor-not-allowed"
+                    className="bg-muted dark:bg-muted cursor-not-allowed"
                   />
                 </Field>
 
@@ -74,70 +74,62 @@ export default function OrganizationForm({
                     id="type"
                     value=""
                     readOnly
-                    className="bg-muted cursor-not-allowed"
+                    className="bg-muted dark:bg-muted cursor-not-allowed"
                   />
                 </Field>
               </FieldGroup>
 
               {/* company capital */}
-              <FieldGroup>
-                <Field>
-                  <FieldLabel htmlFor="capital">
-                    {t("profile.organization.capital")}
-                  </FieldLabel>
-                  <Input
-                    id="capital"
-                    value=""
-                    readOnly
-                    className="bg-muted cursor-not-allowed"
-                  />
-                </Field>
-              </FieldGroup>
+              <Field>
+                <FieldLabel htmlFor="capital">
+                  {t("profile.organization.capital")}
+                </FieldLabel>
+                <Input
+                  id="capital"
+                  value=""
+                  readOnly
+                  className="bg-muted dark:bg-muted cursor-not-allowed"
+                />
+              </Field>
 
               {/* the title */}
-              <FieldGroup>
-                <Field>
-                  <FieldLabel htmlFor="title">
-                    {t("profile.organization.title")}
-                  </FieldLabel>
-                  <Textarea
-                    id="title"
-                    value=""
-                    readOnly
-                    className="bg-muted cursor-not-allowed"
-                  />
-                </Field>
-              </FieldGroup>
+              <Field>
+                <FieldLabel htmlFor="title">
+                  {t("profile.organization.title")}
+                </FieldLabel>
+                <Textarea
+                  id="title"
+                  value=""
+                  readOnly
+                  className="bg-muted dark:bg-muted cursor-not-allowed"
+                />
+              </Field>
 
               {/* mail */}
-              <FieldGroup>
-                <Field>
-                  <FieldLabel htmlFor="mail">
-                    {t("profile.organization.mail")}
-                  </FieldLabel>
-                  <Input
-                    id="mail"
-                    value=""
-                    readOnly
-                    className="bg-muted cursor-not-allowed"
-                  />
-                </Field>
-              </FieldGroup>
+              <Field>
+                <FieldLabel htmlFor="mail">
+                  {t("profile.organization.mail")}
+                </FieldLabel>
+                <Input
+                  id="mail"
+                  value=""
+                  readOnly
+                  className="bg-muted dark:bg-muted cursor-not-allowed"
+                />
+              </Field>
 
               {/* signature */}
-              <FieldGroup>
-                <Field>
-                  <FieldLabel htmlFor="signature">
-                    {t("profile.organization.signature")}
-                  </FieldLabel>
-                  <Input
-                    id="signature"
-                    value=""
-                    readOnly
-                    className="bg-muted cursor-not-allowed"
-                  />
-                </Field>
-              </FieldGroup>
+              <Field>
+                <FieldLabel htmlFor="signature">
+                  {t("profile.organization.signature")}
+                </FieldLabel>
+                <Input
+                  id="signature"
+                  value=""
+                  readOnly
+                  className="bg-muted dark:bg-muted cursor-not-allowed"
+                />
+              </Field>
             </FieldGroup>
           </form>
         </CardContent>

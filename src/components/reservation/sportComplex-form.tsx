@@ -24,17 +24,39 @@ import {
 import { Calendar } from "@/components/ui/calendar";
 import { addMonths, format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
-import { type DateRange } from "react-day-picker";
 import {
   InputGroup,
   InputGroupAddon,
   InputGroupInput,
 } from "@/components/ui/input-group";
 import { Clock2Icon } from "lucide-react";
+import { z } from "zod";
 
 type Option = { value: string; label: string };
-type complexType = "" | "youthCenter" | "sportComplex";
-type serviceType = "" | "activity";
+// type complexType = "" | "youthCenter" | "sportComplex";
+// type serviceType = "" | "activity";
+
+const formSchema = z.object({
+  complexType: z.enum(["youthCenter", "sportComplex"]).optional(),
+  serviceType: z.enum(["activity"]).optional(),
+
+  center: z.string().optional(),
+  complex: z.string().optional(),
+  facilityType: z.string().optional(),
+  facilitys: z.string().optional(),
+
+  beneficiaries: z
+    .number()
+    .min(1, "minumum number is 1")
+    .max(50, "maximum number is 50"),
+
+  dateRange: z.date().optional(),
+  startTime: z.string().optional(),
+  endTime: z.string().optional(),
+});
+
+type formType = z.infer<typeof formSchema>;
+type FormErrors = Partial<Record<keyof formType, string>>;
 
 function daysBetween(from?: Date, to?: Date) {
   if (!from || !to) return 0;
@@ -44,7 +66,7 @@ function daysBetween(from?: Date, to?: Date) {
   return days + 1;
 }
 
-function hoursBetween(startTime: string, endTime: string) {
+function hoursBetween(startTime?: string, endTime?: string) {
   if (!startTime || !endTime) return 0;
   const [sh, sm] = startTime.split(":").map(Number);
   const [eh, em] = endTime.split(":").map(Number);
@@ -67,40 +89,44 @@ export default function SportComplex({
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const [complexType, setComplexType] = useState<complexType>("");
-  const [serviceType, setServiceType] = useState<serviceType>("");
+  const [form, setForm] = useState<formType>({
+    complexType: "sportComplex",
+    serviceType: "activity",
 
-  const [center, setCenter] = useState("");
-  const [complex, setComplex] = useState("");
-  const [facilityType, setFacilityType] = useState("");
-  const [facilitys, setFacilitys] = useState("");
-  const [beneficiaries, setBeneficiaries] = useState("1");
+    center: undefined,
+    complex: undefined,
+    facilityType: undefined,
+    facilitys: undefined,
+    beneficiaries: 0,
 
-  const [dateRange, setDateRange] = useState<DateRange | undefined>();
-  const [startTime, setStartTime] = useState<string>("");
-  const [endTime, setEndTime] = useState<string>("");
+    dateRange: undefined,
+    startTime: undefined,
+    endTime: undefined,
+  });
+  const [formErrors, setFormErrors] = useState<FormErrors>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const today = new Date();
   const maxDate = addMonths(today, 2);
-  const showFacilities = facilityType !== "";
+  const showFacilities = form.facilityType;
 
   const durationDays = useMemo(
-    () => daysBetween(dateRange?.from, dateRange?.to),
-    [dateRange],
+    () => daysBetween(form.dateRange, form.dateRange),
+    [form.dateRange],
   );
 
   const durationHours = useMemo(
-    () => hoursBetween(startTime, endTime),
-    [startTime, endTime],
+    () => hoursBetween(form.startTime, form.endTime),
+    [form.startTime, form.endTime],
   );
 
   const complexTypeOptions: Option[] = useMemo(
     () => [
+      { value: "sportComplex", label: t("reservation.fields.sportsComplex") },
       {
         value: "youthCenter",
         label: t("reservation.fields.youtCenter"),
       },
-      { value: "sportComplex", label: t("reservation.fields.sportsComplex") },
     ],
     [t],
   );
@@ -203,19 +229,58 @@ export default function SportComplex({
   );
 
   const facilityOptions = useMemo(() => {
-    if (facilityType === "court") return courtOptions;
-    if (facilityType === "hall") return hallOptions;
-    if (facilityType === "swimmingPool") return swimpoolOptions;
-  }, [facilityType, courtOptions, swimpoolOptions, hallOptions]);
+    if (form.facilityType === "court") return courtOptions;
+    if (form.facilityType === "hall") return hallOptions;
+    if (form.facilityType === "swimmingPool") return swimpoolOptions;
+  }, [form.facilityType, courtOptions, swimpoolOptions, hallOptions]);
 
-  function onSubmit(e: React.FormEvent) {
+  {
+    /* submit */
+  }
+  function validate(): boolean {
+    const result = formSchema.safeParse(form);
+
+    if (!result.success) {
+      const fieldErrors: FormErrors = {};
+
+      result.error.issues.forEach((issue) => {
+        const field = issue.path[0] as keyof formType;
+        fieldErrors[field] = issue.message;
+      });
+
+      setFormErrors(fieldErrors);
+      return false;
+    }
+
+    setFormErrors({});
+    return true;
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    navigate("/confirmation-message", {
-      state: {
-        descKey: "confirmationMassage.descForsportComplex",
-        step1Key: "confirmationMassage.step1ForsportComplex",
-      },
-    });
+
+    if (!validate()) {
+      console.log(formErrors);
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // API call
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      console.log(form);
+      navigate("/confirmation-message", {
+        state: {
+          descKey: "confirmationMassage.descForsportComplex",
+          step1Key: "confirmationMassage.step1ForsportComplex",
+        },
+      });
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
@@ -243,7 +308,7 @@ export default function SportComplex({
       {/* FORM */}
       <Card className="rounded-none shadow-none dark:bg-slate-900">
         <CardContent className="p-6">
-          <form onSubmit={onSubmit}>
+          <form onSubmit={handleSubmit}>
             <FieldGroup>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
@@ -263,11 +328,15 @@ export default function SportComplex({
                     <span className="text-red-500">*</span>
                   </FieldLabel>
                   <Select
-                    value={complexType}
-                    onValueChange={(v: string) =>
-                      setComplexType(v as complexType)
+                    value={form.complexType}
+                    onValueChange={(value) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        complexType: value as formType["complexType"],
+                      }))
                     }
                     dir={t("dir")}
+                    required
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue
@@ -293,9 +362,15 @@ export default function SportComplex({
                     <span className="text-red-500">*</span>
                   </FieldLabel>
                   <Select
-                    value={serviceType}
-                    onValueChange={(v) => setServiceType(v as serviceType)}
+                    value={form.serviceType}
+                    onValueChange={(value) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        serviceType: value as formType["serviceType"],
+                      }))
+                    }
                     dir={t("dir")}
+                    required
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue
@@ -317,16 +392,22 @@ export default function SportComplex({
 
               {/* complex type */}
               <FieldGroup>
-                {complexType === "youthCenter" && (
+                {form.complexType === "youthCenter" && (
                   <Field>
                     <FieldLabel htmlFor="center">
                       {t("reservation.fields.youtCenter")}{" "}
                       <span className="text-red-500">*</span>
                     </FieldLabel>
                     <Select
-                      value={center}
-                      onValueChange={setCenter}
+                      value={form.center}
+                      onValueChange={(value) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          center: value as formType["center"],
+                        }))
+                      }
                       dir={t("dir")}
+                      required
                     >
                       <SelectTrigger className="w-full">
                         <SelectValue
@@ -346,16 +427,22 @@ export default function SportComplex({
                   </Field>
                 )}
 
-                {complexType === "sportComplex" && (
+                {form.complexType === "sportComplex" && (
                   <Field>
                     <FieldLabel htmlFor="sportComplex">
                       {t("reservation.fields.sportsComplex")}{" "}
                       <span className="text-red-500">*</span>
                     </FieldLabel>
                     <Select
-                      value={complex}
-                      onValueChange={setComplex}
+                      value={form.complex}
+                      onValueChange={(value) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          complex: value as formType["complex"],
+                        }))
+                      }
                       dir={t("dir")}
+                      required
                     >
                       <SelectTrigger className="w-full">
                         <SelectValue
@@ -385,9 +472,15 @@ export default function SportComplex({
                     <span className="text-red-500">*</span>
                   </FieldLabel>
                   <Select
-                    value={facilityType}
-                    onValueChange={(v: string) => setFacilityType(v)}
+                    value={form.facilityType}
+                    onValueChange={(value) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        facilityType: value as formType["facilityType"],
+                      }))
+                    }
                     dir={t("dir")}
+                    required
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue
@@ -414,9 +507,15 @@ export default function SportComplex({
                       <span className="text-red-500">*</span>
                     </FieldLabel>
                     <Select
-                      value={facilitys}
-                      onValueChange={setFacilitys}
+                      value={form.facilitys}
+                      onValueChange={(value) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          facilitys: value as formType["facilitys"],
+                        }))
+                      }
                       dir={t("dir")}
+                      required
                     >
                       <SelectTrigger className="w-full">
                         <SelectValue
@@ -453,15 +552,8 @@ export default function SportComplex({
                         className="justify-start px-2.5 font-normal bg-accent"
                       >
                         <CalendarIcon />
-                        {dateRange?.from ? (
-                          dateRange.to ? (
-                            <>
-                              {format(dateRange.from, "LLL dd, y")} -{" "}
-                              {format(dateRange.to, "LLL dd, y")}
-                            </>
-                          ) : (
-                            format(dateRange.from, "LLL dd, y")
-                          )
+                        {form.dateRange ? (
+                          format(form.dateRange, "LLL dd, y")
                         ) : (
                           <span>{t("reservation.fields.PickDate")}</span>
                         )}
@@ -472,16 +564,21 @@ export default function SportComplex({
                       align="start"
                     >
                       <Calendar
-                        mode="range"
-                        selected={dateRange}
-                        onSelect={setDateRange}
+                        mode="single"
+                        selected={form.dateRange}
+                        onSelect={(value) =>
+                          setForm((prev) => ({
+                            ...prev,
+                            dateRange: value as formType["dateRange"],
+                          }))
+                        }
                         fromMonth={today}
                         toMonth={maxDate}
-                        numberOfMonths={2}
                         disabled={{
                           before: today,
                           after: maxDate,
                         }}
+                        required
                       />
                       <FieldGroup className="bg-card border-t py-3 px-7">
                         <Field>
@@ -493,8 +590,13 @@ export default function SportComplex({
                               id="time-from"
                               type="time"
                               step={60}
-                              value={startTime}
-                              onChange={(e) => setStartTime(e.target.value)}
+                              value={form.startTime}
+                              onChange={(e) =>
+                                setForm((prev) => ({
+                                  ...prev,
+                                  startTime: e.target.value,
+                                }))
+                              }
                               className="appearance-none [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
                               onClick={(e) =>
                                 (e.target as HTMLInputElement).showPicker()
@@ -518,8 +620,13 @@ export default function SportComplex({
                               onClick={(e) =>
                                 (e.target as HTMLInputElement).showPicker()
                               }
-                              value={endTime}
-                              onChange={(e) => setEndTime(e.target.value)}
+                              value={form.endTime}
+                              onChange={(e) =>
+                                setForm((prev) => ({
+                                  ...prev,
+                                  endTime: e.target.value,
+                                }))
+                              }
                             />
                             <InputGroupAddon>
                               <Clock2Icon className="text-muted-foreground" />
@@ -567,8 +674,13 @@ export default function SportComplex({
                     id="beneficiaries"
                     type="number"
                     min={1}
-                    value={beneficiaries}
-                    onChange={(e) => setBeneficiaries(e.target.value)}
+                    value={form.beneficiaries}
+                    onChange={(e) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        beneficiaries: Number(e.target.value),
+                      }))
+                    }
                     required
                   />
                 </Field>
@@ -577,8 +689,14 @@ export default function SportComplex({
               {/* Buttons */}
               <Field>
                 <div className="flex flex-wrap items-center gap-5 mt-6">
-                  <Button type="submit" className="flex-1 py-6 text-base">
-                    {t("reservation.actions.submit")}
+                  <Button
+                    type="submit"
+                    className="flex-1 py-6 text-base"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting
+                      ? t("reservation.actions.isSubmitting")
+                      : t("reservation.actions.submit")}
                   </Button>
                   <Button
                     type="button"
