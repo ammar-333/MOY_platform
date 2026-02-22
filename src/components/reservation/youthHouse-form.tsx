@@ -37,7 +37,9 @@ import {
 } from "@/components/ui/input-group";
 import { Clock2Icon } from "lucide-react";
 import { z } from "zod";
-import { Textarea } from "../ui/textarea";
+import Jordanian from "../profile/jordanian";
+import NonJordanian from "../profile/non-jordanian";
+import Organization from "../profile/organization";
 
 type Option = { value: string; label: string };
 // type houseOrCampType = "" | "house" | "camp";
@@ -47,45 +49,153 @@ type Option = { value: string; label: string };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const formSchema = (t: any) =>
-  z.object({
-    serviceType: z.enum(["activity", "accommodation", "both"]).optional(),
-    houseOrCamp: z.enum(["house", "camp"]).optional(),
+  z
+    .object({
+      serviceType: z.enum(["activity", "accommodation", "both"]).optional(),
+      houseOrCamp: z.enum(["house", "camp"]).optional(),
 
-    nameOfhouse: z.string().optional(),
+      nameOfhouse: z.string().optional(),
 
-    dateRange: z
-      .object(
-        {
+      dateRange: z
+        .object({
           from: z.date(),
           to: z.date(),
-        },
-        "please pick a date",
-      )
-      .optional(),
-    startTime: z.string().optional(),
-    endTime: z.string().optional(),
+        })
+        .optional(),
+      startTime: z.string().optional(),
+      endTime: z.string().optional(),
 
-    beneficiaries: z
-      .number()
-      .min(1, t("errors.min", { len: 1 }))
-      .max(50, t("errors.max", { len: 50 })),
+      beneficiaries: z
+        .number(t("errors.digitsOnly"))
+        .min(1, t("errors.minNumber", { min: 1 }))
+        .max(50, t("errors.maxNumber", { max: 50 })),
 
-    facility: z.enum(["room", "tent", "suite", "chalet"]).optional(),
-    capacity: z.enum(["normal", "double", "triple", "four", "five"]).optional(),
-    isShared: z.boolean().optional(),
+      activity: z.string().optional(),
 
-    membershipCheck: z.boolean().optional(),
-    membershipType: z.enum(["jordanian", "arabic", "international"]).optional(),
-    memberNumber: z.string().optional(),
-    employeeCheck: z.boolean().optional(),
-    employeeType: z.enum(["worker", "retired"]).optional(),
-    employeeNumber: z.string().optional(),
-    discountCheck: z.boolean().optional(),
-    discountNumber: z.string().optional(),
-    discountDate: z.date().optional(),
+      facility: z.enum(["room", "tent", "suite", "chalet"]).optional(),
+      capacity: z
+        .enum(["normal", "double", "triple", "four", "five"])
+        .optional(),
+      isShared: z.boolean().optional(),
 
-    activity: z.string().optional(),
-  });
+      membershipCheck: z.boolean().optional(),
+      membershipType: z
+        .enum(["jordanian", "arabic", "international"])
+        .optional(),
+      memberNumber: z.string().optional(),
+      employeeCheck: z.boolean().optional(),
+      employeeType: z.enum(["worker", "retired"]).optional(),
+      employeeNumber: z.string().optional(),
+      discountCheck: z.boolean().optional(),
+      discountNumber: z.string().optional(),
+      discountDate: z.date().optional(),
+    })
+    .superRefine((data, ctx) => {
+      if (
+        data.serviceType === "activity" &&
+        (!data.startTime || !data.endTime)
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["dateRange"],
+          message: t("errors.time"),
+        });
+      }
+
+      if (!data.dateRange) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["dateRange"],
+          message: t("errors.date"),
+        });
+      }
+
+      if (!data.nameOfhouse) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["nameOfhouse"],
+          message: t("errors.required"),
+        });
+      }
+
+      if (
+        (data.serviceType === "activity" || data.serviceType === "both") &&
+        !data.activity
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["activity"],
+          message: t("errors.required"),
+        });
+      }
+
+      if (
+        (data.serviceType === "accommodation" || data.serviceType === "both") &&
+        !data.facility
+      ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["facility"],
+          message: t("errors.required"),
+        });
+      }
+
+      if (data.facility && !data.capacity) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["capacity"],
+          message: t("errors.required"),
+        });
+      }
+
+      if (data.membershipCheck && !data.membershipType) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["membershipType"],
+          message: t("errors.required"),
+        });
+      }
+
+      if (data.membershipCheck && !data.memberNumber) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["memberNumber"],
+          message: t("errors.required"),
+        });
+      }
+
+      if (data.employeeCheck && !data.employeeType) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["employeeType"],
+          message: t("errors.required"),
+        });
+      }
+
+      if (data.employeeCheck && !data.employeeNumber) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["employeeNumber"],
+          message: t("errors.required"),
+        });
+      }
+
+      if (data.discountCheck && !data.discountDate) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["discountDate"],
+          message: t("errors.date"),
+        });
+      }
+
+      if (data.discountCheck && !data.discountNumber) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["discountNumber"],
+          message: t("errors.required"),
+        });
+      }
+    });
 
 function daysBetween(from?: Date, to?: Date) {
   if (!from || !to) return 0;
@@ -122,7 +232,7 @@ export default function YouthHouse({
   type FormErrors = Partial<Record<keyof formType, string>>;
 
   const [form, setForm] = useState<formType>({
-    serviceType: undefined,
+    serviceType: "accommodation",
     houseOrCamp: "house",
 
     nameOfhouse: undefined,
@@ -398,238 +508,9 @@ export default function YouthHouse({
               </div>
               {/* user Data from API */}
               <FieldGroup>
-                <FieldGroup className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                  {/* name */}
-                  <Field>
-                    <FieldLabel htmlFor="name">
-                      {t("profile.individual.name")}
-                    </FieldLabel>
-                    <Input
-                      id="name"
-                      value="name"
-                      readOnly
-                      className="bg-muted dark:bg-muted cursor-not-allowed"
-                    />
-                  </Field>
-
-                  {/* email */}
-                  <Field>
-                    <FieldLabel htmlFor="email">
-                      {t("profile.individual.email")}
-                    </FieldLabel>
-                    <Input
-                      id="email"
-                      value="example@gmail.com"
-                      readOnly
-                      className="bg-muted dark:bg-muted cursor-not-allowed"
-                    />
-                  </Field>
-
-                  {/* phone number */}
-                  <Field>
-                    <FieldLabel htmlFor="phone">
-                      {t("profile.individual.phone")}
-                    </FieldLabel>
-                    <div dir="ltr">
-                      <Input
-                        id="phone"
-                        value="+962 719878548"
-                        readOnly
-                        className="bg-muted dark:bg-muted cursor-not-allowed"
-                      />
-                    </div>
-                  </Field>
-
-                  {/* birth date */}
-                  <Field>
-                    <FieldLabel htmlFor="birth">
-                      {t("profile.individual.birth")}
-                    </FieldLabel>
-                    <Input
-                      id="birth"
-                      value="11/03/1995"
-                      readOnly
-                      className="bg-muted dark:bg-muted cursor-not-allowed"
-                    />
-                  </Field>
-
-                  {/* Social status */}
-                  <Field>
-                    <FieldLabel htmlFor="socialStatus">
-                      {t("profile.individual.socialStatus")}
-                    </FieldLabel>
-                    <Input
-                      id="socialStatus"
-                      value="single"
-                      readOnly
-                      className="bg-muted dark:bg-muted cursor-not-allowed"
-                    />
-                  </Field>
-
-                  {/* gender */}
-                  <Field>
-                    <FieldLabel htmlFor="gender">
-                      {t("profile.individual.gender")}
-                    </FieldLabel>
-                    <Input
-                      id="gender"
-                      value="male"
-                      readOnly
-                      className="bg-muted dark:bg-muted cursor-not-allowed"
-                    />
-                  </Field>
-
-                  {/* ID number */}
-                  <Field>
-                    <FieldLabel htmlFor="id">
-                      {t("profile.individual.idNumber")}
-                    </FieldLabel>
-                    <Input
-                      id="id"
-                      value="123"
-                      readOnly
-                      className="bg-muted dark:bg-muted cursor-not-allowed"
-                    />
-                  </Field>
-
-                  {/* civil number */}
-                  <Field>
-                    <FieldLabel htmlFor="civil">
-                      {t("profile.individual.civil")}
-                    </FieldLabel>
-                    <Input
-                      id="civil"
-                      value="12312"
-                      readOnly
-                      className="bg-muted dark:bg-muted cursor-not-allowed"
-                    />
-                  </Field>
-                </FieldGroup>
-
-                <FieldGroup>
-                  {/* Residence validity */}
-                  <Field>
-                    <FieldLabel htmlFor="residenceValidity">
-                      {t("profile.individual.residenceValidity")}
-                    </FieldLabel>
-                    <Input
-                      id="residenceValidity"
-                      value="13/12/2025"
-                      readOnly
-                      className="bg-muted dark:bg-muted cursor-not-allowed"
-                    />
-                  </Field>
-
-                  {/* Residence details */}
-                  <Field>
-                    <FieldLabel htmlFor="ResidenceDetails">
-                      {t("profile.individual.ResidenceDetails")}
-                    </FieldLabel>
-                    <Textarea
-                      id="ResidenceDetails"
-                      value=". . ."
-                      readOnly
-                      className="bg-muted dark:bg-muted cursor-not-allowed"
-                    />
-                  </Field>
-
-                  {/* Passport details */}
-                  <Field>
-                    <FieldLabel htmlFor="PassportDetails">
-                      {t("profile.individual.PassportDetails")}
-                    </FieldLabel>
-                    <Textarea
-                      id="PassportDetails"
-                      value=". . ."
-                      readOnly
-                      className="bg-muted dark:bg-muted cursor-not-allowed"
-                    />
-                  </Field>
-                </FieldGroup>
-
-                <FieldGroup>
-                  <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* Commercial name */}
-                    <Field>
-                      <FieldLabel htmlFor="commercial">
-                        {t("profile.organization.commercial")}
-                      </FieldLabel>
-                      <Input
-                        id="commercial"
-                        value=""
-                        readOnly
-                        className="bg-muted dark:bg-muted cursor-not-allowed"
-                      />
-                    </Field>
-
-                    {/* type */}
-                    <Field>
-                      <FieldLabel htmlFor="type">
-                        {t("profile.organization.type")}
-                      </FieldLabel>
-                      <Input
-                        id="type"
-                        value=""
-                        readOnly
-                        className="bg-muted dark:bg-muted cursor-not-allowed"
-                      />
-                    </Field>
-                  </FieldGroup>
-
-                  <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {/* company capital */}
-                    <Field>
-                      <FieldLabel htmlFor="capital">
-                        {t("profile.organization.capital")}
-                      </FieldLabel>
-                      <Input
-                        id="capital"
-                        value=""
-                        readOnly
-                        className="bg-muted dark:bg-muted cursor-not-allowed"
-                      />
-                    </Field>
-
-                    {/* mail */}
-                    <Field>
-                      <FieldLabel htmlFor="mail">
-                        {t("profile.organization.mail")}
-                      </FieldLabel>
-                      <Input
-                        id="mail"
-                        value=""
-                        readOnly
-                        className="bg-muted dark:bg-muted cursor-not-allowed"
-                      />
-                    </Field>
-                  </FieldGroup>
-
-                  {/* signature */}
-                  <Field>
-                    <FieldLabel htmlFor="signature">
-                      {t("profile.organization.signature")}
-                    </FieldLabel>
-                    <Input
-                      id="signature"
-                      value=""
-                      readOnly
-                      className="bg-muted dark:bg-muted cursor-not-allowed"
-                    />
-                  </Field>
-
-                  {/* the address */}
-                  <Field>
-                    <FieldLabel htmlFor="adress">
-                      {t("profile.organization.title")}
-                    </FieldLabel>
-                    <Textarea
-                      id="adress"
-                      value=""
-                      readOnly
-                      className="bg-muted dark:bg-muted cursor-not-allowed"
-                    />
-                  </Field>
-                </FieldGroup>
+                <Jordanian />
+                <NonJordanian />
+                <Organization />
               </FieldGroup>
 
               <hr className="border-primary" />
@@ -728,9 +609,8 @@ export default function YouthHouse({
                 </Field>
               </FieldGroup>
 
-              {/* house type */}
+              {/* house name */}
               <FieldGroup>
-                {/* Youth House */}
                 {form.houseOrCamp === "house" ? (
                   <FieldLabel htmlFor="house">
                     {t("reservation.fields.youthHouse")}{" "}
@@ -752,7 +632,6 @@ export default function YouthHouse({
                       }))
                     }
                     dir={t("dir")}
-                    required
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue
@@ -782,6 +661,7 @@ export default function YouthHouse({
                     </SelectContent>
                   </Select>
                 </Field>
+                <FieldError>{formErrors.nameOfhouse}</FieldError>
               </FieldGroup>
 
               {/* Date row */}
@@ -895,11 +775,7 @@ export default function YouthHouse({
                       </FieldGroup>
                     </PopoverContent>
                   </Popover>
-                  {formErrors.dateRange && (
-                    <p className="text-sm text-red-500 mt-1">
-                      {formErrors.dateRange}
-                    </p>
-                  )}
+                  <FieldError>{formErrors.dateRange}</FieldError>
                 </Field>
 
                 <Field>
@@ -980,7 +856,6 @@ export default function YouthHouse({
                         }))
                       }
                       dir={t("dir")}
-                      required
                     >
                       <SelectTrigger className="w-full">
                         <SelectValue
@@ -997,6 +872,7 @@ export default function YouthHouse({
                         </SelectGroup>
                       </SelectContent>
                     </Select>
+                    <FieldError>{formErrors.activity}</FieldError>
                   </Field>
                 </>
               )}
@@ -1034,7 +910,6 @@ export default function YouthHouse({
                           }))
                         }
                         dir={t("dir")}
-                        required
                       >
                         <SelectTrigger className="w-full">
                           <SelectValue
@@ -1054,6 +929,7 @@ export default function YouthHouse({
                           </SelectGroup>
                         </SelectContent>
                       </Select>
+                      <FieldError>{formErrors.facility}</FieldError>
                     </Field>
 
                     {/* capacity */}
@@ -1111,7 +987,6 @@ export default function YouthHouse({
                               }))
                             }
                             dir={t("dir")}
-                            required
                           >
                             <SelectTrigger className="w-full">
                               <SelectValue
@@ -1133,6 +1008,7 @@ export default function YouthHouse({
                               </SelectGroup>
                             </SelectContent>
                           </Select>
+                          <FieldError>{formErrors.capacity}</FieldError>
                         </Field>
                       )}
                     </FieldGroup>
@@ -1180,8 +1056,8 @@ export default function YouthHouse({
                                   }))
                                 }
                                 placeholder="087712"
-                                required
                               />
+                              <FieldError>{formErrors.memberNumber}</FieldError>
                             </Field>
 
                             {/* mempership type */}
@@ -1200,7 +1076,6 @@ export default function YouthHouse({
                                   }))
                                 }
                                 dir={t("dir")}
-                                required
                               >
                                 <SelectTrigger className="w-full">
                                   <SelectValue
@@ -1223,6 +1098,7 @@ export default function YouthHouse({
                                 </SelectContent>
                               </Select>
                             </Field>
+                            <FieldError>{formErrors.membershipType}</FieldError>
                           </FieldGroup>
                         )}
                       </FieldGroup>
@@ -1267,8 +1143,10 @@ export default function YouthHouse({
                                   }))
                                 }
                                 placeholder="676322"
-                                required
                               />
+                              <FieldError>
+                                {formErrors.employeeNumber}
+                              </FieldError>
                             </Field>
 
                             {/* employee type */}
@@ -1307,6 +1185,7 @@ export default function YouthHouse({
                                   </SelectGroup>
                                 </SelectContent>
                               </Select>
+                              <FieldError>{formErrors.employeeType}</FieldError>
                             </Field>
                           </FieldGroup>
                         )}
@@ -1351,8 +1230,10 @@ export default function YouthHouse({
                                   }))
                                 }
                                 placeholder="676322"
-                                required
                               />
+                              <FieldError>
+                                {formErrors.discountNumber}
+                              </FieldError>
                             </Field>
 
                             <Field className="w-full md:w-1/3">
@@ -1377,8 +1258,8 @@ export default function YouthHouse({
                                     discountDate: selectedDate,
                                   }));
                                 }}
-                                required
                               />
+                              <FieldError>{formErrors.discountDate}</FieldError>
                             </Field>
                           </FieldGroup>
                         )}

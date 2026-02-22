@@ -70,11 +70,14 @@ const formSchema = (t: any) =>
 
       file: z
         .instanceof(File)
-        .refine((file) => file.size <= 5_000_000, "Max size is 5MB")
+        .refine(
+          (file) => file.size <= 5_000_000,
+          t("errors.maxFileSize", { size: 5 }),
+        )
         .refine(
           (file) =>
             ["image/png", "image/jpeg", "application/pdf"].includes(file.type),
-          "Only PNG, JPG, JPEG, or PDF files are allowed",
+          t("errors.invalidFileType", { types: "PNG, JPG, JPEG, PDF" }),
         )
         .optional(),
     })

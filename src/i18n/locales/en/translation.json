@@ -65,7 +65,13 @@
     "max": "This field must be at most {{len}} characters long",
     "invalid": "This field is invalid",
     "length": "This field must be exactly {{len}} characters long",
-    "digitsOnly": "This field must contain only digits"
+    "digitsOnly": "This field must contain only digits",
+    "maxFileSize": "File size must be less than {{size}} MB",
+    "invalidFileType": "Invalid file type. Allowed types: {{types}}",
+    "maxNumber": "This field must be less than or equal to {{max}}",
+    "minNumber": "This field must be greater than or equal to {{min}}",
+    "time": "please enter a valid time",
+    "date": "please enter a valid date"
   },
   "buttons": {
     "save": "Save",
