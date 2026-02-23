@@ -22,6 +22,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { z } from "zod";
+import { register } from "@/services/api";
+import type { registerData } from "../../Types/signup_types";
 
 type companySectorType =
   | "charity"
@@ -50,7 +52,6 @@ const formSchema = (t: any) =>
         .string()
         .length(10, t("errors.length", { len: 10 }))
         .regex(/^\d*$/, t("errors.digitsOnly")),
-
       companySector: z
         .enum(["charity", "cooperative", "sole_establishment", "company"])
         .optional(),
@@ -65,9 +66,7 @@ const formSchema = (t: any) =>
         .length(9, t("errors.length", { len: 9 }))
         .regex(/^\d*$/, t("errors.digitsOnly")),
       orgAddress: z.string().min(1, t("errors.required")),
-
       password: z.string().min(6, t("errors.min", { len: 6 })),
-
       file: z
         .instanceof(File)
         .refine((file) => file.size <= 5_000_000, "Max size is 5MB")
@@ -155,9 +154,6 @@ export default function SignupForm({
     [t],
   );
 
-  {
-    /* Submit */
-  }
   const formatPhone = (num: string | undefined) => `+962${num}`;
 
   function validate(): boolean {
@@ -165,12 +161,10 @@ export default function SignupForm({
 
     if (!result.success) {
       const fieldErrors: FormErrors = {};
-
       result.error.issues.forEach((issue) => {
         const field = issue.path[0] as keyof formType;
         fieldErrors[field] = issue.message;
       });
-
       setFormErrors(fieldErrors);
       return false;
     }
@@ -182,30 +176,37 @@ export default function SignupForm({
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
 
-    if (!validate()) {
-      console.log(formErrors);
-      return;
-    }
-    if (form.file === undefined && showWrittenAttachment) {
-      setFormErrors((prev) => ({
-        ...prev,
-        file: t("errors.required"),
-      }));
+    if (!validate()) return;
+
+    if (!form.file && showWrittenAttachment) {
+      setFormErrors((prev) => ({ ...prev, file: t("errors.required") }));
       return;
     }
 
-    const payload = {
-      ...form,
-      orgPhone: formatPhone(form.orgPhone),
-      delegatePhone: formatPhone(form.delegatePhone),
+    const payload: registerData = {
+      commissioner_Name: form.delegateName,
+      commissioner_NID: form.delegateNationalId,
+      commissioner_PhonNum: formatPhone(form.delegatePhone),
+      commissioner_Mail: form.delegateEmail,
+      commissioner_nationality: form.delegateNationality,
+
+      institutions_Name: form.orgNationalName,
+      institutions_Type: form.companySector ?? "",
+      institutions_NID: Number(form.orgNationalId),
+      institutions_Address: form.orgAddress,
+      institutions_PhonNum: formatPhone(form.orgPhone),
+      institutions_Email: form.orgEmail,
+
+      applicant: form.delegateRole ?? "written",
+      delegation: form.delegateRole ?? "written",
+      password: form.password,
     };
 
     try {
-      // API call
-      console.log(payload);
+      await register(payload);
       navigate("/services");
     } catch (error) {
-      console.error(error);
+      console.error("Registration failed:", error);
     }
   }
 
