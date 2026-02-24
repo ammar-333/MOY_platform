@@ -1,14 +1,14 @@
 import axios from "axios";
 import type { registerData, AuthResponse } from "../Types/signup_types";
 
-export async function register(data: registerData): Promise<AuthResponse> {
+export async function register(data: FormData): Promise<AuthResponse> {
+    console.log(data);
   try {
     const res = await axios.post(
       "http://10.0.82.105:1125/api/Registration/Registration",
       data,
       {
         headers: {
-          "Content-Type": "application/json",
           "X-API-KEY": "k9F8v2xY!tG7#QpR6sL4mB0wZ1uX3eJd",
         },
       },

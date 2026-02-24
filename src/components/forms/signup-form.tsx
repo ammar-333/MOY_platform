@@ -22,7 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { z } from "zod";
-import { register } from "@/services/api";
+import { register } from "@/api/api";
 import type { registerData } from "../../Types/signup_types";
 
 type companySectorType =
@@ -58,7 +58,7 @@ const formSchema = (t: any) =>
       orgNationalName: z.string().min(1, t("errors.required")),
       orgNationalId: z
         .string()
-        .length(10, t("errors.length", { len: 10 }))
+        .length(9, t("errors.length", { len: 9 }))
         .regex(/^\d*$/, t("errors.digitsOnly")),
       orgEmail: z.string().email(t("errors.invalidEmail")),
       orgPhone: z
@@ -169,7 +169,6 @@ export default function SignupForm({
 
   function validate(): boolean {
     const result = schema.safeParse(form);
-
     if (!result.success) {
       const fieldErrors: FormErrors = {};
       result.error.issues.forEach((issue) => {
@@ -186,36 +185,29 @@ export default function SignupForm({
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-
     if (!validate()) return;
-
-    if (!form.file && showWrittenAttachment) {
-      setFormErrors((prev) => ({ ...prev, file: t("errors.required") }));
-      return;
+    const formData = new FormData();
+    formData.append("commissioner_Name", form.delegateName);
+    formData.append("commissioner_NID", form.delegateNationalId);
+    formData.append("commissioner_PhonNum", formatPhone(form.delegatePhone));
+    formData.append("commissioner_Mail", form.delegateEmail);
+    formData.append("commissioner_nationality", form.delegateNationality);
+    formData.append("institutions_Name", form.orgNationalName);
+    formData.append("institutions_Type", form.companySector ?? "");
+    formData.append("institutions_NID", form.orgNationalId);
+    formData.append("institutions_Address", form.orgAddress);
+    formData.append("institutions_PhonNum", formatPhone(form.orgPhone));
+    formData.append("institutions_Email", form.orgEmail);
+    formData.append("applicant", form.delegateRole ?? "written");
+    formData.append("delegation", form.delegateRole ?? "written");
+    formData.append("password", form.password);
+    if (form.file) {
+      formData.append("file", form.file);
     }
 
-    const payload: registerData = {
-      commissioner_Name: form.delegateName,
-      commissioner_NID: form.delegateNationalId,
-      commissioner_PhonNum: formatPhone(form.delegatePhone),
-      commissioner_Mail: form.delegateEmail,
-      commissioner_nationality: form.delegateNationality,
-
-      institutions_Name: form.orgNationalName,
-      institutions_Type: form.companySector ?? "",
-      institutions_NID: Number(form.orgNationalId),
-      institutions_Address: form.orgAddress,
-      institutions_PhonNum: formatPhone(form.orgPhone),
-      institutions_Email: form.orgEmail,
-
-      applicant: form.delegateRole ?? "written",
-      delegation: form.delegateRole ?? "written",
-      password: form.password,
-    };
-
     try {
-      await register(payload);
-      navigate("/services");
+      await register(formData);
+      navigate("/login");
     } catch (error) {
       console.error("Registration failed:", error);
     }
@@ -618,9 +610,7 @@ export default function SignupForm({
                       accept=".png,.jpg,.jpeg,.pdf"
                       onChange={(e) => {
                         const file = e.target.files?.[0];
-
                         if (!file) return;
-
                         setForm((prev) => ({
                           ...prev,
                           file,
