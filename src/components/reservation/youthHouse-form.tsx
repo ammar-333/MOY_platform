@@ -443,7 +443,7 @@ export default function YouthHouse({
       // API call
       await new Promise((resolve) => setTimeout(resolve, 2000));
       console.log(form);
-      navigate("/confirmation-message", {
+      navigate("/user/confirmation-message", {
         state: {
           descKey: "confirmationMassage.descForYouthHouse",
           step1Key: "confirmationMassage.step1ForYouthHouse",

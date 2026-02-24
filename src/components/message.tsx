@@ -64,14 +64,14 @@ export default function Message({
         <CardFooter className="flex flex-wrap justify-center items-center gap-5">
           <Button
             className="px-5 sm:px-10 flex-1"
-            onClick={() => navigate("/Service-Requests")}
+            onClick={() => navigate("/user/Service-Requests")}
           >
             {t("confirmationMassage.showApplications")}
           </Button>
 
           <Button
             className="px-5 sm:px-10 bg-green-500 hover:bg-green-400 flex-1"
-            onClick={() => navigate("/services")}
+            onClick={() => navigate("/user/services")}
           >
             {t("confirmationMassage.newReservation")}
           </Button>

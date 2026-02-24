@@ -38,7 +38,7 @@ export default function Navbar() {
               {t("nav.home")}
             </p>{" "}
           </Link>
-          <Link to="/Service-Requests">
+          <Link to="/user/Service-Requests">
             <p className="hover:underline hover:decoration-primary hover:decoration-2 font-medium">
               {t("nav.Requests")}
             </p>{" "}

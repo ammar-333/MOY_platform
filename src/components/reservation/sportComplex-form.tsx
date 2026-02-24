@@ -332,7 +332,7 @@ export default function SportComplex({
       // API call
       await new Promise((resolve) => setTimeout(resolve, 2000));
       console.log(form);
-      navigate("/confirmation-message", {
+      navigate("/user/confirmation-message", {
         state: {
           descKey: "confirmationMassage.descForsportComplex",
           step1Key: "confirmationMassage.step1ForsportComplex",
