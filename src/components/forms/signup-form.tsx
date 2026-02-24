@@ -23,7 +23,6 @@ import {
 } from "@/components/ui/select";
 import { z } from "zod";
 import { register } from "@/api/api";
-import type { registerData } from "../../Types/signup_types";
 
 type companySectorType =
   | "charity"
@@ -185,7 +184,9 @@ export default function SignupForm({
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+
     if (!validate()) return;
+
     const formData = new FormData();
     formData.append("commissioner_Name", form.delegateName);
     formData.append("commissioner_NID", form.delegateNationalId);
