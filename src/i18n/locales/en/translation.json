@@ -57,7 +57,9 @@
     "file": "Upload the delegation",
     "delegateName": "Delegate name",
     "loginSuccess": "Login successful",
-    "loginFailed": "Login failed"
+    "loginFailed": "Login failed",
+    "registrationSuccess": "Registration successful",
+    "registrationFailed": "Registration failed"
   },
   "errors": {
     "required": "This field is required",

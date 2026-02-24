@@ -44,7 +44,6 @@ export default function ServiceSelector({
     if (token) {
       // Store the token in localStorage or a cookie
       localStorage.setItem("authToken", token);
-
       // Clear the query parameters from the URL
       clearQuery();
     }

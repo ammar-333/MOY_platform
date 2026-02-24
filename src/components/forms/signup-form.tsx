@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/select";
 import { z } from "zod";
 import { register } from "@/api/api";
+import { toast } from "react-hot-toast";
 
 type companySectorType =
   | "charity"
@@ -208,8 +209,10 @@ export default function SignupForm({
 
     try {
       await register(formData);
+      toast.success(t("auth.registerSuccess"));
       navigate("/login");
     } catch (error) {
+      toast.error(t("auth.registerFailed"));
       console.error("Registration failed:", error);
     }
   }

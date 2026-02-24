@@ -458,7 +458,7 @@ export default function YouthHouse({
 
   const token = localStorage.getItem("authToken");
   useEffect(() => {
-    fetch("http://10.0.82.105:1125/api/SanadSignleSignon/test/", {
+    fetch("http://10.0.82.105:1125/api/Login/profile", {
       method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,

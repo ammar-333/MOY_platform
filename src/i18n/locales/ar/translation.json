@@ -56,7 +56,9 @@
     "sanadSignOn": "الدخول الموحد",
     "delegateName": "اسم المفوض",
     "loginSuccess": "تم تسجيل الدخول بنجاح",
-    "loginFailed": "فشل تسجيل الدخول"
+    "loginFailed": "فشل تسجيل الدخول",
+    "registerSuccess": "تم إنشاء الحساب بنجاح",
+    "registerFailed": "فشل إنشاء الحساب"
   },
   "errors": {
     "required": "هذا الحقل مطلوب",
