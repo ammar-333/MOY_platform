@@ -9,6 +9,8 @@ import ServiceRequestsPage from "@/pages/service/service-requests";
 import SignupPage from "@/pages/auth/signup-page";
 import SportComplexPage from "@/pages/reservation/sportComplex-page";
 import YouthHousePage from "@/pages/reservation/youthHouse-page";
+import ProtectedLayout from "@/layouts/protected-layout";
+import { protectedLoader } from "./protected-route";
 
 const routes = createBrowserRouter([
   {
@@ -21,6 +23,7 @@ const routes = createBrowserRouter([
       },
     ],
   },
+
   {
     path: "/login",
     element: <LoginPage />,
@@ -29,26 +32,35 @@ const routes = createBrowserRouter([
     path: "/signup",
     element: <SignupPage />,
   },
+
   {
-    path: "/youthHouse",
-    element: <YouthHousePage />,
+    path: "/user",
+    element: <ProtectedLayout />,
+    loader: protectedLoader,
+    children: [
+      {
+        path: "services",
+        element: <ServicesPage />,
+      },
+      {
+        path: "youthHouse",
+        element: <YouthHousePage />,
+      },
+      {
+        path: "sportComplex",
+        element: <SportComplexPage />,
+      },
+      {
+        path: "confirmation-message",
+        element: <ConfirmationMessage />,
+      },
+      {
+        path: "Service-Requests",
+        element: <ServiceRequestsPage />,
+      },
+    ],
   },
-  {
-    path: "/sportComplex",
-    element: <SportComplexPage />,
-  },
-  {
-    path: "/services",
-    element: <ServicesPage />,
-  },
-  {
-    path: "/Service-Requests",
-    element: <ServiceRequestsPage />,
-  },
-  {
-    path: "/confirmation-message",
-    element: <ConfirmationMessage />,
-  },
+
   {
     path: "*",
     element: <NotFound />,

@@ -26,12 +26,12 @@ export default function ServiceSelector({
     {
       title: t("services.cards.youthHouse.title"),
       desc: t("services.cards.youthHouse.desc"),
-      action: () => navigate("/youthHouse"),
+      action: () => navigate("/user/youthHouse"),
     },
     {
       title: t("services.cards.sportsComplex.title"),
       desc: t("services.cards.sportsComplex.desc"),
-      action: () => navigate("/sportComplex"),
+      action: () => navigate("/user/sportComplex"),
     },
   ];
 

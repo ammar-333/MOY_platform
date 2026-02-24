@@ -304,7 +304,7 @@ export default function ServiceRequests({
           <div className="pt-4 flex justify-center">
             <Button
               type="button"
-              onClick={() => navigate("/services")}
+              onClick={() => navigate("/user/services")}
               className="rounded-xl px-10"
             >
               {t("requests.newRequest")}
