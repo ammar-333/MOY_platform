@@ -42,7 +42,8 @@ const formSchema = (t: any) =>
       delegatePhone: z
         .string()
         .length(9, t("errors.length", { len: 9 }))
-        .regex(/^\d*$/, t("errors.digitsOnly")),
+        .regex(/^\d*$/, t("errors.digitsOnly"))
+        .regex(/^7/, t("errors.jordanNumber")),
       delegateEmail: z.string().email(t("errors.invalidEmail")),
       delegateNationality: z.enum(["jordanian", "nonJordanian"]),
       delegateRole: z
@@ -64,9 +65,16 @@ const formSchema = (t: any) =>
       orgPhone: z
         .string()
         .length(9, t("errors.length", { len: 9 }))
-        .regex(/^\d*$/, t("errors.digitsOnly")),
+        .regex(/^\d*$/, t("errors.digitsOnly"))
+        .regex(/^7/, t("errors.jordanNumber")),
       orgAddress: z.string().min(1, t("errors.required")),
-      password: z.string().min(6, t("errors.min", { len: 6 })),
+      password: z
+        .string()
+        .min(6, t("errors.min", { len: 6 }))
+        .regex(
+          /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).+$/,
+          t("errors.passwordStrength"),
+        ),
       file: z
         .instanceof(File)
         .refine(
@@ -128,6 +136,7 @@ export default function SignupForm({
     file: undefined,
   });
   const [formErrors, setFormErrors] = useState<FormErrors>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const showWrittenAttachment = form.delegateRole === "written";
   const showCharityRole =
@@ -187,6 +196,7 @@ export default function SignupForm({
     e.preventDefault();
 
     if (!validate()) return;
+    setIsSubmitting(true);
 
     const formData = new FormData();
     formData.append("commissioner_Name", form.delegateName);
@@ -209,11 +219,16 @@ export default function SignupForm({
 
     try {
       await register(formData);
-      toast.success(t("auth.registerSuccess"));
+      if (form.delegateRole === "written")
+        toast.success(t("auth.registerSuccess"));
+      else toast.success(t("auth.registerSuccess"));
+
       navigate("/login");
     } catch (error) {
       toast.error(t("auth.registerFailed"));
       console.error("Registration failed:", error);
+    } finally {
+      setIsSubmitting(false);
     }
   }
 
@@ -315,7 +330,7 @@ export default function SignupForm({
                           orgNationalId: e.target.value,
                         }))
                       }
-                      maxLength={10}
+                      maxLength={9}
                     />
                     <FieldError>{formErrors.orgNationalId}</FieldError>
                   </Field>
@@ -647,8 +662,12 @@ export default function SignupForm({
 
                 {/* Submit */}
                 <Field className="md:col-span-2">
-                  <Button type="submit" className="w-full py-6 text-base">
-                    {t("auth.signup")}
+                  <Button
+                    type="submit"
+                    className="w-full py-6 text-base"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? t("auth.signingup") : t("auth.signup")}
                   </Button>
 
                   <FieldDescription className="text-center mt-3">

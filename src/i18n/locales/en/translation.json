@@ -23,6 +23,7 @@
     "emailPlaceholder": "Enter your email",
     "forgotPassword": "Forgot password?",
     "signup": "Create Account",
+    "signingup": "Creating account...",
     "fullName": "Full Name",
     "fullNamePlaceholder": "Enter your full name",
     "confirmPassword": "Confirm Password",
@@ -59,7 +60,8 @@
     "loginSuccess": "Login successful",
     "loginFailed": "Login failed",
     "registrationSuccess": "Registration successful",
-    "registrationFailed": "Registration failed"
+    "registrationFailed": "Registration failed",
+    "writtenDelegateDelay": "your request submission is successful, but it may take up some time for the written delegate role to be approved. You will receive a notification once your role is updated."
   },
   "errors": {
     "required": "This field is required",
@@ -76,7 +78,9 @@
     "minNumber": "This field must be greater than or equal to {{min}}",
     "time": "please enter a valid time",
     "date": "please enter a valid date",
-    "range": "this field must be between {{min}} and {{max}}"
+    "range": "this field must be between {{min}} and {{max}}",
+    "jordanNumber": "Please enter a valid Jordanian phone number",
+    "passwordStrength": "Password must contain uppercase, lowercase, number, and special character"
   },
   "buttons": {
     "save": "Save",
