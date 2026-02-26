@@ -11,8 +11,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { LogIn } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Link, useNavigate } from "react-router-dom";
-import { useMemo, useState } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -25,16 +25,18 @@ import { z } from "zod";
 import { register } from "@/api/api";
 import { toast } from "react-hot-toast";
 
+// Types
 type companySectorType =
   | "charity"
   | "cooperative"
   | "sole_establishment"
-  | "company";
+  | "company"
+  | "free_zone";
 type delegateRoleType = "owner" | "authorizedOnRegistry" | "written";
 type delegateNationalityType = "jordanian" | "nonJordanian";
 type Option<T extends string> = { value: T; label: string };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// Schema
 const formSchema = (t: any) =>
   z
     .object({
@@ -54,7 +56,13 @@ const formSchema = (t: any) =>
         .length(10, t("errors.length", { len: 10 }))
         .regex(/^\d*$/, t("errors.digitsOnly")),
       companySector: z
-        .enum(["charity", "cooperative", "sole_establishment", "company"])
+        .enum([
+          "charity",
+          "cooperative",
+          "sole_establishment",
+          "company",
+          "free_zone",
+        ])
         .optional(),
       orgNationalName: z.string().min(1, t("errors.required")),
       orgNationalId: z
@@ -96,7 +104,6 @@ const formSchema = (t: any) =>
           message: t("errors.required"),
         });
       }
-
       if (data.delegateRole === "written" && !data.file) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -116,6 +123,27 @@ export default function SignupForm({
   type formType = z.infer<typeof schema>;
   type FormErrors = Partial<Record<keyof formType, string>>;
 
+  const [searchParams, setSearchParams] = useSearchParams();
+  const queryToken = searchParams.get("token");
+
+  // Local state to keep token even after clearing query params
+  const [localToken, setLocalToken] = useState<string | null>(null);
+  const [tokenReady, setTokenReady] = useState(false);
+
+  function clearQuery() {
+    setSearchParams({}, { replace: true });
+  }
+
+  useEffect(() => {
+    if (queryToken) {
+      setLocalToken(queryToken);
+      localStorage.setItem("signUpToken", queryToken);
+      clearQuery();
+    }
+    setTokenReady(true);
+  }, [queryToken]);
+
+  // Form state
   const [form, setForm] = useState<formType>({
     delegateName: "",
     delegatePhone: "",
@@ -123,35 +151,84 @@ export default function SignupForm({
     delegateNationality: "jordanian",
     delegateRole: "written",
     delegateNationalId: "",
-
     companySector: undefined,
     orgNationalName: "",
     orgNationalId: "",
     orgEmail: "",
     orgPhone: "",
     orgAddress: "",
-
     password: "",
-
     file: undefined,
   });
   const [formErrors, setFormErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const showWrittenAttachment = form.delegateRole === "written";
-  const showCharityRole =
-    form.companySector === "charity" || form.companySector === "cooperative";
+  // Profile fetched from API
+  interface Profile {
+    data: {
+      dateOfBirth: string;
+      mail: string;
+      mobile: string;
+      nationalId: string;
+    };
+    userType: string;
+  }
+  const [profile, setProfile] = useState<Profile | null>(null);
 
+  // Redirect if token ready but missing
+  useEffect(() => {
+    if (tokenReady && !localToken) {
+      navigate("/sanad_signup", { replace: true });
+    }
+  }, [tokenReady, localToken, navigate]);
+
+  // Fetch profile if token exists
+  useEffect(() => {
+    if (!localToken) return;
+
+    fetch("http://10.0.82.105:1125/api/Login/profile", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${localToken}`,
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Network response was not ok");
+        return res.json();
+      })
+      .then((json) => setProfile(json))
+      .catch(() => navigate("/sanad_signup", { replace: true }));
+  }, [localToken, navigate]);
+
+  // Populate form from profile
+  useEffect(() => {
+    if (!profile?.data) return;
+
+    const { mail, mobile, nationalId } = profile.data;
+    const phoneWithoutCode = mobile?.startsWith("+962")
+      ? mobile.replace("+962", "")
+      : mobile;
+
+    setForm((prev) => ({
+      ...prev,
+      delegateEmail: mail || "",
+      delegateNationalId: nationalId || "",
+      delegatePhone: phoneWithoutCode || "",
+    }));
+  }, [profile]);
+
+  // Options
   const sectorOptions: Option<companySectorType>[] = useMemo(
     () => [
       { value: "company", label: t("auth.company") },
       { value: "sole_establishment", label: t("auth.sole_establishment") },
       { value: "cooperative", label: t("auth.cooperative") },
       { value: "charity", label: t("auth.charity") },
+      { value: "free_zone", label: t("auth.free_zones_establishments") },
     ],
     [t],
   );
-
   const roleOptions: Option<delegateRoleType>[] = useMemo(
     () => [
       { value: "owner", label: t("auth.owner") },
@@ -160,12 +237,10 @@ export default function SignupForm({
     ],
     [t],
   );
-
   const charityRoleOptions: Option<delegateRoleType>[] = useMemo(
     () => [{ value: "written", label: t("auth.writtenDelegate") }],
     [t],
   );
-
   const nationalityOptions: Option<delegateNationalityType>[] = useMemo(
     () => [
       { value: "jordanian", label: t("auth.jordanian") },
@@ -187,7 +262,6 @@ export default function SignupForm({
       setFormErrors(fieldErrors);
       return false;
     }
-
     setFormErrors({});
     return true;
   }
@@ -196,45 +270,46 @@ export default function SignupForm({
     e.preventDefault();
 
     if (!validate()) return;
+
     setIsSubmitting(true);
 
-    const formData = new FormData();
-    formData.append("commissioner_Name", form.delegateName);
-    formData.append("commissioner_NID", form.delegateNationalId);
-    formData.append("commissioner_PhonNum", formatPhone(form.delegatePhone));
-    formData.append("commissioner_Mail", form.delegateEmail);
-    formData.append("commissioner_nationality", form.delegateNationality);
-    formData.append("institutions_Name", form.orgNationalName);
-    formData.append("institutions_Type", form.companySector ?? "");
-    formData.append("institutions_NID", form.orgNationalId);
-    formData.append("institutions_Address", form.orgAddress);
-    formData.append("institutions_PhonNum", formatPhone(form.orgPhone));
-    formData.append("institutions_Email", form.orgEmail);
-    formData.append("applicant", form.delegateRole ?? "written");
-    formData.append("delegation", form.delegateRole ?? "written");
-    formData.append("password", form.password);
-    if (form.file) {
-      formData.append("file", form.file);
-    }
-
     try {
-      await register(formData);
-      if (form.delegateRole === "written")
-        toast.success(t("auth.registerSuccess"));
-      else toast.success(t("auth.registerSuccess"));
+      const formData = new FormData();
 
+      formData.append("commissioner_Name", form.delegateName);
+      formData.append("commissioner_NID", form.delegateNationalId);
+      formData.append("commissioner_PhonNum", formatPhone(form.delegatePhone));
+      formData.append("commissioner_Mail", form.delegateEmail);
+      formData.append("commissioner_nationality", form.delegateNationality);
+      formData.append("institutions_Name", form.orgNationalName);
+      formData.append("institutions_Type", form.companySector ?? "");
+      formData.append("institutions_NID", form.orgNationalId);
+      formData.append("institutions_Address", form.orgAddress);
+      formData.append("institutions_PhonNum", formatPhone(form.orgPhone));
+      formData.append("institutions_Email", form.orgEmail);
+      formData.append("applicant", form.delegateRole ?? "written");
+      formData.append("delegation", form.delegateRole ?? "written");
+      formData.append("password", form.password);
+
+      if (form.file) formData.append("file", form.file);
+
+      await register(formData);
+
+      toast.success(t("auth.registerSuccess"));
       navigate("/login");
     } catch (error) {
       toast.error(t("auth.registerFailed"));
-      console.error("Registration failed:", error);
     } finally {
       setIsSubmitting(false);
     }
   }
+  const showWrittenAttachment = form.delegateRole === "written";
+  const showCharityRole =
+    form.companySector === "charity" || form.companySector === "cooperative";
 
   return (
     <div
-      className={cn("mx-auto w-full max-w-3xl px-4 md:px-0", className)}
+      className={cn("mx-auto w-full max-w-6xl px-4 md:px-0", className)}
       {...props}
     >
       <div className="overflow-hidden rounded-2xl border bg-background shadow-sm">
@@ -517,13 +592,9 @@ export default function SignupForm({
                     id="delegateNationalId"
                     type="text"
                     value={form.delegateNationalId}
-                    onChange={(e) =>
-                      setForm((prev) => ({
-                        ...prev,
-                        delegateNationalId: e.target.value,
-                      }))
-                    }
+                    readOnly
                     maxLength={10}
+                    className="bg-muted border-dashed text-muted-foreground cursor-default focus-visible:ring-0"
                   />
                   <FieldError>{formErrors.delegateNationalId}</FieldError>
                 </Field>
@@ -540,12 +611,8 @@ export default function SignupForm({
                         id="delegateEmail"
                         type="email"
                         value={form.delegateEmail}
-                        onChange={(e) =>
-                          setForm((prev) => ({
-                            ...prev,
-                            delegateEmail: e.target.value,
-                          }))
-                        }
+                        readOnly
+                        className="bg-muted border-dashed text-muted-foreground cursor-default focus-visible:ring-0"
                       />
                       <FieldError>{formErrors.delegateEmail}</FieldError>
                     </Field>
@@ -566,14 +633,9 @@ export default function SignupForm({
                           id="delegatePhone"
                           type="tel"
                           value={form.delegatePhone}
-                          onChange={(e) =>
-                            setForm((prev) => ({
-                              ...prev,
-                              delegatePhone: e.target.value,
-                            }))
-                          }
+                          readOnly
                           maxLength={9}
-                          placeholder="7XXXXXXXX"
+                          className="bg-gray-100 text-gray-600 cursor-not-allowed focus-visible:ring-0"
                         />
                       </div>
                       <FieldError>{formErrors.delegatePhone}</FieldError>

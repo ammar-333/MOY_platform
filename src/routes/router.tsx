@@ -11,6 +11,7 @@ import SportComplexPage from "@/pages/reservation/sportComplex-page";
 import YouthHousePage from "@/pages/reservation/youthHouse-page";
 import ProtectedLayout from "@/layouts/protected-layout";
 import { protectedLoader } from "./protected-route";
+import SanadSignUp from "@/components/forms/signup/SanadSignUp";
 import IndividualProfile from "@/pages/profile/individuals-profile";
 import GovernmentProfile from "@/pages/profile/government-profile";
 import BusinessProfile from "@/pages/profile/business-profile";
@@ -34,6 +35,10 @@ const routes = createBrowserRouter([
   {
     path: "/signup",
     element: <SignupPage />,
+  },
+  {
+    path: "/sanad_signup",
+    element: <SanadSignUp />,
   },
   {
     path: "/user/services",
