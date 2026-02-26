@@ -93,7 +93,7 @@ export function LoginForm({
   function handleSanad(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
     window.location.assign(
-      "http://10.0.82.105:1125/api/SanadSignleSignon/Auth/",
+      "http://10.0.82.105:1125/api/SanadSignleSignon/Auth?returnUrl=/user/services",
     );
   }
 
@@ -233,7 +233,7 @@ export function LoginForm({
                     <FieldDescription className="text-center">
                       {t("auth.noaccount")}{" "}
                       <Link
-                        to="/signup"
+                        to="/sanad_signup"
                         className="text-primary hover:underline"
                       >
                         {t("auth.signup")}
