@@ -12,6 +12,9 @@ import YouthHousePage from "@/pages/reservation/youthHouse-page";
 import ProtectedLayout from "@/layouts/protected-layout";
 import { protectedLoader } from "./protected-route";
 import SanadSignUp from "@/components/forms/signup/SanadSignUp";
+import IndividualProfile from "@/pages/profile/individuals-profile";
+import GovernmentProfile from "@/pages/profile/government-profile";
+import BusinessProfile from "@/pages/profile/business-profile";
 
 const routes = createBrowserRouter([
   {
@@ -62,6 +65,18 @@ const routes = createBrowserRouter([
       {
         path: "Service-Requests",
         element: <ServiceRequestsPage />,
+      },
+      {
+        path: "individual-profile",
+        element: <IndividualProfile />,
+      },
+      {
+        path: "goverment-profile",
+        element: <GovernmentProfile />,
+      },
+      {
+        path: "business-profile",
+        element: <BusinessProfile />,
       },
     ],
   },
