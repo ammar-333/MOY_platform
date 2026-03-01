@@ -15,6 +15,7 @@
     "nationalId": "National / Personal ID",
     "nationalIdPlaceholder": "Enter national or personal ID",
     "orgNationalId": "Organization national ID",
+    "govId": "Organization Identification Number",
     "login": "Login",
     "password": "Password",
     "noaccount": "Don't have an account?",
@@ -100,7 +101,8 @@
     "reservation": "booking and rental system",
     "userType": "Beneficiary type",
     "individual": "Individuals",
-    "organization": "Organizations"
+    "organization": "Organizations",
+    "government": "Government entities"
   },
   "profile": {
     "personal": "Personal Profile",

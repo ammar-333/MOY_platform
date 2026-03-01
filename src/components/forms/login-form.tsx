@@ -19,7 +19,7 @@ import { z } from "zod";
 import { login } from "@/api/api";
 import toast from "react-hot-toast";
 
-type UserType = "individual" | "organization";
+type UserType = "individual" | "organization" | "government";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const formSchema = (t: any) =>
@@ -83,7 +83,7 @@ export function LoginForm({
       const res = await login(formData);
       if (res?.token) localStorage.setItem("authToken", res.token);
       toast.success(t("auth.loginSuccess"));
-      navigate("/user/services");
+      navigate("/user/business-profile");
     } catch (error) {
       toast.error(t("auth.loginFailed"));
       console.log(error);
@@ -93,7 +93,7 @@ export function LoginForm({
   function handleSanad(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
     window.location.assign(
-      "http://10.0.82.105:1125/api/SanadSignleSignon/Auth?returnUrl=/user/services",
+      "http://10.0.82.105:1125/api/SanadSignleSignon/Auth?returnUrl=/user/individual-profile",
     );
   }
 
@@ -120,7 +120,7 @@ export function LoginForm({
               {/* USER TYPE TOGGLE */}
               <Field>
                 <FieldLabel>{t("form.userType")}</FieldLabel>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-3 gap-2">
                   <button
                     type="button"
                     onClick={() => setUserType("individual")}
@@ -146,11 +146,24 @@ export function LoginForm({
                   >
                     {t("form.organization")}
                   </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setUserType("government")}
+                    className={cn(
+                      "rounded-md border px-4 py-2 text-sm transition",
+                      userType === "government"
+                        ? "bg-primary text-white"
+                        : "bg-muted",
+                    )}
+                  >
+                    {t("form.government")}
+                  </button>
                 </div>
               </Field>
 
               {/* CONDITIONAL FIELDS */}
-              {userType === "individual" ? (
+              {userType === "individual" && (
                 <div>
                   <div className="flex flex-col items-center justify-center rounded-2xl">
                     <img
@@ -179,7 +192,9 @@ export function LoginForm({
                     <span>{t("auth.sanadSignOn")}</span>
                   </button>
                 </div>
-              ) : (
+              )}
+
+              {userType === "organization" && (
                 <>
                   {/* ID */}
                   <Field>
@@ -234,6 +249,69 @@ export function LoginForm({
                       {t("auth.noaccount")}{" "}
                       <Link
                         to="/sanad_signup"
+                        className="text-primary hover:underline"
+                      >
+                        {t("auth.signup")}
+                      </Link>
+                    </FieldDescription>
+                  </Field>
+                </>
+              )}
+
+              {userType === "government" && (
+                <>
+                  {/* ID */}
+                  <Field>
+                    <FieldLabel htmlFor="ID">
+                      {t("auth.govId")} <span className="text-red-500">*</span>
+                    </FieldLabel>
+                    <Input
+                      id="ID"
+                      type="text"
+                      value={form.ID}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          ID: e.target.value,
+                        }))
+                      }
+                      maxLength={9}
+                      placeholder={t("auth.orgNationalIdPlaceholder")}
+                    />
+                    <FieldError>{formErrors.ID}</FieldError>
+                  </Field>
+
+                  {/* PASSWORD */}
+                  <Field>
+                    <FieldLabel htmlFor="password">
+                      {t("auth.password")}
+                      <span className="text-red-500">*</span>
+                    </FieldLabel>
+                    <Input
+                      id="password"
+                      value={form.password}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          password: e.target.value,
+                        }))
+                      }
+                      type="password"
+                      placeholder={t("auth.passwordPlaceholder")}
+                    />
+                    <FieldError>{formErrors.password}</FieldError>
+                  </Field>
+
+                  {/* SUBMIT */}
+                  <Field>
+                    <Button className="w-full" type="submit">
+                      {t("auth.login")}
+                    </Button>
+
+                    <FieldDescription className="text-center">
+                      {t("auth.noaccount")}{" "}
+                      <Link
+                        to="/gov_signup"
                         className="text-primary hover:underline"
                       >
                         {t("auth.signup")}

@@ -11,8 +11,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { LogIn } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Link, useNavigate, useSearchParams } from "react-router-dom";
-import { useEffect, useMemo, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { useMemo, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -114,7 +114,7 @@ const formSchema = (t: any) =>
       }
     });
 
-export default function SignupForm({
+export default function GovSignupForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
@@ -124,25 +124,25 @@ export default function SignupForm({
   type formType = z.infer<typeof schema>;
   type FormErrors = Partial<Record<keyof formType, string>>;
 
-  const [searchParams, setSearchParams] = useSearchParams();
-  const queryToken = searchParams.get("token");
+  //   const [searchParams, setSearchParams] = useSearchParams();
+  //   const queryToken = searchParams.get("token");
 
-  // Local state to keep token even after clearing query params
-  const [localToken, setLocalToken] = useState<string | null>(null);
-  const [tokenReady, setTokenReady] = useState(false);
+  //   // Local state to keep token even after clearing query params
+  //   const [localToken, setLocalToken] = useState<string | null>(null);
+  //   const [tokenReady, setTokenReady] = useState(false);
 
-  function clearQuery() {
-    setSearchParams({}, { replace: true });
-  }
+  //   function clearQuery() {
+  //     setSearchParams({}, { replace: true });
+  //   }
 
-  useEffect(() => {
-    if (queryToken) {
-      setLocalToken(queryToken);
-      localStorage.setItem("signUpToken", queryToken);
-      clearQuery();
-    }
-    setTokenReady(true);
-  }, [queryToken]);
+  //   useEffect(() => {
+  //     if (queryToken) {
+  //       setLocalToken(queryToken);
+  //       localStorage.setItem("signUpToken", queryToken);
+  //       clearQuery();
+  //     }
+  //     setTokenReady(true);
+  //   }, [queryToken]);
 
   // Form state
   const [form, setForm] = useState<formType>({
@@ -165,62 +165,62 @@ export default function SignupForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Profile fetched from API
-  interface Profile {
-    data: {
-      dateOfBirth: string;
-      mail: string;
-      mobile: string;
-      nationalId: string;
-    };
-    userType: string;
-  }
-  const [profile, setProfile] = useState<Profile | null>(null);
+  //   interface Profile {
+  //     data: {
+  //       dateOfBirth: string;
+  //       mail: string;
+  //       mobile: string;
+  //       nationalId: string;
+  //     };
+  //     userType: string;
+  //   }
+  //   const [profile, setProfile] = useState<Profile | null>(null);
 
   // Redirect if token ready but missing
-  useEffect(() => {
-    if (tokenReady && !localToken) {
-      navigate("/sanad_signup", { replace: true });
-    }
-  }, [tokenReady, localToken, navigate]);
+  //   useEffect(() => {
+  //     if (tokenReady && !localToken) {
+  //       navigate("/sanad_signup", { replace: true });
+  //     }
+  //   }, [tokenReady, localToken, navigate]);
 
-  // Fetch profile if token exists
-  useEffect(() => {
-    if (!localToken) return;
+  //   // Fetch profile if token exists
+  //   useEffect(() => {
+  //     if (!localToken) return;
 
-    fetch("http://10.0.82.105:1125/api/Login/profile", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${localToken}`,
-        "Content-Type": "application/json",
-      },
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Network response was not ok");
-        return res.json();
-      })
-      .then((json) => {
-        setProfile(json);
-        console.log(json);
-      })
-      .catch(() => navigate("/sanad_signup", { replace: true }));
-  }, [localToken, navigate]);
+  //     fetch("http://10.0.82.105:1125/api/Login/profile", {
+  //       method: "GET",
+  //       headers: {
+  //         Authorization: `Bearer ${localToken}`,
+  //         "Content-Type": "application/json",
+  //       },
+  //     })
+  //       .then((res) => {
+  //         if (!res.ok) throw new Error("Network response was not ok");
+  //         return res.json();
+  //       })
+  //       .then((json) => {
+  //         setProfile(json);
+  //         console.log(json);
+  //       })
+  //       .catch(() => navigate("/sanad_signup", { replace: true }));
+  //   }, [localToken, navigate]);
 
   // Populate form from profile
-  useEffect(() => {
-    if (!profile?.data) return;
+  //   useEffect(() => {
+  //     if (!profile?.data) return;
 
-    const { mail, mobile, nationalId } = profile.data;
-    const phoneWithoutCode = mobile?.startsWith("+962")
-      ? mobile.replace("+962", "")
-      : mobile;
+  //     const { mail, mobile, nationalId } = profile.data;
+  //     const phoneWithoutCode = mobile?.startsWith("+962")
+  //       ? mobile.replace("+962", "")
+  //       : mobile;
 
-    setForm((prev) => ({
-      ...prev,
-      delegateEmail: mail || "",
-      delegateNationalId: nationalId || "",
-      delegatePhone: phoneWithoutCode || "",
-    }));
-  }, [profile]);
+  //     setForm((prev) => ({
+  //       ...prev,
+  //       delegateEmail: mail || "",
+  //       delegateNationalId: nationalId || "",
+  //       delegatePhone: phoneWithoutCode || "",
+  //     }));
+  //   }, [profile]);
 
   // Options
   const sectorOptions: Option<companySectorType>[] = useMemo(

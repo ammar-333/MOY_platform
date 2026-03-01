@@ -7,7 +7,16 @@ import { User } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Textarea } from "../ui/textarea";
 import { useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+
+type dataType = {
+  address: string;
+  commissioner: string;
+  delegation: string;
+  email: string;
+  name: string;
+  type: string;
+};
 
 export default function BusinessForm({
   className,
@@ -17,6 +26,32 @@ export default function BusinessForm({
   const navigate = useNavigate();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [edit, setEdit] = useState(false);
+  const [data, setData] = useState<dataType>();
+
+  const token = localStorage.getItem("authToken");
+  useEffect(() => {
+    fetch("http://10.0.82.105:1125/api/Login/profile", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return res.json();
+      })
+      .then((json) => {
+        setData(json.data);
+        console.log(json);
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleEdit = () => {
     setEdit(true);
@@ -59,7 +94,7 @@ export default function BusinessForm({
                   </FieldLabel>
                   <Input
                     id="commercial"
-                    value=""
+                    value={data?.name}
                     readOnly
                     className="bg-muted dark:bg-muted cursor-not-allowed"
                   />
@@ -72,7 +107,7 @@ export default function BusinessForm({
                   </FieldLabel>
                   <Input
                     id="type"
-                    value=""
+                    value={data?.type}
                     readOnly
                     className="bg-muted dark:bg-muted cursor-not-allowed"
                   />
@@ -99,7 +134,7 @@ export default function BusinessForm({
                 </FieldLabel>
                 <Textarea
                   id="title"
-                  value=""
+                  value={data?.address}
                   readOnly
                   className="bg-muted dark:bg-muted cursor-not-allowed"
                 />
@@ -112,7 +147,7 @@ export default function BusinessForm({
                 </FieldLabel>
                 <Input
                   id="mail"
-                  value=""
+                  value={data?.email}
                   readOnly
                   className="bg-muted dark:bg-muted cursor-not-allowed"
                 />
@@ -125,7 +160,7 @@ export default function BusinessForm({
                 </FieldLabel>
                 <Input
                   id="signature"
-                  value=""
+                  value={data?.commissioner}
                   readOnly
                   className="bg-muted dark:bg-muted cursor-not-allowed"
                 />
