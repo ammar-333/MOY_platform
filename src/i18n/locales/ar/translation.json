@@ -15,6 +15,7 @@
     "nationalId": "الرقم الوطني / الشخصي",
     "nationalIdPlaceholder": "ادخل الرقم الوطني أو الرقم الشخصي",
     "orgNationalId": "الرقم الوطني للمنشأة",
+    "govId": "الرقم التعريفي للجهة",
     "login": "تسجيل الدخول",
     "password": "كلمة المرور",
     "noaccount": "ليس لديك حساب؟",
@@ -99,7 +100,8 @@
     "reservation": "نظام حجز وتأجير",
     "userType": "نوع المستفيد",
     "individual": "أفراد",
-    "organization": "مؤسسات"
+    "organization": "مؤسسات",
+    "government": "جهات حكومية"
   },
   "profile": {
     "personal": "الملف الشخصي",

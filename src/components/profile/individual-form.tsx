@@ -5,20 +5,9 @@ import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { User } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { Checkbox } from "../ui/checkbox";
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Textarea } from "../ui/textarea";
 import { useNavigate } from "react-router-dom";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-
-type Option = { value: string; label: string };
 
 export default function IndividualForm({
   className,
@@ -28,30 +17,32 @@ export default function IndividualForm({
   const navigate = useNavigate();
 
   const [edit, setEdit] = useState(false);
-  const [membershipCheck, setMembershipCheck] = useState(false);
-  const [employeeCheck, setEmployeeCheck] = useState(false);
-  const [discountCheck, setDiscountCheck] = useState(false);
-  const [employeeType, setEmployeeType] = useState("");
-  const [employeeNumber, setEmployeeNumber] = useState("");
-  const [IdFile, setIdFile] = useState<File | null>(null);
-  const [employeeIdFile, setEmployeeIdFile] = useState<File | null>(null);
-  const [discountFile, setDiscountFile] = useState<File | null>(null);
   const [email, setEmail] = useState("");
   const [Phone, setPhone] = useState("");
 
-  const employeeTypeOptions: Option[] = useMemo(
-    () => [
-      {
-        value: "worker",
-        label: t("profile.individual.worker"),
+  const token = localStorage.getItem("authToken");
+  useEffect(() => {
+    fetch("http://10.0.82.105:1125/api/Login/profile", {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
-      {
-        value: "retired",
-        label: t("profile.individual.retired"),
-      },
-    ],
-    [t],
-  );
+    })
+      .then((res) => {
+        if (!res.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return res.json();
+      })
+      .then((json) => {
+        console.log(json);
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleEdit = () => {
     setEdit(true);
@@ -252,230 +243,6 @@ export default function IndividualForm({
                     required
                   />
                 </Field>
-              </FieldGroup>
-
-              {/* membership check */}
-              <FieldGroup>
-                <Field orientation="horizontal">
-                  <Checkbox
-                    id="member-checkbox"
-                    name="member"
-                    checked={membershipCheck}
-                    onCheckedChange={(value) =>
-                      setMembershipCheck(value as boolean)
-                    }
-                    className="dark:bg-slate-700"
-                    disabled={!edit}
-                  />
-                  <FieldLabel htmlFor="member-checkbox">
-                    {t("profile.individual.membership")}
-                  </FieldLabel>
-                </Field>
-
-                {/* membership number */}
-                {membershipCheck && (
-                  <Field>
-                    <FieldLabel htmlFor="membership-number">
-                      {t("profile.individual.membershipNumber")}
-                    </FieldLabel>
-                    <Input
-                      id="embership-number"
-                      type="number"
-                      required
-                      className={edit ? "dark:bg-slate-700" : ""}
-                      readOnly={!edit}
-                    />
-                  </Field>
-                )}
-              </FieldGroup>
-
-              {/* ministry employees */}
-              <FieldGroup>
-                <Field orientation="horizontal">
-                  <Checkbox
-                    id="employee-checkbox"
-                    name="employee"
-                    checked={employeeCheck}
-                    onCheckedChange={(value) =>
-                      setEmployeeCheck(value as boolean)
-                    }
-                    className="dark:bg-slate-700"
-                    disabled={!edit}
-                  />
-
-                  <FieldLabel htmlFor="employee-checkbox">
-                    {t("profile.individual.employee")}
-                  </FieldLabel>
-                </Field>
-
-                {employeeCheck && (
-                  <FieldGroup>
-                    {/* emp;oyee type */}
-                    <Field>
-                      <FieldLabel htmlFor="employee-type">
-                        {t("profile.individual.employeeType")}{" "}
-                      </FieldLabel>
-                      <Select
-                        value={employeeType}
-                        onValueChange={setEmployeeType}
-                        dir={t("dir")}
-                        disabled={!edit}
-                      >
-                        <SelectTrigger className="w-full">
-                          <SelectValue
-                            placeholder={t("reservation.placeholders.select")}
-                          />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectGroup>
-                            {employeeTypeOptions.map((option) => (
-                              <SelectItem
-                                key={option.value}
-                                value={option.value}
-                              >
-                                {option.label}
-                              </SelectItem>
-                            ))}
-                          </SelectGroup>
-                        </SelectContent>
-                      </Select>
-                    </Field>
-
-                    {/* emp;oyee number */}
-                    <Field>
-                      <FieldLabel htmlFor="employee-number">
-                        {t("profile.individual.employeeNumber")}
-                      </FieldLabel>
-                      <Input
-                        id="employee-number"
-                        type="number"
-                        value={employeeNumber}
-                        onChange={(e) => setEmployeeNumber(e.target.value)}
-                        placeholder="676322"
-                        className={edit ? "dark:bg-slate-700" : ""}
-                        readOnly={!edit}
-                        required
-                      />
-                    </Field>
-
-                    {/* ID upload */}
-                    <Field>
-                      <label className="block space-y-2">
-                        <span className="text-sm font-medium block">
-                          {t("profile.individual.id")}
-                        </span>
-
-                        <span className="flex gap-2">
-                          <Button type="button" asChild>
-                            <label>
-                              {t("profile.chooseFile")}
-                              <input
-                                type="file"
-                                className="hidden"
-                                onChange={(e) =>
-                                  setIdFile(e.target.files?.[0] ?? null)
-                                }
-                                disabled={!edit}
-                              />
-                            </label>
-                          </Button>
-
-                          {IdFile && (
-                            <p className="text-sm text-muted-foreground">
-                              {IdFile.name}
-                            </p>
-                          )}
-                        </span>
-                      </label>
-                    </Field>
-
-                    {/* Ministry ID upload */}
-                    <Field>
-                      <label className="block space-y-2">
-                        <span className="text-sm font-medium block">
-                          {t("profile.individual.ministryId")}
-                        </span>
-
-                        <span className="flex gap-2">
-                          <Button type="button" asChild>
-                            <label>
-                              {t("profile.chooseFile")}
-                              <input
-                                type="file"
-                                className="hidden"
-                                onChange={(e) =>
-                                  setEmployeeIdFile(e.target.files?.[0] ?? null)
-                                }
-                                disabled={!edit}
-                              />
-                            </label>
-                          </Button>
-
-                          {employeeIdFile && (
-                            <p className="text-sm text-muted-foreground">
-                              {employeeIdFile.name}
-                            </p>
-                          )}
-                        </span>
-                      </label>
-                    </Field>
-                  </FieldGroup>
-                )}
-              </FieldGroup>
-
-              {/* Minister's discount */}
-              <FieldGroup>
-                <Field orientation="horizontal">
-                  <Checkbox
-                    id="discount-checkbox"
-                    name="employee"
-                    checked={discountCheck}
-                    onCheckedChange={(value) =>
-                      setDiscountCheck(value as boolean)
-                    }
-                    className="dark:bg-slate-700"
-                    disabled={!edit}
-                  />
-
-                  <FieldLabel htmlFor="discount-checkbox">
-                    {t("profile.individual.discount")}
-                  </FieldLabel>
-                </Field>
-
-                {/* membership number */}
-                {discountCheck && (
-                  <FieldGroup>
-                    <Field>
-                      <label className="block space-y-2">
-                        <span className="text-sm font-medium block">
-                          {t("profile.individual.discountFile")}
-                        </span>
-
-                        <span className="flex gap-2">
-                          <Button type="button" asChild>
-                            <label>
-                              {t("profile.chooseFile")}
-                              <input
-                                type="file"
-                                className="hidden"
-                                onChange={(e) =>
-                                  setDiscountFile(e.target.files?.[0] ?? null)
-                                }
-                                disabled={!edit}
-                              />
-                            </label>
-                          </Button>
-
-                          {discountFile && (
-                            <p className="text-sm text-muted-foreground">
-                              {discountFile.name}
-                            </p>
-                          )}
-                        </span>
-                      </label>
-                    </Field>
-                  </FieldGroup>
-                )}
               </FieldGroup>
             </FieldGroup>
           </form>

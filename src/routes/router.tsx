@@ -11,10 +11,11 @@ import SportComplexPage from "@/pages/reservation/sportComplex-page";
 import YouthHousePage from "@/pages/reservation/youthHouse-page";
 import ProtectedLayout from "@/layouts/protected-layout";
 import { protectedLoader } from "./protected-route";
-import SanadSignUp from "@/components/forms/signup/SanadSignUp";
 import IndividualProfile from "@/pages/profile/individuals-profile";
 import GovernmentProfile from "@/pages/profile/government-profile";
 import BusinessProfile from "@/pages/profile/business-profile";
+import SanadSignupPage from "@/pages/auth/sanad-signup";
+import GovSignupPage from "@/pages/auth/gov-signup";
 
 const routes = createBrowserRouter([
   {
@@ -38,8 +39,13 @@ const routes = createBrowserRouter([
   },
   {
     path: "/sanad_signup",
-    element: <SanadSignUp />,
+    element: <SanadSignupPage />,
   },
+  {
+    path: "/gov_signup",
+    element: <GovSignupPage />,
+  },
+
   {
     path: "/user/services",
     element: <ServicesPage />,
