@@ -37,9 +37,6 @@ import {
 } from "@/components/ui/input-group";
 import { Clock2Icon } from "lucide-react";
 import { z } from "zod";
-import Jordanian from "../profile/jordanian";
-import NonJordanian from "../profile/non-jordanian";
-import Organization from "../profile/organization";
 
 type Option = { value: string; label: string };
 // type houseOrCampType = "" | "house" | "camp";

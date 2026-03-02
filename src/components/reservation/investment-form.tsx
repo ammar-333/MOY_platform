@@ -80,8 +80,8 @@ export default function InvestmentForm({ className }: { className?: string }) {
   }
 
   async function handleSubmit(e: React.FormEvent) {
+    debugger;
     e.preventDefault();
-    if (!validate()) return;
 
     setIsSubmitting(true);
     await new Promise((r) => setTimeout(r, 1500));
@@ -368,8 +368,8 @@ export default function InvestmentForm({ className }: { className?: string }) {
                   className="flex-1 h-11 text-base font-semibold"
                 >
                   {isSubmitting
-                    ? t("reservation.investment.actions.isSubmitting")
-                    : t("reservation.investment.actions.submit")}
+                    ? t("reservation.actions.isSubmitting")
+                    : t("reservation.actions.submit")}
                 </Button>
 
                 <Button

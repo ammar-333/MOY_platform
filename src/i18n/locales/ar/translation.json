@@ -95,6 +95,7 @@
     "delete": "حذف"
   },
   "common": {
+    "selectedFile": "الملف المختار",
     "cancel": "إلغاء"
   },
   "shared": {
@@ -102,7 +103,7 @@
     "governorate": "المحافظة",
     "district": "اللواء",
     "directorate": "المديرية",
-    "placeholder":{
+    "placeholder": {
       "beneficiaryName": "ادخل اسم المستفيد",
       "governorate": "اختر المحافظة",
       "district": "اختر اللواء",
@@ -364,9 +365,11 @@
     "title": "تم استلام طلب الحجز بنجاح!",
     "descForYouthHouse": "شكرا لاستخدامك خدمة حجز بيوت الشباب",
     "descForsportComplex": "شكرا لاستخدامك خدمة حجز المجمعات الرياضية",
+    "descForInvestment": "شكرا لاستخدامك خدمة طلب الاستثمار",
     "nextSteps": "الخطوات القادمة:",
     "step1ForYouthHouse": "سيتم مراجعة طلبك من قبل مشرفي بيت الشباب",
     "step1ForsportComplex": "سيتم مراجعة طلبك من قبل مشرفي المجمعات الرياضية",
+    "step1ForInvestment": "سيتم مراجعة طلبك من قبل فريق الاستثمار في وزارة الشباب",
     "step2": "سيتم إرسال إشعار لك عند تحديد سعر الخدمة",
     "step3": "يمكنك متابعة حالة طلبك من خلال صفحة \"طلبات الخدمات\"",
     "newReservation": "حجز جديد",

@@ -96,6 +96,7 @@
     "delete": "Delete"
   },
   "common": {
+    "selectedFile": "Selected file",
     "cancel": "Cancel"
   },
   "shared": {
