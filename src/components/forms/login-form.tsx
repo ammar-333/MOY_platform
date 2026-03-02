@@ -50,6 +50,12 @@ export function LoginForm({
   });
   const [formErrors, setFormErrors] = useState<FormErrors>({});
 
+  const [govForm, setGovForm] = useState<formType>({
+    ID: "",
+    password: "",
+  });
+  const [govFormErrors, setGovFormErrors] = useState<FormErrors>({});
+
   {
     /* Submit */
   }
@@ -69,6 +75,25 @@ export function LoginForm({
     }
 
     setFormErrors({});
+    return true;
+  }
+
+  function govValidate(): boolean {
+    const result = schema.safeParse(govForm);
+
+    if (!result.success) {
+      const fieldErrors: FormErrors = {};
+
+      result.error.issues.forEach((issue) => {
+        const field = issue.path[0] as keyof formType;
+        fieldErrors[field] = issue.message;
+      });
+
+      setGovFormErrors(fieldErrors);
+      return false;
+    }
+
+    setGovFormErrors({});
     return true;
   }
 
@@ -92,16 +117,17 @@ export function LoginForm({
 
   async function handleGovLogin(e: React.FormEvent) {
     e.preventDefault();
-    if (!validate()) return;
+    if (!govValidate()) return;
 
     const formData = new FormData();
-    formData.append("Institutions_NID", form.ID);
-    formData.append("Password", form.password);
+    formData.append("Institutions_NID", govForm.ID);
+    formData.append("Password", govForm.password);
+
     try {
       const res = await GovLogin(formData);
       if (res?.token) localStorage.setItem("authToken", res.token);
       toast.success(t("auth.loginSuccess"));
-      navigate("/user/business-profile");
+      navigate("/user/goverment-profile");
     } catch (error) {
       toast.error(t("auth.loginFailed"));
       console.log(error);
@@ -117,7 +143,13 @@ export function LoginForm({
 
   return (
     <div
-      className={cn("rounded-2xl shadow-lg overflow-hidden ", className)}
+      className={cn("rounded-2xl shadow-lg overflow-hidden", className)}
+      style={{
+        backgroundColor: "#f0f4ff",
+        backgroundImage:
+          "url('https://www.transparenttextures.com/patterns/cubes.png')",
+        backgroundRepeat: "repeat",
+      }}
       {...props}
     >
       {/* HEADER */}
@@ -243,6 +275,7 @@ export function LoginForm({
                           ID: e.target.value,
                         }))
                       }
+                      className={cn("py-5", formErrors.ID && "border-red-500")}
                       maxLength={9}
                       placeholder={t("auth.orgNationalIdPlaceholder")}
                     />
@@ -264,6 +297,10 @@ export function LoginForm({
                           password: e.target.value,
                         }))
                       }
+                      className={cn(
+                        "py-5",
+                        formErrors.password && "border-red-500",
+                      )}
                       type="password"
                       placeholder={t("auth.passwordPlaceholder")}
                     />
@@ -272,7 +309,7 @@ export function LoginForm({
 
                   {/* SUBMIT */}
                   <Field className="mt-5">
-                    <Button className="w-full py-5" type="submit">
+                    <Button className="w-full py-5.5" type="submit">
                       {t("auth.login")}
                     </Button>
 
@@ -299,17 +336,21 @@ export function LoginForm({
                     <Input
                       id="ID"
                       type="text"
-                      value={form.ID}
+                      value={govForm.ID}
                       onChange={(e) =>
-                        setForm((prev) => ({
+                        setGovForm((prev) => ({
                           ...prev,
                           ID: e.target.value,
                         }))
                       }
+                      className={cn(
+                        "py-5",
+                        govFormErrors.ID && "border-red-500",
+                      )}
                       maxLength={9}
                       placeholder={t("auth.orgNationalIdPlaceholder")}
                     />
-                    <FieldError>{formErrors.ID}</FieldError>
+                    <FieldError>{govFormErrors.ID}</FieldError>
                   </Field>
 
                   {/* PASSWORD */}
@@ -320,22 +361,26 @@ export function LoginForm({
                     </FieldLabel>
                     <Input
                       id="password"
-                      value={form.password}
+                      value={govForm.password}
                       onChange={(e) =>
-                        setForm((prev) => ({
+                        setGovForm((prev) => ({
                           ...prev,
                           password: e.target.value,
                         }))
                       }
+                      className={cn(
+                        "py-5",
+                        govFormErrors.password && "border-red-500",
+                      )}
                       type="password"
                       placeholder={t("auth.passwordPlaceholder")}
                     />
-                    <FieldError>{formErrors.password}</FieldError>
+                    <FieldError>{govFormErrors.password}</FieldError>
                   </Field>
 
                   {/* SUBMIT */}
                   <Field className="mt-5">
-                    <Button className="w-full py-5" type="submit">
+                    <Button className="w-full py-5.5" type="submit">
                       {t("auth.login")}
                     </Button>
 
