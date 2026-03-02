@@ -33,6 +33,11 @@ export default function ServiceSelector({
       desc: t("services.cards.sportsComplex.desc"),
       action: () => navigate("/user/sportComplex"),
     },
+    {
+      title: t("services.cards.investment.title"),
+      desc: t("services.cards.investment.desc"),
+      action: () => navigate("/user/investment"),
+    },
   ];
 
   const [searchParams, setSearchParams] = useSearchParams();
