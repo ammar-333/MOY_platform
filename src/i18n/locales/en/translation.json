@@ -98,6 +98,18 @@
   "common": {
     "cancel": "Cancel"
   },
+  "shared": {
+    "beneficaryName": "Beneficiary name",
+    "governorate": "Governorate",
+    "district": "District",
+    "direrctorate": "Directorate",
+    "placeholder": {
+      "beneficaryName": "Enter beneficiary name",
+      "governorate": "Select governorate",
+      "district": "Select district",
+      "direrctorate": "Select direrctorate"
+    }
+  },
   "messages": {
     "welcome": "Welcome, {{name}}!",
     "loading": "Loading...",
@@ -162,6 +174,51 @@
     },
     "sportsComplex": {
       "title": "Sports Complex Booking & Rental"
+    },
+    "investment": {
+      "title": "Investment Request Service",
+      "subtitle": "Fill the form below to submit your investment request",
+      "sections": {
+        "details": "Investment Details",
+        "documents": "Supporting Documents"
+      },
+      "fields": {
+        "investmentType": "Type of investment",
+        "investmentLocation": "Investment location",
+        "investmentDuration": "Investment duration",
+        "financialProposal": "Financial proposal",
+        "operationalPlan": "Operational plan",
+        "feasibilityStudy": "Feasibility study",
+        "presentation": "Presentation file",
+        "financialSolvency": "Financial solvency document"
+      },
+      "placeholders": {
+        "investmentLocation": "Enter investment location",
+        "investmentDuration": "Enter duration in months",
+        "financialProposal": "Enter amount in Jordanian Dinar"
+      },
+      "options": {
+        "investmentType": {
+          "fields": "Fields",
+          "halls": "Halls",
+          "kiosks": "Kiosks",
+          "billboards": "Advertising Billboards",
+          "commercialSpaces": "Commercial Spaces",
+          "hospitalitySites": "Hospitality Sites",
+          "eventHalls": "Event Halls",
+          "cafeterias": "Cafeterias",
+          "trainingFacilities": "Training Facilities"
+        }
+      },
+      "units": {
+        "month": "Month",
+        "months": "Months",
+        "jod": "JOD"
+      },
+      "actions": {
+        "submit": "Submit investment request",
+        "isSubmitting": "Submitting..."
+      }
     },
     "subtitle": "Fill the form below to complete the reservation request",
     "sections": {
@@ -305,6 +362,10 @@
       "sportsComplex": {
         "title": "Sports Complex Booking & Rental Service",
         "desc": "Book facilities at a sports complex for training, matches, or events"
+      },
+      "investment": {
+        "title": "Investment Request Service",
+        "desc": "Submit an investment request for available facilities and spaces at the Ministry of Youth"
       },
       "other": {
         "title": "Other Services",
