@@ -372,22 +372,56 @@ export default function SportComplex({
         <CardContent className="p-6">
           <form onSubmit={handleSubmit}>
             <FieldGroup>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <User className="h-5 w-5 text-primary" />
-                  <h2 className="text-lg font-semibold">
-                    {t("reservation.sections.personal")}
-                  </h2>
-                </div>
-              </div>
-              {/* user Data from API */}
-              <FieldGroup>
-                <Jordanian />
-                <NonJordanian />
-                <Organization />
-              </FieldGroup>
+              {/* ================= BENEFICIARY INFO CARD ================= */}
+              <Card className="mt-6 border-primary border">
+                <CardContent className="p-6 space-y-6">
+                  <div className="flex items-center gap-2">
+                    <User className="h-5 w-5 text-primary" />
+                    <h2 className="text-lg font-semibold">
+                      {t("reservation.sections.personal")}
+                    </h2>
+                  </div>
 
-              <hr className="border-primary" />
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <Field>
+                      <FieldLabel>{t("shared.beneficiaryName")}</FieldLabel>
+                      <Input
+                        value={""}
+                        readOnly
+                        className="bg-muted cursor-not-allowed"
+                      />
+                    </Field>
+
+                    <Field>
+                      <FieldLabel>{t("shared.governorate")}</FieldLabel>
+                      <Input
+                        value={""}
+                        readOnly
+                        className="bg-muted cursor-not-allowed"
+                      />
+                    </Field>
+
+                    <Field>
+                      <FieldLabel>{t("shared.district")}</FieldLabel>
+                      <Input
+                        value={""}
+                        readOnly
+                        className="bg-muted cursor-not-allowed"
+                      />
+                    </Field>
+
+                    <Field>
+                      <FieldLabel>{t("shared.directorate")}</FieldLabel>
+                      <Input
+                        value={""}
+                        readOnly
+                        className="bg-muted cursor-not-allowed"
+                      />
+                    </Field>
+                  </div>
+                </CardContent>
+              </Card>
+
 
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
