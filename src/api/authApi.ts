@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import axios from "axios";
 import type { AuthResponse } from "../Types/signup_types";
 
@@ -47,13 +48,25 @@ export async function login(data: FormData): Promise<AuthResponse> {
   }
 }
 
-// export async function login(data: LoginData): Promise<AuthResponse> {
-//   const res = await axios.post(``, body, {
-//     headers: {
-//       Authorization: `Bearer ${token}`,
-//       "Content-Type": "application/json",
-//     },
-//   });
+export async function GovLogin(data: FormData): Promise<AuthResponse> {
+  try {
+    const res = await axios.post(
+      "http://10.0.82.105:1125/api/Login/login",
+      data,
+      {
+        headers: {
+          "X-API-KEY": "k9F8v2xY!tG7#QpR6sL4mB0wZ1uX3eJd",
+        },
+      },
+    );
 
-//   return res.json();
-// }
+    console.log("Login successful:", res.data);
+    return res.data;
+  } catch (error) {
+    if (axios.isAxiosError(error)) {
+      throw error.response?.data || error.message;
+    }
+
+    throw "Unexpected error";
+  }
+}

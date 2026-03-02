@@ -62,7 +62,14 @@
     "loginFailed": "Login failed",
     "registrationSuccess": "Registration successful",
     "registrationFailed": "Registration failed",
-    "writtenDelegateDelay": "your request submission is successful, but it may take up some time for the written delegate role to be approved. You will receive a notification once your role is updated."
+    "writtenDelegateDelay": "your request submission is successful, but it may take up some time for the written delegate role to be approved. You will receive a notification once your role is updated.",
+    "orgSignup": "delegate signup",
+    "OrgsignupSanad": "Create and register your organization through",
+    "sanad": "Sanad",
+    "orgSignupDesc": "to create and register a new organization. Log in through the delegate single sign-on to start the organization creation procedures.",
+    "individualsSanad": "Individuals login through ",
+    "individualsSanadDesc": "You can log in using your Sanad account to access your e-services easily and securely.",
+    "free_zones_establishments": "Establishments affiliated with free and developmental zones"
   },
   "errors": {
     "required": "This field is required",
@@ -98,7 +105,7 @@
   },
   "form": {
     "gate": "Ministry of Youth portal",
-    "reservation": "booking and rental system",
+    "reservation": "E-Services Reservation System",
     "userType": "Beneficiary type",
     "individual": "Individuals",
     "organization": "Organizations",

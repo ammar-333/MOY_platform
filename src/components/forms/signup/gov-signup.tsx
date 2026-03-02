@@ -22,7 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { z } from "zod";
-import { register } from "@/api/api";
+import { register } from "@/api/authApi";
 import { toast } from "react-hot-toast";
 
 // Types

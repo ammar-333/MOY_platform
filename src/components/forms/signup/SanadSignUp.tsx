@@ -5,6 +5,8 @@ import { useTranslation } from "react-i18next";
 import { Card, CardContent } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { LogIn } from "lucide-react";
+import { Field, FieldDescription } from "@/components/ui/field";
+import { Link } from "react-router-dom";
 
 export default function SandSignupForm({
   className,
@@ -33,10 +35,22 @@ export default function SandSignupForm({
           <h1 className="text-xl font-bold">{t("form.gate")}</h1>
           <p className="mt-1 text-sm opacity-90">{t("form.reservation")}</p>
         </div>
+
         {/* FORM */}
-        <Card className="rounded-none shadow-none dark:bg-slate-900">
+        <Card className="rounded-none shadow-none dark:bg-slate-900 min-h-125">
           <CardContent className="p-6">
-            <div>
+            <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-3">
+              {t("auth.OrgsignupSanad")}{" "}
+              <span className="text-emerald-600">{t("auth.sanad")}</span>
+            </h1>
+
+            <p className="text-gray-500 text-sm mb-8 leading-relaxed">
+              {t("auth.orgSignupDesc")}{" "}
+            </p>
+
+            <hr className="border-muted" />
+
+            <div className="mt-5">
               <div className="flex flex-col items-center justify-center rounded-2xl">
                 <img
                   className="text-center w-4/5 dark:hidden"
@@ -49,20 +63,29 @@ export default function SandSignupForm({
                   alt="sanad-logo"
                 />
               </div>
-              <button
-                className="flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 dark:bg-primary dark:hover:bg-blue-800  text-white py-3 px-6 rounded-lg transition-colors w-full mt-6"
-                type="button"
-                onClick={handleSanad}
-              >
-                <span className="w-14 h-6 rounded-full flex items-center justify-center text-white text-xs">
-                  <img
-                    className="text-center"
-                    src={sanadLogo}
-                    alt="sanad-logo"
-                  />
-                </span>
-                <span>{t("auth.sanadSignOn")}</span>
-              </button>
+
+              <Field className="md:col-span-2">
+                <button
+                  className="flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 dark:bg-primary dark:hover:bg-blue-800  text-white py-3 px-6 rounded-lg transition-colors w-full mt-6"
+                  type="button"
+                  onClick={handleSanad}
+                >
+                  <span className="w-14 h-6 rounded-full flex items-center justify-center text-white text-xs">
+                    <img
+                      className="text-center"
+                      src={sanadLogo}
+                      alt="sanad-logo"
+                    />
+                  </span>
+                  <span>{t("auth.sanadSignOn")}</span>
+                </button>
+                <FieldDescription className="text-center mt-3">
+                  {t("auth.account")}{" "}
+                  <Link to="/login" className="text-primary hover:underline">
+                    {t("auth.login")}
+                  </Link>
+                </FieldDescription>
+              </Field>
             </div>
           </CardContent>
         </Card>

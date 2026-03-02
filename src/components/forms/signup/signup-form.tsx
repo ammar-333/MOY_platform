@@ -22,7 +22,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { z } from "zod";
-import { register } from "@/api/api";
+import { register } from "@/api/authApi";
 import { toast } from "react-hot-toast";
 
 // Types
@@ -641,7 +641,7 @@ export default function SignupForm({
                           value={form.delegatePhone}
                           readOnly
                           maxLength={9}
-                          className="bg-gray-100 text-gray-600 cursor-not-allowed focus-visible:ring-0"
+                          className="bg-muted border-dashed text-muted-foreground cursor-default focus-visible:ring-0"
                         />
                       </div>
                       <FieldError>{formErrors.delegatePhone}</FieldError>

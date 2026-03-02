@@ -7,8 +7,13 @@ import { User } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { Textarea } from "../ui/textarea";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
+type sanadDataType = {
+  mail: string;
+  mobile: string;
+  nationalId: string;
+};
 export default function IndividualForm({
   className,
   ...props
@@ -17,10 +22,23 @@ export default function IndividualForm({
   const navigate = useNavigate();
 
   const [edit, setEdit] = useState(false);
-  const [email, setEmail] = useState("");
-  const [Phone, setPhone] = useState("");
+  const [data, setData] = useState<sanadDataType>();
 
-  const token = localStorage.getItem("authToken");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const token = searchParams.get("token");
+  function clearQuery() {
+    setSearchParams({}, { replace: true });
+  }
+  useEffect(() => {
+    if (token) {
+      // Store the token in localStorage or a cookie
+      localStorage.setItem("authToken", token);
+      // Clear the query parameters from the URL
+      clearQuery();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     fetch("http://10.0.82.105:1125/api/Login/profile", {
       method: "GET",
@@ -36,6 +54,7 @@ export default function IndividualForm({
         return res.json();
       })
       .then((json) => {
+        setData(json.data);
         console.log(json);
       })
       .catch((err) => {
@@ -98,7 +117,36 @@ export default function IndividualForm({
                   </FieldLabel>
                   <Input
                     id="id"
-                    value="123"
+                    value={data?.nationalId || "not found"}
+                    readOnly
+                    className="bg-muted cursor-not-allowed"
+                  />
+                </Field>
+              </FieldGroup>
+
+              {/* email and pass */}
+              <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* email */}
+                <Field>
+                  <FieldLabel htmlFor="email">
+                    {t("profile.individual.email")}
+                  </FieldLabel>
+                  <Input
+                    id="email"
+                    value={data?.mail || "not found"}
+                    readOnly
+                    className="bg-muted cursor-not-allowed"
+                  />
+                </Field>
+
+                {/* phone number */}
+                <Field>
+                  <FieldLabel htmlFor="phone">
+                    {t("profile.individual.phone")}
+                  </FieldLabel>
+                  <Input
+                    id="phone"
+                    value={data?.mobile || "not found"}
                     readOnly
                     className="bg-muted cursor-not-allowed"
                   />
@@ -204,43 +252,6 @@ export default function IndividualForm({
                     value=". . ."
                     readOnly
                     className="bg-muted cursor-not-allowed"
-                  />
-                </Field>
-              </FieldGroup>
-
-              <hr className="border-border" />
-
-              {/* email and pass */}
-              <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* email */}
-                <Field>
-                  <FieldLabel htmlFor="email">
-                    {t("profile.individual.email")}
-                  </FieldLabel>
-                  <Input
-                    id="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder={t("auth.emailPlaceholder")}
-                    disabled={!edit}
-                    required
-                  />
-                </Field>
-
-                {/* phone number */}
-                <Field>
-                  <FieldLabel htmlFor="phone">
-                    {t("profile.individual.phone")}
-                  </FieldLabel>
-                  <Input
-                    id="phone"
-                    type="tel"
-                    value={Phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    placeholder={t("auth.phoneNumberPlaceholder")}
-                    disabled={!edit}
-                    required
                   />
                 </Field>
               </FieldGroup>

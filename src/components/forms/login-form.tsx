@@ -16,7 +16,7 @@ import { Link, useNavigate } from "react-router-dom";
 import sanad from "@/assets/sanad.png";
 import sanadLogo from "@/assets/sanad-logo.png";
 import { z } from "zod";
-import { login } from "@/api/api";
+import { GovLogin, login } from "@/api/authApi";
 import toast from "react-hot-toast";
 
 type UserType = "individual" | "organization" | "government";
@@ -90,6 +90,24 @@ export function LoginForm({
     }
   }
 
+  async function handleGovLogin(e: React.FormEvent) {
+    e.preventDefault();
+    if (!validate()) return;
+
+    const formData = new FormData();
+    formData.append("Institutions_NID", form.ID);
+    formData.append("Password", form.password);
+    try {
+      const res = await GovLogin(formData);
+      if (res?.token) localStorage.setItem("authToken", res.token);
+      toast.success(t("auth.loginSuccess"));
+      navigate("/user/business-profile");
+    } catch (error) {
+      toast.error(t("auth.loginFailed"));
+      console.log(error);
+    }
+  }
+
   function handleSanad(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
     window.location.assign(
@@ -99,7 +117,7 @@ export function LoginForm({
 
   return (
     <div
-      className={cn("rounded-2xl shadow-lg overflow-hidden", className)}
+      className={cn("rounded-2xl shadow-lg overflow-hidden ", className)}
       {...props}
     >
       {/* HEADER */}
@@ -113,9 +131,11 @@ export function LoginForm({
       </div>
 
       {/* FORM */}
-      <Card className="rounded-none shadow-none dark:bg-slate-900">
+      <Card className="rounded-none shadow-none dark:bg-slate-900 min-h-125">
         <CardContent className="p-6">
-          <form onSubmit={handleLogin}>
+          <form
+            onSubmit={userType === "government" ? handleGovLogin : handleLogin}
+          >
             <FieldGroup>
               {/* USER TYPE TOGGLE */}
               <Field>
@@ -165,6 +185,17 @@ export function LoginForm({
               {/* CONDITIONAL FIELDS */}
               {userType === "individual" && (
                 <div>
+                  <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-3">
+                    {t("auth.individualsSanad")}{" "}
+                    <span className="text-emerald-600">{t("auth.sanad")}</span>
+                  </h1>
+
+                  <p className="text-gray-500 text-sm mb-8 leading-relaxed">
+                    {t("auth.individualsSanadDesc")}{" "}
+                  </p>
+
+                  <hr className="border-muted" />
+
                   <div className="flex flex-col items-center justify-center rounded-2xl">
                     <img
                       className="text-center w-4/5 dark:hidden"
@@ -178,7 +209,7 @@ export function LoginForm({
                     />
                   </div>
                   <button
-                    className="flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 dark:bg-primary dark:hover:bg-blue-800  text-white py-3 px-6 rounded-lg transition-colors w-full mt-6"
+                    className="flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 dark:bg-primary dark:hover:bg-blue-800  text-white py-3 px-6 rounded-lg transition-colors w-full mt-8"
                     type="button"
                     onClick={handleSanad}
                   >
@@ -240,8 +271,8 @@ export function LoginForm({
                   </Field>
 
                   {/* SUBMIT */}
-                  <Field>
-                    <Button className="w-full" type="submit">
+                  <Field className="mt-5">
+                    <Button className="w-full py-5" type="submit">
                       {t("auth.login")}
                     </Button>
 
@@ -303,8 +334,8 @@ export function LoginForm({
                   </Field>
 
                   {/* SUBMIT */}
-                  <Field>
-                    <Button className="w-full" type="submit">
+                  <Field className="mt-5">
+                    <Button className="w-full py-5" type="submit">
                       {t("auth.login")}
                     </Button>
 
