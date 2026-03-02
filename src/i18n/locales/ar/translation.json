@@ -95,7 +95,20 @@
     "delete": "حذف"
   },
   "common": {
+    "selectedFile": "الملف المختار",
     "cancel": "إلغاء"
+  },
+  "shared": {
+    "beneficiaryName": "اسم المستفيد",
+    "governorate": "المحافظة",
+    "district": "اللواء",
+    "directorate": "المديرية",
+    "placeholder": {
+      "beneficiaryName": "ادخل اسم المستفيد",
+      "governorate": "اختر المحافظة",
+      "district": "اختر اللواء",
+      "directorate": "اختر المديرية"
+    }
   },
   "messages": {
     "welcome": "مرحباً، {{name}}!",
@@ -160,6 +173,50 @@
     },
     "sportsComplex": {
       "title": "حجز وتأجير المجمعات الرياضية"
+    },
+    "investment": {
+      "title": "خدمة طلب استثمار",
+      "subtitle": "يرجى تعبئة النموذج أدناه لتقديم طلب الاستثمار",
+      "sections": {
+        "details": "بيانات الاستثمار",
+        "documents": "الوثائق الداعمة"
+      },
+      "fields": {
+        "investmentType": "نوع الاستثمار",
+        "investmentLocation": "مكان الاستثمار",
+        "investmentDuration": "مدة الاستثمار (بالأشهر)",
+        "financialProposal": "المقترح المالي",
+        "operationalPlan": "الخطة التشغيلية",
+        "feasibilityStudy": "دراسة الجدوى",
+        "presentation": "العرض التقديمي",
+        "financialSolvency": "وثيقة الملاءة المالية"
+      },
+      "placeholders": {
+        "investmentLocation": "أدخل مكان الاستثمار",
+        "investmentDuration": "أدخل مدة الاستثمار بالأشهر",
+        "financialProposal": "أدخل المبلغ بالدينار الأردني"
+      },
+      "options": {
+        "investmentType": {
+          "fields": "الملاعب",
+          "halls": "القاعات",
+          "kiosks": "الأكشاك",
+          "billboards": "اللوحات الإعلانية",
+          "commercialSpaces": "المساحات التجارية",
+          "hospitalitySites": "مواقع الضيافة",
+          "eventHalls": "صالات المناسبات",
+          "cafeterias": "الكافتيريات",
+          "trainingFacilities": "مرافق التدريب"
+        }
+      },
+      "units": {
+        "months": "شهر",
+        "jod": "د.أ"
+      },
+      "actions": {
+        "submit": "تقديم طلب الاستثمار",
+        "isSubmitting": "جاري الإرسال..."
+      }
     },
     "subtitle": "املأ النموذج التالي لإتمام عملية الحجز",
     "sections": {
@@ -294,6 +351,10 @@
         "title": "خدمة حجز وتأجير المجمعات الرياضية",
         "desc": "احجز مرافق في مجمع الرياضة لتدريبات أو مباريات أو فعاليات"
       },
+      "investment": {
+        "title": "خدمة طلب الاستثمار",
+        "desc": "قدم طلب استثمار للمرافق والمساحات المتاحة في وزارة الشباب"
+      },
       "other": {
         "title": "خدمات أخرى",
         "desc": "المزيد من الخدمات قريباً"
@@ -304,9 +365,11 @@
     "title": "تم استلام طلب الحجز بنجاح!",
     "descForYouthHouse": "شكرا لاستخدامك خدمة حجز بيوت الشباب",
     "descForsportComplex": "شكرا لاستخدامك خدمة حجز المجمعات الرياضية",
+    "descForInvestment": "شكرا لاستخدامك خدمة طلب الاستثمار",
     "nextSteps": "الخطوات القادمة:",
     "step1ForYouthHouse": "سيتم مراجعة طلبك من قبل مشرفي بيت الشباب",
     "step1ForsportComplex": "سيتم مراجعة طلبك من قبل مشرفي المجمعات الرياضية",
+    "step1ForInvestment": "سيتم مراجعة طلبك من قبل فريق الاستثمار في وزارة الشباب",
     "step2": "سيتم إرسال إشعار لك عند تحديد سعر الخدمة",
     "step3": "يمكنك متابعة حالة طلبك من خلال صفحة \"طلبات الخدمات\"",
     "newReservation": "حجز جديد",
