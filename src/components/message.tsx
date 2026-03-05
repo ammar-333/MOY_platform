@@ -13,6 +13,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 type ConfirmState = {
   descKey?: string;
   step1Key?: string;
+  title?: string;
 };
 
 export default function Message({
@@ -26,6 +27,7 @@ export default function Message({
   const state = (location.state as ConfirmState) || {};
   const descKey = state.descKey ?? "confirmationMassage.descForYouthHouse";
   const step1Key = state.step1Key ?? "confirmationMassage.step1ForYouthHouse";
+  const titleKey = state.title ?? "confirmationMassage.titleForInvestment";
 
   return (
     <div
@@ -39,9 +41,7 @@ export default function Message({
             <CalendarDays className="h-10 w-10" />
           </div>
 
-          <h1 className="text-2xl font-bold">
-            {t("confirmationMassage.title")}
-          </h1>
+          <h1 className="text-2xl font-bold">{t(titleKey)}</h1>
 
           <p className="text-sm opacity-90">{t(descKey)}</p>
         </CardHeader>
@@ -54,7 +54,11 @@ export default function Message({
 
             <ul className="list-disc space-y-1 px-5 text-sm">
               <li>{t(step1Key)}</li>
-              <li>{t("confirmationMassage.step2")}</li>
+              {titleKey != "confirmationMassage.titleForInvestment" ? (
+                <li>{t("confirmationMassage.step2")}</li>
+              ) : (
+                ""
+              )}
               <li>{t("confirmationMassage.step3")}</li>
             </ul>
           </div>

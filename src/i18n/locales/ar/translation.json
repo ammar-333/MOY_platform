@@ -184,6 +184,7 @@
       "title": "حجز وتأجير المجمعات الرياضية"
     },
     "investment": {
+      "selected": "مختار",
       "title": "خدمة طلب استثمار",
       "subtitle": "يرجى تعبئة النموذج أدناه لتقديم طلب الاستثمار",
       "sections": {
@@ -372,6 +373,7 @@
   },
   "confirmationMassage": {
     "title": "تم استلام طلب الحجز بنجاح!",
+    "titleForInvestment": "تم استلام طلب الاستثمار بنجاح!",
     "descForYouthHouse": "شكرا لاستخدامك خدمة حجز بيوت الشباب",
     "descForsportComplex": "شكرا لاستخدامك خدمة حجز المجمعات الرياضية",
     "descForInvestment": "شكرا لاستخدامك خدمة طلب الاستثمار",
@@ -497,7 +499,7 @@
       {
         "id": "INV-3003",
         "investmentType": "اللوحات الإعلانية",
-        "location": " لعقبة",
+        "location": "العقبة",
         "durationMonths": 36,
         "proposedBudget": 30000,
         "status": "rejected"
