@@ -10,7 +10,7 @@ export default function Navbar() {
   const { t } = useTranslation();
 
   function handleLoginBtn() {
-    navigate("/login");
+    navigate("/auth/login");
   }
 
   return (

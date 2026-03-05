@@ -17,6 +17,7 @@ import BusinessProfile from "@/pages/profile/business-profile";
 import SanadSignupPage from "@/pages/auth/sanad-signup";
 import GovSignupPage from "@/pages/auth/gov-signup";
 import InvestmentPage from "@/pages/reservation/Investment-page";
+import AuthLayout from "@/layouts/auth-layout";
 
 const routes = createBrowserRouter([
   {
@@ -31,21 +32,28 @@ const routes = createBrowserRouter([
   },
 
   {
-    path: "/login",
-    element: <LoginPage />,
+    path: "/auth",
+    element: <AuthLayout />,
+    children: [
+      {
+        path: "login",
+        element: <LoginPage />,
+      },
+      {
+        path: "signup",
+        element: <SignupPage />,
+      },
+      {
+        path: "sanad_signup",
+        element: <SanadSignupPage />,
+      },
+      {
+        path: "gov_signup",
+        element: <GovSignupPage />,
+      },
+    ],
   },
-  {
-    path: "/signup",
-    element: <SignupPage />,
-  },
-  {
-    path: "/sanad_signup",
-    element: <SanadSignupPage />,
-  },
-  {
-    path: "/gov_signup",
-    element: <GovSignupPage />,
-  },
+
   {
     path: "/user/individual-profile",
     element: <IndividualProfile />,

@@ -3,13 +3,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Field,
+  FieldContent,
   FieldDescription,
   FieldError,
   FieldGroup,
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { LogIn } from "lucide-react";
+import { CalendarIcon, LogIn } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
@@ -24,16 +25,23 @@ import {
 import { z } from "zod";
 import { register } from "@/api/authApi";
 import { toast } from "react-hot-toast";
+import { Calendar } from "@/components/ui/calendar";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Checkbox } from "@/components/ui/checkbox";
 
 // Types
 type companySectorType =
-  | "charity"
+  | "association"
   | "cooperative"
   | "sole_establishment"
   | "company"
   | "free_zone";
 type delegateRoleType = "owner" | "authorizedOnRegistry" | "written";
-type delegateNationalityType = "jordanian" | "nonJordanian";
+// type delegateNationalityType = "jordanian" | "nonJordanian";
 type Option<T extends string> = { value: T; label: string };
 
 // Schema
@@ -41,42 +49,51 @@ type Option<T extends string> = { value: T; label: string };
 const formSchema = (t: any) =>
   z
     .object({
-      delegateName: z.string().min(1, t("errors.required")),
-      delegatePhone: z
-        .string()
-        .length(9, t("errors.length", { len: 9 }))
-        .regex(/^\d*$/, t("errors.digitsOnly"))
-        .regex(/^7/, t("errors.jordanNumber")),
-      delegateEmail: z.string().email(t("errors.invalidEmail")),
-      delegateNationality: z.enum(["jordanian", "nonJordanian"]),
-      delegateRole: z
-        .enum(["owner", "authorizedOnRegistry", "written"])
-        .optional(),
-      delegateNationalId: z
-        .string()
-        .length(10, t("errors.length", { len: 10 }))
-        .regex(/^\d*$/, t("errors.digitsOnly")),
+      delegateRole: z.enum(["owner", "authorizedOnRegistry", "written"]),
+
+      // delegateName: z.string().min(1, t("errors.required")),
+      // delegatePhone: z
+      //   .string()
+      //   .length(9, t("errors.length", { len: 9 }))
+      //   .regex(/^\d*$/, t("errors.digitsOnly"))
+      //   .regex(/^7/, t("errors.jordanNumber")),
+      // delegateEmail: z.string().email(t("errors.invalidEmail")),
+      // delegateNationality: z.enum(["jordanian", "nonJordanian"]),
+
+      // delegateNationalId: z
+      //   .string()
+      //   .length(10, t("errors.length", { len: 10 }))
+      //   .regex(/^\d*$/, t("errors.digitsOnly")),
+      // delegateDateOfBirth: z.string().optional(),
+
+      delegateName: z.string().optional(),
+      delegatePhone: z.string().optional(),
+      delegateEmail: z.string().optional(),
+      delegateNationality: z.string().optional(),
+      delegateNationalId: z.string().optional(),
+      delegateDateOfBirth: z.string().optional(),
+
       companySector: z
         .enum([
-          "charity",
+          "association",
           "cooperative",
           "sole_establishment",
           "company",
           "free_zone",
         ])
         .optional(),
-      orgNationalName: z.string().min(1, t("errors.required")),
+      orgNationalName: z.string().optional(),
       orgNationalId: z
         .string()
         .length(9, t("errors.length", { len: 9 }))
         .regex(/^\d*$/, t("errors.digitsOnly")),
       orgEmail: z.string().email(t("errors.invalidEmail")),
+      orgDate: z.date().optional(),
       orgPhone: z
         .string()
         .length(9, t("errors.length", { len: 9 }))
         .regex(/^\d*$/, t("errors.digitsOnly"))
         .regex(/^7/, t("errors.jordanNumber")),
-      orgAddress: z.string().min(1, t("errors.required")),
       password: z
         .string()
         .min(6, t("errors.min", { len: 6 }))
@@ -84,6 +101,7 @@ const formSchema = (t: any) =>
           /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).+$/,
           t("errors.passwordStrength"),
         ),
+
       file: z
         .instanceof(File)
         .refine(
@@ -112,6 +130,14 @@ const formSchema = (t: any) =>
           message: t("errors.required"),
         });
       }
+
+      if (!data.orgDate) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["orgDate"],
+          message: t("errors.date"),
+        });
+      }
     });
 
 export default function SignupForm({
@@ -123,6 +149,10 @@ export default function SignupForm({
   const schema = formSchema(t);
   type formType = z.infer<typeof schema>;
   type FormErrors = Partial<Record<keyof formType, string>>;
+
+  const [open, setOpen] = useState(false);
+  const [isChecked, setIsChecked] = useState(false);
+  const [showError, setShowError] = useState(false);
 
   const [searchParams, setSearchParams] = useSearchParams();
   const queryToken = searchParams.get("token");
@@ -142,6 +172,8 @@ export default function SignupForm({
       clearQuery();
     }
     setTokenReady(true);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [queryToken]);
 
   // Form state
@@ -149,15 +181,17 @@ export default function SignupForm({
     delegateName: "",
     delegatePhone: "",
     delegateEmail: "",
-    delegateNationality: "jordanian",
-    delegateRole: "written",
+    delegateNationality: "",
+    delegateRole: "owner",
     delegateNationalId: "",
+    delegateDateOfBirth: undefined,
+
     companySector: undefined,
     orgNationalName: "",
     orgNationalId: "",
+    orgDate: undefined,
     orgEmail: "",
     orgPhone: "",
-    orgAddress: "",
     password: "",
     file: undefined,
   });
@@ -179,7 +213,7 @@ export default function SignupForm({
   // Redirect if token ready but missing
   useEffect(() => {
     if (tokenReady && !localToken) {
-      navigate("/sanad_signup", { replace: true });
+      navigate("/auth/sanad_signup", { replace: true });
     }
   }, [tokenReady, localToken, navigate]);
 
@@ -202,7 +236,7 @@ export default function SignupForm({
         setProfile(json);
         console.log(json);
       })
-      .catch(() => navigate("/sanad_signup", { replace: true }));
+      .catch(() => navigate("/auth/sanad_signup", { replace: true }));
   }, [localToken, navigate]);
 
   // Populate form from profile
@@ -226,9 +260,9 @@ export default function SignupForm({
   const sectorOptions: Option<companySectorType>[] = useMemo(
     () => [
       { value: "company", label: t("auth.company") },
+      { value: "association", label: t("auth.association") },
       { value: "sole_establishment", label: t("auth.sole_establishment") },
       { value: "cooperative", label: t("auth.cooperative") },
-      { value: "charity", label: t("auth.charity") },
       { value: "free_zone", label: t("auth.free_zones_establishments") },
     ],
     [t],
@@ -241,17 +275,17 @@ export default function SignupForm({
     ],
     [t],
   );
-  const charityRoleOptions: Option<delegateRoleType>[] = useMemo(
+  const associationRoleOptions: Option<delegateRoleType>[] = useMemo(
     () => [{ value: "written", label: t("auth.writtenDelegate") }],
     [t],
   );
-  const nationalityOptions: Option<delegateNationalityType>[] = useMemo(
-    () => [
-      { value: "jordanian", label: t("auth.jordanian") },
-      { value: "nonJordanian", label: t("auth.nonJordanian") },
-    ],
-    [t],
-  );
+  // const nationalityOptions: Option<delegateNationalityType>[] = useMemo(
+  //   () => [
+  //     { value: "jordanian", label: t("auth.jordanian") },
+  //     { value: "nonJordanian", label: t("auth.nonJordanian") },
+  //   ],
+  //   [t],
+  // );
 
   const formatPhone = (num: string | undefined) => `+962${num}`;
 
@@ -275,23 +309,31 @@ export default function SignupForm({
 
     if (!validate()) return;
 
+    if (!isChecked) {
+      setShowError(true);
+      return;
+    }
+
     setIsSubmitting(true);
 
     try {
       const formData = new FormData();
 
-      formData.append("commissioner_Name", form.delegateName);
-      formData.append("commissioner_NID", form.delegateNationalId);
+      formData.append("commissioner_Name", form.delegateName ?? "");
+      formData.append("commissioner_NID", form.delegateNationalId ?? "");
       formData.append("commissioner_PhonNum", formatPhone(form.delegatePhone));
-      formData.append("commissioner_Mail", form.delegateEmail);
-      formData.append("commissioner_nationality", form.delegateNationality);
-      formData.append("institutions_Name", form.orgNationalName);
-      formData.append("institutions_Type", form.companySector ?? "");
+      formData.append("commissioner_Mail", form.delegateEmail ?? "");
+      formData.append(
+        "commissioner_nationality",
+        form.delegateNationality ?? "jordanian",
+      );
+      formData.append("institutions_Name", form.orgNationalName ?? "");
+      formData.append("applicant", form.delegateRole);
+
+      formData.append("institutions_Type", form.companySector ?? "company");
       formData.append("institutions_NID", form.orgNationalId);
-      formData.append("institutions_Address", form.orgAddress);
       formData.append("institutions_PhonNum", formatPhone(form.orgPhone));
       formData.append("institutions_Email", form.orgEmail);
-      formData.append("applicant", form.delegateRole ?? "written");
       formData.append("password", form.password);
       if (form.file) {
         formData.append("delegation", form.file);
@@ -301,7 +343,7 @@ export default function SignupForm({
       await register(formData);
 
       toast.success(t("auth.registerSuccess"));
-      navigate("/login");
+      navigate("/auth/login");
     } catch (error) {
       toast.error(t("auth.registerFailed"));
       console.log("error" + error);
@@ -310,8 +352,13 @@ export default function SignupForm({
     }
   }
   const showWrittenAttachment = form.delegateRole === "written";
-  const showCharityRole =
-    form.companySector === "charity" || form.companySector === "cooperative";
+  const showAssociationRole =
+    form.companySector === "association" ||
+    form.companySector === "cooperative";
+
+  useEffect(() => {
+    console.log(form.orgDate);
+  }, [form.orgDate]);
 
   return (
     <div
@@ -339,22 +386,22 @@ export default function SignupForm({
           <CardContent className="p-6 md:p-8">
             <form onSubmit={handleSubmit}>
               <FieldGroup>
-                {/* Company Sector */}
+                {/* Delegate Role */}
                 <Field>
                   <FieldLabel>
-                    {t("auth.companySector")}{" "}
+                    {t("auth.delegateRole")}{" "}
                     <span className="text-red-500">*</span>
                   </FieldLabel>
                   <Select
-                    value={form.companySector}
+                    value={form.delegateRole}
                     onValueChange={(value) =>
                       setForm((prev) => ({
                         ...prev,
-                        companySector: value as companySectorType,
-                        delegateRole: "written",
+                        delegateRole: value as formType["delegateRole"],
                       }))
                     }
                     dir={t("dir")}
+                    required
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue
@@ -363,195 +410,106 @@ export default function SignupForm({
                     </SelectTrigger>
                     <SelectContent>
                       <SelectGroup>
-                        {sectorOptions.map((o) => (
-                          <SelectItem key={o.value} value={o.value}>
-                            {o.label}
-                          </SelectItem>
-                        ))}
+                        {showAssociationRole
+                          ? associationRoleOptions.map((o) => (
+                              <SelectItem key={o.value} value={o.value}>
+                                {o.label}
+                              </SelectItem>
+                            ))
+                          : roleOptions.map((o) => (
+                              <SelectItem key={o.value} value={o.value}>
+                                {o.label}
+                              </SelectItem>
+                            ))}
                       </SelectGroup>
                     </SelectContent>
                   </Select>
-                  <FieldError>{formErrors.companySector}</FieldError>
                 </Field>
 
                 <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  {/* Organization Name */}
+                  {/* Name */}
                   <Field>
-                    <FieldLabel htmlFor="orgNationalName">
-                      {t("auth.organizationName")}
+                    <FieldLabel htmlFor="delegateName">
+                      {t("auth.delegateName")}{" "}
                       <span className="text-red-500">*</span>
                     </FieldLabel>
                     <Input
-                      id="orgNationalName"
-                      type="string"
-                      value={form.orgNationalName}
-                      onChange={(e) =>
-                        setForm((prev) => ({
-                          ...prev,
-                          orgNationalName: e.target.value,
-                        }))
-                      }
+                      id="delegateName"
+                      type="text"
+                      value={form.delegateName}
+                      readOnly
+                      className="bg-muted dark:bg-muted border-dashed text-muted-foreground cursor-default focus-visible:ring-0"
                     />
-                    <FieldError>{formErrors.orgNationalName}</FieldError>
+                    <FieldError>{formErrors.delegateName}</FieldError>
                   </Field>
 
-                  {/* Organization National ID */}
+                  {/* Delegate National ID */}
                   <Field>
-                    <FieldLabel htmlFor="orgNationalId">
-                      {t("auth.orgNationalId")}
+                    <FieldLabel htmlFor="delegateNationalId">
+                      {form.delegateNationality === "nonJordanian"
+                        ? t("auth.delegatePersonalId")
+                        : t("auth.delegateNationalId")}
                       <span className="text-red-500">*</span>
                     </FieldLabel>
                     <Input
-                      id="orgNationalId"
+                      id="delegateNationalId"
                       type="text"
-                      value={form.orgNationalId}
-                      onChange={(e) =>
-                        setForm((prev) => ({
-                          ...prev,
-                          orgNationalId: e.target.value,
-                        }))
-                      }
-                      maxLength={9}
+                      value={form.delegateNationalId}
+                      readOnly
+                      maxLength={10}
+                      className="bg-muted dark:bg-muted border-dashed text-muted-foreground cursor-default focus-visible:ring-0"
                     />
-                    <FieldError>{formErrors.orgNationalId}</FieldError>
+                    <FieldError>{formErrors.delegateNationalId}</FieldError>
                   </Field>
                 </FieldGroup>
 
                 <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-5">
                   {/* Email */}
-                  <Field>
-                    <FieldLabel htmlFor="orgEmail">
-                      {t("auth.orgEmail")}
-                      <span className="text-red-500">*</span>
-                    </FieldLabel>
-                    <Input
-                      id="orgEmail"
-                      type="email"
-                      value={form.orgEmail}
-                      onChange={(e) =>
-                        setForm((prev) => ({
-                          ...prev,
-                          orgEmail: e.target.value,
-                        }))
-                      }
-                    />
-                    <FieldError>{formErrors.orgEmail}</FieldError>
-                  </Field>
+                  <FieldGroup>
+                    <Field>
+                      <FieldLabel htmlFor="delegateEmail">
+                        {t("auth.delegateEmail")}
+                        <span className="text-red-500">*</span>
+                      </FieldLabel>
+                      <Input
+                        id="delegateEmail"
+                        type="email"
+                        value={form.delegateEmail}
+                        readOnly
+                        className="bg-muted dark:bg-muted border-dashed text-muted-foreground cursor-default focus-visible:ring-0"
+                      />
+                      <FieldError>{formErrors.delegateEmail}</FieldError>
+                    </Field>
+                  </FieldGroup>
 
                   {/* Phone */}
-                  <Field>
-                    <FieldLabel htmlFor="orgPhone">
-                      {t("auth.orgPhone")}
-                      <span className="text-red-500">*</span>
-                    </FieldLabel>
-                    <div dir="ltr" className="flex items-center">
-                      <span className="px-3 py-1 border border-r-0 rounded-l-md">
-                        +962
-                      </span>
-                      <Input
-                        id="orgPhone"
-                        type="tel"
-                        value={form.orgPhone}
-                        onChange={(e) =>
-                          setForm((prev) => ({
-                            ...prev,
-                            orgPhone: e.target.value,
-                          }))
-                        }
-                        maxLength={9}
-                        placeholder="7XXXXXXXX"
-                      />
-                    </div>
-                    <FieldError>{formErrors.orgPhone}</FieldError>
-                  </Field>
+                  <FieldGroup>
+                    <Field>
+                      <FieldLabel htmlFor="delegatePhone">
+                        {t("auth.delegatePhone")}{" "}
+                        <span className="text-red-500">*</span>
+                      </FieldLabel>
+                      <div dir="ltr" className="flex items-center">
+                        <span className="px-3 py-1 border border-r-0 rounded-l-md">
+                          +962
+                        </span>
+                        <Input
+                          id="delegatePhone"
+                          type="tel"
+                          value={form.delegatePhone}
+                          readOnly
+                          maxLength={9}
+                          className="bg-muted dark:bg-muted border-dashed text-muted-foreground cursor-default focus-visible:ring-0"
+                        />
+                      </div>
+                      <FieldError>{formErrors.delegatePhone}</FieldError>
+                    </Field>
+                  </FieldGroup>
                 </FieldGroup>
 
-                {/* address */}
-                <Field>
-                  <FieldLabel htmlFor="orgAddress">
-                    {t("auth.orgAddress")}
-                    <span className="text-red-500">*</span>
-                  </FieldLabel>
-                  <Input
-                    id="orgAddress"
-                    type="string"
-                    value={form.orgAddress}
-                    onChange={(e) =>
-                      setForm((prev) => ({
-                        ...prev,
-                        orgAddress: e.target.value,
-                      }))
-                    }
-                  />
-                  <FieldError>{formErrors.orgAddress}</FieldError>
-                </Field>
-
-                {/* Divider */}
-                <hr className="border-primary" />
-
-                {/* Name */}
-                <Field>
-                  <FieldLabel htmlFor="delegateName">
-                    {t("auth.delegateName")}{" "}
-                    <span className="text-red-500">*</span>
-                  </FieldLabel>
-                  <Input
-                    id="delegateName"
-                    type="text"
-                    value={form.delegateName}
-                    onChange={(e) =>
-                      setForm((prev) => ({
-                        ...prev,
-                        delegateName: e.target.value,
-                      }))
-                    }
-                  />
-                  <FieldError>{formErrors.delegateName}</FieldError>
-                </Field>
-
                 <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  {/* Delegate Role */}
-                  <Field>
-                    <FieldLabel>
-                      {t("auth.delegateRole")}{" "}
-                      <span className="text-red-500">*</span>
-                    </FieldLabel>
-                    <Select
-                      value={form.delegateRole}
-                      onValueChange={(value) =>
-                        setForm((prev) => ({
-                          ...prev,
-                          delegateRole: value as formType["delegateRole"],
-                        }))
-                      }
-                      dir={t("dir")}
-                      required
-                    >
-                      <SelectTrigger className="w-full">
-                        <SelectValue
-                          placeholder={t("reservation.placeholders.select")}
-                        />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectGroup>
-                          {showCharityRole
-                            ? charityRoleOptions.map((o) => (
-                                <SelectItem key={o.value} value={o.value}>
-                                  {o.label}
-                                </SelectItem>
-                              ))
-                            : roleOptions.map((o) => (
-                                <SelectItem key={o.value} value={o.value}>
-                                  {o.label}
-                                </SelectItem>
-                              ))}
-                        </SelectGroup>
-                      </SelectContent>
-                    </Select>
-                  </Field>
-
                   {/* Nationality */}
-                  <Field>
+                  {/* <Field>
                     <FieldLabel>
                       {t("auth.delegateNationality")}{" "}
                       <span className="text-red-500">*</span>
@@ -583,70 +541,35 @@ export default function SignupForm({
                         </SelectGroup>
                       </SelectContent>
                     </Select>
+                  </Field> */}
+
+                  <Field>
+                    <FieldLabel>
+                      {t("auth.delegateNationality")}{" "}
+                      <span className="text-red-500">*</span>
+                    </FieldLabel>
+                    <Input
+                      id="delegateEmail"
+                      // value={form.delegateNationality}
+                      readOnly
+                      className="bg-muted dark:bg-muted border-dashed text-muted-foreground cursor-default focus-visible:ring-0"
+                    />
+                    <FieldError>{formErrors.delegateEmail}</FieldError>
                   </Field>
-                </FieldGroup>
 
-                {/* Delegate National ID */}
-                <Field>
-                  <FieldLabel htmlFor="delegateNationalId">
-                    {form.delegateNationality === "nonJordanian"
-                      ? t("auth.delegatePersonalId")
-                      : t("auth.delegateNationalId")}
-                    <span className="text-red-500">*</span>
-                  </FieldLabel>
-                  <Input
-                    id="delegateNationalId"
-                    type="text"
-                    value={form.delegateNationalId}
-                    readOnly
-                    maxLength={10}
-                    className="bg-muted border-dashed text-muted-foreground cursor-default focus-visible:ring-0"
-                  />
-                  <FieldError>{formErrors.delegateNationalId}</FieldError>
-                </Field>
-
-                <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  {/* Email */}
-                  <FieldGroup>
-                    <Field>
-                      <FieldLabel htmlFor="delegateEmail">
-                        {t("auth.delegateEmail")}
-                        <span className="text-red-500">*</span>
-                      </FieldLabel>
-                      <Input
-                        id="delegateEmail"
-                        type="email"
-                        value={form.delegateEmail}
-                        readOnly
-                        className="bg-muted border-dashed text-muted-foreground cursor-default focus-visible:ring-0"
-                      />
-                      <FieldError>{formErrors.delegateEmail}</FieldError>
-                    </Field>
-                  </FieldGroup>
-
-                  {/* Phone */}
-                  <FieldGroup>
-                    <Field>
-                      <FieldLabel htmlFor="delegatePhone">
-                        {t("auth.delegatePhone")}{" "}
-                        <span className="text-red-500">*</span>
-                      </FieldLabel>
-                      <div dir="ltr" className="flex items-center">
-                        <span className="px-3 py-1 border border-r-0 rounded-l-md">
-                          +962
-                        </span>
-                        <Input
-                          id="delegatePhone"
-                          type="tel"
-                          value={form.delegatePhone}
-                          readOnly
-                          maxLength={9}
-                          className="bg-muted border-dashed text-muted-foreground cursor-default focus-visible:ring-0"
-                        />
-                      </div>
-                      <FieldError>{formErrors.delegatePhone}</FieldError>
-                    </Field>
-                  </FieldGroup>
+                  <Field>
+                    <FieldLabel>
+                      {t("auth.dateofBirth")}{" "}
+                      <span className="text-red-500">*</span>
+                    </FieldLabel>
+                    <Input
+                      id="dateofBirth"
+                      value={form.delegateDateOfBirth}
+                      readOnly
+                      className="bg-muted dark:bg-muted border-dashed text-muted-foreground cursor-default focus-visible:ring-0"
+                    />
+                    <FieldError>{formErrors.delegateEmail}</FieldError>
+                  </Field>
                 </FieldGroup>
 
                 {/* Attachment */}
@@ -709,6 +632,174 @@ export default function SignupForm({
                   </Field>
                 )}
 
+                {/* Divider */}
+                <hr className="border-primary" />
+
+                {/* Company Sector */}
+                <Field>
+                  <FieldLabel>
+                    {t("auth.companySector")}{" "}
+                    <span className="text-red-500">*</span>
+                  </FieldLabel>
+                  <Select
+                    value={form.companySector}
+                    onValueChange={(value) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        companySector: value as companySectorType,
+
+                        delegateRole:
+                          value === "cooperative" || value === "association"
+                            ? "written"
+                            : prev.delegateRole,
+                      }))
+                    }
+                    dir={t("dir")}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue
+                        placeholder={t("reservation.placeholders.select")}
+                      />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectGroup>
+                        {sectorOptions.map((o) => (
+                          <SelectItem key={o.value} value={o.value}>
+                            {o.label}
+                          </SelectItem>
+                        ))}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                  <FieldError>{formErrors.companySector}</FieldError>
+                </Field>
+
+                <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  {/* Organization National ID */}
+                  <Field>
+                    <FieldLabel htmlFor="orgNationalId">
+                      {t("auth.orgNationalId")}
+                      <span className="text-red-500">*</span>
+                    </FieldLabel>
+                    <Input
+                      id="orgNationalId"
+                      type="text"
+                      value={form.orgNationalId}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          orgNationalId: e.target.value,
+                        }))
+                      }
+                      maxLength={9}
+                    />
+                    <FieldError>{formErrors.orgNationalId}</FieldError>
+                  </Field>
+
+                  {/* Organization date */}
+                  <Field className="mx-auto">
+                    <FieldLabel htmlFor="date">
+                      {t("auth.dateofEstablishment")}
+                    </FieldLabel>
+                    <Popover open={open} onOpenChange={setOpen}>
+                      <PopoverTrigger asChild>
+                        <Button
+                          variant="outline"
+                          id="date"
+                          className="justify-start font-normal bg-white"
+                        >
+                          <CalendarIcon />
+                          {form.orgDate
+                            ? form.orgDate.toLocaleDateString()
+                            : t("reservation.fields.PickDate")}
+                        </Button>
+                      </PopoverTrigger>
+                      <PopoverContent
+                        className="w-auto overflow-hidden p-0"
+                        align="start"
+                      >
+                        <Calendar
+                          mode="single"
+                          selected={form.orgDate}
+                          defaultMonth={form.orgDate}
+                          captionLayout="dropdown"
+                          onSelect={(value) => {
+                            setForm((prev) => ({
+                              ...prev,
+                              orgDate: value as formType["orgDate"],
+                            }));
+                            setOpen(false);
+                          }}
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <FieldError>{formErrors.orgDate}</FieldError>
+                  </Field>
+                </FieldGroup>
+
+                <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                  {/* Email */}
+                  <Field>
+                    <FieldLabel htmlFor="orgEmail">
+                      {t("auth.orgEmail")}
+                      <span className="text-red-500">*</span>
+                    </FieldLabel>
+                    <Input
+                      id="orgEmail"
+                      type="email"
+                      value={form.orgEmail}
+                      onChange={(e) =>
+                        setForm((prev) => ({
+                          ...prev,
+                          orgEmail: e.target.value,
+                        }))
+                      }
+                    />
+                    <FieldError>{formErrors.orgEmail}</FieldError>
+                  </Field>
+
+                  {/* Phone */}
+                  <Field>
+                    <FieldLabel htmlFor="orgPhone">
+                      {t("auth.orgPhone")}
+                      <span className="text-red-500">*</span>
+                    </FieldLabel>
+                    <div dir="ltr" className="flex items-center">
+                      <span className="px-3 py-1 border border-r-0 rounded-l-md">
+                        +962
+                      </span>
+                      <Input
+                        id="orgPhone"
+                        type="tel"
+                        value={form.orgPhone}
+                        onChange={(e) =>
+                          setForm((prev) => ({
+                            ...prev,
+                            orgPhone: e.target.value,
+                          }))
+                        }
+                        maxLength={9}
+                        placeholder="7XXXXXXXX"
+                      />
+                    </div>
+                    <FieldError>{formErrors.orgPhone}</FieldError>
+                  </Field>
+                </FieldGroup>
+
+                <Field>
+                  <FieldLabel htmlFor="orgNationalName">
+                    {t("auth.organizationName")}
+                    <span className="text-red-500">*</span>
+                  </FieldLabel>
+                  <Input
+                    id="orgNationalName"
+                    type="string"
+                    value={form.orgNationalName}
+                    readOnly
+                    className="bg-muted dark:bg-muted border-dashed text-muted-foreground cursor-default focus-visible:ring-0"
+                  />
+                </Field>
+
                 {/* Password */}
                 <Field>
                   <FieldLabel htmlFor="password">
@@ -728,6 +819,35 @@ export default function SignupForm({
                   <FieldError>{formErrors.password}</FieldError>
                 </Field>
 
+                {/* terms checkBox */}
+                <FieldGroup className="mx-auto" dir={t("dir")}>
+                  <Field
+                    orientation="horizontal"
+                    data-invalid={!isChecked && showError}
+                  >
+                    <Checkbox
+                      id="terms-checkbox-desc"
+                      name="terms-checkbox-desc"
+                      checked={isChecked}
+                      onCheckedChange={(value) => {
+                        const checked = value === true;
+                        setIsChecked(checked);
+
+                        if (checked) {
+                          setShowError(false); // remove red when user fixes it
+                        }
+                      }}
+                      aria-invalid={!isChecked && showError}
+                    />
+                    <FieldContent>
+                      <FieldLabel htmlFor="terms-checkbox-desc">
+                        {t("auth.terms")}
+                      </FieldLabel>
+                      <FieldDescription>{t("auth.termsDesc")}</FieldDescription>
+                    </FieldContent>
+                  </Field>
+                </FieldGroup>
+
                 {/* Submit */}
                 <Field className="md:col-span-2">
                   <Button
@@ -740,7 +860,10 @@ export default function SignupForm({
 
                   <FieldDescription className="text-center mt-3">
                     {t("auth.account")}{" "}
-                    <Link to="/login" className="text-primary hover:underline">
+                    <Link
+                      to="/auth/login"
+                      className="text-primary hover:underline"
+                    >
                       {t("auth.login")}
                     </Link>
                   </FieldDescription>

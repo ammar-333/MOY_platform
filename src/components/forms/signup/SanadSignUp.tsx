@@ -17,7 +17,7 @@ export default function SandSignupForm({
   function handleSanad(e: React.MouseEvent<HTMLButtonElement>) {
     e.preventDefault();
     window.location.assign(
-      "http://10.0.82.105:1125/api/SanadSignleSignon/Auth?returnUrl=/signup",
+      "http://10.0.82.105:1125/api/SanadSignleSignon/Auth?returnUrl=/auth/signup",
     );
   }
   return (
@@ -81,7 +81,10 @@ export default function SandSignupForm({
                 </button>
                 <FieldDescription className="text-center mt-3">
                   {t("auth.account")}{" "}
-                  <Link to="/login" className="text-primary hover:underline">
+                  <Link
+                    to="/auth/login"
+                    className="text-primary hover:underline"
+                  >
                     {t("auth.login")}
                   </Link>
                 </FieldDescription>

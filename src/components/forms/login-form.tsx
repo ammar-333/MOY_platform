@@ -144,16 +144,10 @@ export function LoginForm({
   return (
     <div
       className={cn("rounded-2xl shadow-lg overflow-hidden", className)}
-      style={{
-        backgroundColor: "#f0f4ff",
-        backgroundImage:
-          "url('https://www.transparenttextures.com/patterns/cubes.png')",
-        backgroundRepeat: "repeat",
-      }}
       {...props}
     >
       {/* HEADER */}
-      <div className="bg-primary text-white text-center px-6 pt-6 pb-6">
+      <div className="bg-primary text-white text-center px-6 pt-5 pb-5">
         <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-white/20">
           <LogIn className="h-6 w-6" />
         </div>
@@ -163,8 +157,8 @@ export function LoginForm({
       </div>
 
       {/* FORM */}
-      <Card className="rounded-none shadow-none dark:bg-slate-900 min-h-125">
-        <CardContent className="p-6">
+      <Card className="rounded-none shadow-none dark:bg-slate-900">
+        <CardContent className="p-5">
           <form
             onSubmit={userType === "government" ? handleGovLogin : handleLogin}
           >
@@ -190,7 +184,7 @@ export function LoginForm({
                     type="button"
                     onClick={() => setUserType("organization")}
                     className={cn(
-                      "rounded-md border px-4 py-2 text-sm transition",
+                      "rounded-md border px-4 py- text-sm transition",
                       userType === "organization"
                         ? "bg-primary text-white"
                         : "bg-muted",
@@ -275,7 +269,7 @@ export function LoginForm({
                           ID: e.target.value,
                         }))
                       }
-                      className={cn("py-5", formErrors.ID && "border-red-500")}
+                      className={cn("py-3", formErrors.ID && "border-red-500")}
                       maxLength={9}
                       placeholder={t("auth.orgNationalIdPlaceholder")}
                     />
@@ -298,7 +292,7 @@ export function LoginForm({
                         }))
                       }
                       className={cn(
-                        "py-5",
+                        "py-3",
                         formErrors.password && "border-red-500",
                       )}
                       type="password"
@@ -308,15 +302,15 @@ export function LoginForm({
                   </Field>
 
                   {/* SUBMIT */}
-                  <Field className="mt-5">
-                    <Button className="w-full py-5.5" type="submit">
+                  <Field className="mt-3">
+                    <Button className="w-full py-4" type="submit">
                       {t("auth.login")}
                     </Button>
 
                     <FieldDescription className="text-center">
                       {t("auth.noaccount")}{" "}
                       <Link
-                        to="/sanad_signup"
+                        to="/auth//sanad_signup"
                         className="text-primary hover:underline"
                       >
                         {t("auth.signup")}
@@ -344,7 +338,7 @@ export function LoginForm({
                         }))
                       }
                       className={cn(
-                        "py-5",
+                        "py-3",
                         govFormErrors.ID && "border-red-500",
                       )}
                       maxLength={9}
@@ -369,7 +363,7 @@ export function LoginForm({
                         }))
                       }
                       className={cn(
-                        "py-5",
+                        "py-3",
                         govFormErrors.password && "border-red-500",
                       )}
                       type="password"
@@ -379,15 +373,15 @@ export function LoginForm({
                   </Field>
 
                   {/* SUBMIT */}
-                  <Field className="mt-5">
-                    <Button className="w-full py-5.5" type="submit">
+                  <Field className="mt-3">
+                    <Button className="w-full py-4" type="submit">
                       {t("auth.login")}
                     </Button>
 
                     <FieldDescription className="text-center">
                       {t("auth.noaccount")}{" "}
                       <Link
-                        to="/gov_signup"
+                        to="/auth/gov_signup"
                         className="text-primary hover:underline"
                       >
                         {t("auth.signup")}
