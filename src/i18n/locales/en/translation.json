@@ -131,6 +131,7 @@
       "account": "Individual Account",
       "name": "Full name",
       "idNumber": "ID Number",
+      "nationality": "nationality",
       "email": "Email",
       "phone": "Phone number",
       "birth": "Date of birth",
@@ -412,32 +413,138 @@
     "samples": {
       "pending": [
         {
-          "title": "Petra Youth House - Wadi Musa",
+          "title": "Youth Hostel - Wadi Musa",
           "location": "Petra - Wadi Musa",
           "serviceType": "Activity"
+        },
+        {
+          "title": "Irbid Model Youth Center",
+          "location": "Irbid",
+          "serviceType": "Activity"
+        },
+        {
+          "title": "Prince Rashid Sports Complex",
+          "location": "Irbid",
+          "serviceType": "Sports Complex"
         }
       ],
       "approved": [
         {
-          "title": "Ajloun Youth House",
+          "title": "Ajloun Youth Hostel",
           "location": "Ajloun",
           "serviceType": "Accommodation"
+        },
+        {
+          "title": "Salt Youth Center",
+          "location": "Balqa - Salt",
+          "serviceType": "Activity"
+        },
+        {
+          "title": "Aqaba Sports Complex",
+          "location": "Aqaba",
+          "serviceType": "Sports Complex"
         }
       ],
       "rejected": [
         {
-          "title": "Aqaba Youth House",
+          "title": "Aqaba Youth Hostel",
           "location": "Aqaba",
           "serviceType": "Activity"
+        },
+        {
+          "title": "Tafileh Youth Center",
+          "location": "Tafileh",
+          "serviceType": "Accommodation"
+        },
+        {
+          "title": "Al Hassan Sports Complex",
+          "location": "Zarqa",
+          "serviceType": "Sports Complex"
         }
       ],
       "canceled": [
         {
-          "title": "Petra Youth House - Wadi Musa",
-          "location": "Petra - Wadi Musa",
+          "title": "Jerash Youth Hostel",
+          "location": "Jerash",
           "serviceType": "Accommodation"
+        },
+        {
+          "title": "Zarqa Youth Hostel",
+          "location": "Zarqa",
+          "serviceType": "Activity"
+        },
+        {
+          "title": "King Abdullah II Sports Complex",
+          "location": "Qweismeh - Amman",
+          "serviceType": "Sports Complex"
         }
       ]
-    }
+    },
+    "investmentSamples": [
+      {
+        "id": "INV-3001",
+        "investmentType": "Hospitality Sites",
+        "location": "Irbid",
+        "durationMonths": 12,
+        "proposedBudget": 12000,
+        "status": "pending"
+      },
+      {
+        "id": "INV-3002",
+        "investmentType": "Commercial Spaces",
+        "location": "Zarqa",
+        "durationMonths": 24,
+        "proposedBudget": 25000,
+        "status": "approved"
+      },
+      {
+        "id": "INV-3003",
+        "investmentType": "Billboards",
+        "location": "Aqaba",
+        "durationMonths": 36,
+        "proposedBudget": 30000,
+        "status": "rejected"
+      },
+      {
+        "id": "INV-3004",
+        "investmentType": "Kiosks",
+        "location": "Ajloun",
+        "durationMonths": 18,
+        "proposedBudget": 15000,
+        "status": "canceled"
+      },
+      {
+        "id": "INV-3005",
+        "investmentType": "Halls",
+        "location": "Karak",
+        "durationMonths": 6,
+        "proposedBudget": 8000,
+        "status": "pending"
+      },
+      {
+        "id": "INV-3006",
+        "investmentType": "Playgrounds",
+        "location": "Mafraq",
+        "durationMonths": 48,
+        "proposedBudget": 40000,
+        "status": "approved"
+      },
+      {
+        "id": "INV-3007",
+        "investmentType": "Billboards",
+        "location": "Tafileh",
+        "durationMonths": 12,
+        "proposedBudget": 10000,
+        "status": "rejected"
+      },
+      {
+        "id": "INV-3008",
+        "investmentType": "Hospitality Sites",
+        "location": "Salt",
+        "durationMonths": 24,
+        "proposedBudget": 22000,
+        "status": "canceled"
+      }
+    ]
   }
 }

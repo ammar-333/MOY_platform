@@ -505,55 +505,59 @@ export default function YouthHouse({
           <form onSubmit={handleSubmit}>
             <FieldGroup>
               {/* ================= BENEFICIARY INFO CARD ================= */}
-              <Card className="mt-6 border-primary border">
-                <CardContent className="p-6 space-y-6">
-                  <div className="flex items-center gap-2">
-                    <User className="h-5 w-5 text-primary" />
-                    <h2 className="text-lg font-semibold">
-                      {t("reservation.sections.personal")}
-                    </h2>
-                  </div>
+              <Card
+                className="group mt-8 relative overflow-hidden rounded-2xl 
+                            border border-blue-200/40 
+                            bg-gradient-to-br from-blue-50/70 via-white/60 to-blue-100/40 
+                            backdrop-blur-xl 
+                            shadow-lg 
+                            transition-all duration-500 ease-out
+                            hover:-translate-y-1 hover:shadow-2xl hover:border-primary/40"
+              >
+                {/* soft floating glow */}
+                <div className="absolute -top-24 -right-24 w-80 h-80 bg-primary/20 rounded-full blur-3xl opacity-30 transition-all duration-500 group-hover:opacity-50" />
+                <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-blue-300/20 rounded-full blur-3xl opacity-20 transition-all duration-500 group-hover:opacity-40" />
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Field>
-                      <FieldLabel>{t("shared.beneficiaryName")}</FieldLabel>
-                      <Input
-                        value={""}
-                        readOnly
-                        className="bg-muted cursor-not-allowed"
-                      />
-                    </Field>
+                <CardContent className="relative p-8">
+                  <div className="flex items-center justify-between flex-wrap gap-6">
+                    {/* Left Section */}
+                    <div className="flex items-center gap-6">
+                      {/* Avatar */}
+                      <div className="relative transition-all duration-500 group-hover:scale-105">
+                        <div
+                          className="w-20 h-20 rounded-full 
+                                    bg-white/60 backdrop-blur-md 
+                                    flex items-center justify-center 
+                                    ring-4 ring-primary/20 
+                                    shadow-md 
+                                    transition-all duration-500 
+                                    group-hover:ring-primary/40 group-hover:shadow-xl"
+                        >
+                          <User className="h-10 w-10 text-primary transition-all duration-500 group-hover:scale-110" />
+                        </div>
 
-                    <Field>
-                      <FieldLabel>{t("shared.governorate")}</FieldLabel>
-                      <Input
-                        value={""}
-                        readOnly
-                        className="bg-muted cursor-not-allowed"
-                      />
-                    </Field>
+                        {/* Active dot */}
+                        <span className="absolute bottom-1 right-1 w-4 h-4 bg-emerald-400 border-2 border-white rounded-full" />
+                      </div>
 
-                    <Field>
-                      <FieldLabel>{t("shared.district")}</FieldLabel>
-                      <Input
-                        value={""}
-                        readOnly
-                        className="bg-muted cursor-not-allowed"
-                      />
-                    </Field>
+                      {/* Info */}
+                      <div className="space-y-1">
+                        <p className="text-xs uppercase tracking-widest text-primary/80">
+                          {t("reservation.sections.personal")}
+                        </p>
 
-                    <Field>
-                      <FieldLabel>{t("shared.directorate")}</FieldLabel>
-                      <Input
-                        value={""}
-                        readOnly
-                        className="bg-muted cursor-not-allowed"
-                      />
-                    </Field>
+                        <h3 className="text-2xl font-bold text-slate-800 tracking-wide">
+                          {t("shared.beneficiaryName")}
+                        </h3>
+
+                        <p className="text-sm text-slate-500">
+                          ليث احمد ابراهيم تنيره
+                        </p>
+                      </div>
+                    </div>
                   </div>
                 </CardContent>
               </Card>
-
 
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">

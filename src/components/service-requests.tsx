@@ -22,17 +22,22 @@ type RequestStatus =
   | "PENDING_PAYMENT"
   | "NOT_ATTENDED";
 
+type ItemType = "SAMPLE" | "INVESTMENT";
+
 type ServiceRequestItem = {
   id: string;
+  type: ItemType;
   title: string;
   location: string;
-  requestNo: string;
-  submittedAt: string;
-  fromDate: string;
-  toDate: string;
-  days: number;
-  serviceType: string;
   status: RequestStatus;
+  requestNo?: string;
+  submittedAt?: string;
+  days?: number;
+  fromDate?: string;
+  toDate?: string;
+  investmentType?: string;
+  durationMonths?: number;
+  proposedBudget?: number;
 };
 
 function StatusBadge({
@@ -68,8 +73,7 @@ function StatusBadge({
       cls: "bg-stone-300 text-stone-800 border-stone-200",
     },
   };
-  const it = map[status];
-
+  const it = map[status] || map.PENDING;
   return (
     <span
       className={cn(
@@ -103,7 +107,7 @@ function MiniField({
   icon: Icon,
 }: {
   label: string;
-  value: string;
+  value: string | number;
   icon: React.ElementType;
 }) {
   return (
@@ -128,79 +132,46 @@ export default function ServiceRequests({
   const { t } = useTranslation();
   const navigate = useNavigate();
 
+  // 🔥 جلب البيانات من الترجمة مباشرة
+  const samples = t("requests.samples", { returnObjects: true }) as any;
+  const investmentSamples = t("requests.investmentSamples", {
+    returnObjects: true,
+  }) as any;
+
   const items: ServiceRequestItem[] = [
-    {
-      id: "P1",
-      title: t("requests.samples.pending.0.title"),
-      location: t("requests.samples.pending.0.location"),
-      requestNo: "BK-20260120-1968",
-      submittedAt: "2026/01/20",
-      fromDate: "2026/01/20",
-      toDate: "2026/01/23",
-      days: 3,
-      serviceType: t("requests.samples.pending.0.serviceType"),
-      status: "PENDING",
-    },
-    {
-      id: "A1",
-      title: t("requests.samples.approved.0.title"),
-      location: t("requests.samples.approved.0.location"),
-      requestNo: "BK-20260110-1021",
-      submittedAt: "2026/01/10",
-      fromDate: "2026/01/15",
-      toDate: "2026/01/16",
-      days: 2,
-      serviceType: t("requests.samples.approved.0.serviceType"),
-      status: "APPROVED",
-    },
-    {
-      id: "R1",
-      title: t("requests.samples.rejected.0.title"),
-      location: t("requests.samples.rejected.0.location"),
-      requestNo: "BK-20251230-778",
-      submittedAt: "2025/12/30",
-      fromDate: "2026/01/02",
-      toDate: "2026/01/04",
-      days: 3,
-      serviceType: t("requests.samples.rejected.0.serviceType"),
-      status: "REJECTED",
-    },
-    {
-      id: "C1",
-      title: t("requests.samples.canceled.0.title"),
-      location: t("requests.samples.canceled.0.location"),
-      requestNo: "BK-20251212-443",
-      submittedAt: "2025/12/12",
-      fromDate: "2025/12/20",
-      toDate: "2025/12/21",
-      days: 2,
-      serviceType: t("requests.samples.canceled.0.serviceType"),
-      status: "CANCELED",
-    },
-    {
-      id: "Y1",
-      title: t("requests.samples.canceled.0.title"),
-      location: t("requests.samples.canceled.0.location"),
-      requestNo: "BK-20251212-443",
-      submittedAt: "2025/12/12",
-      fromDate: "2025/12/20",
-      toDate: "2025/12/21",
-      days: 2,
-      serviceType: t("requests.samples.canceled.0.serviceType"),
-      status: "PENDING_PAYMENT",
-    },
-    {
-      id: "N1",
-      title: t("requests.samples.canceled.0.title"),
-      location: t("requests.samples.canceled.0.location"),
-      requestNo: "BK-20251212-443",
-      submittedAt: "2025/12/12",
-      fromDate: "2025/12/20",
-      toDate: "2025/12/21",
-      days: 2,
-      serviceType: t("requests.samples.canceled.0.serviceType"),
-      status: "NOT_ATTENDED",
-    },
+    // الطلبات العادية
+    ...["pending", "approved", "rejected", "canceled"].flatMap((statusKey) => {
+      const list = samples[statusKey as keyof typeof samples] || [];
+      const statusMap: Record<string, RequestStatus> = {
+        pending: "PENDING",
+        approved: "APPROVED",
+        rejected: "REJECTED",
+        canceled: "CANCELED",
+      };
+      return list.map((item: any, i: number) => ({
+        id: `${statusKey[0].toUpperCase()}-${i}`,
+        type: "SAMPLE" as const,
+        title: item.title,
+        location: item.location,
+        status: statusMap[statusKey],
+        requestNo: `BK-202601${i + 10}-${1000 + i}`,
+        submittedAt: "2026/01/20",
+        days: 3,
+        fromDate: "2026/01/20",
+        toDate: "2026/01/23",
+      }));
+    }),
+    // الاستثمارات
+    ...investmentSamples.map((item: any) => ({
+      id: item.id,
+      type: "INVESTMENT" as const,
+      title: item.investmentType,
+      location: item.location,
+      status: item.status.toUpperCase() as RequestStatus,
+      investmentType: item.investmentType,
+      durationMonths: item.durationMonths,
+      proposedBudget: item.proposedBudget,
+    })),
   ];
 
   return (
@@ -218,7 +189,6 @@ export default function ServiceRequests({
             <div className="flex size-12 items-center justify-center rounded-full bg-white/20">
               <ClipboardList className="h-6 w-6" />
             </div>
-
             <div>
               <h1 className="text-2xl font-bold leading-tight">
                 {t("requests.pageTitle")}
@@ -245,57 +215,92 @@ export default function ServiceRequests({
                         {item.title}
                       </h3>
                       <StatusBadge status={item.status} t={t} />
+                      <span className="text-[10px] text-muted-foreground uppercase font-medium">
+                        {item.type}
+                      </span>
                     </div>
 
                     <div className="mt-2 space-y-1">
                       <MetaRow icon={Home}>
                         <span className="truncate">{item.title}</span>
                       </MetaRow>
-
                       <MetaRow icon={MapPin}>
                         <span className="truncate">{item.location}</span>
                       </MetaRow>
-
-                      <MetaRow icon={Hash}>
-                        <span>{t("requests.requestNo")}:</span>
-                        <span className="font-semibold">{item.requestNo}</span>
-                      </MetaRow>
+                      {item.type === "SAMPLE" && item.requestNo && (
+                        <MetaRow icon={Hash}>
+                          <span>{t("requests.requestNo")}:</span>{" "}
+                          <span className="font-semibold">
+                            {item.requestNo}
+                          </span>
+                        </MetaRow>
+                      )}
                     </div>
                   </div>
 
-                  <div className="text-end ms-auto">
-                    <div className="text-[11px] text-muted-foreground">
-                      {t("requests.submittedAt")}
+                  {item.type === "SAMPLE" && item.submittedAt && (
+                    <div className="text-end ms-auto">
+                      <div className="text-[11px] text-muted-foreground">
+                        {t("requests.submittedAt")}
+                      </div>
+                      <div className="mt-1 text-sm font-semibold">
+                        {item.submittedAt}
+                      </div>
                     </div>
-                    <div className="mt-1 text-sm font-semibold">
-                      {item.submittedAt}
-                    </div>
-                  </div>
+                  )}
                 </div>
 
                 <hr className="my-5 border-border" />
 
                 <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
-                  <MiniField
-                    icon={Tag}
-                    label={t("requests.serviceType")}
-                    value={item.serviceType}
-                  />
-                  <MiniField
-                    icon={Clock3}
-                    label={t("requests.days")}
-                    value={`${item.days} ${t("requests.day")}`}
-                  />
-                  <MiniField
-                    icon={CalendarDays}
-                    label={t("requests.fromDate")}
-                    value={item.fromDate}
-                  />
-                  <MiniField
-                    icon={CalendarDays}
-                    label={t("requests.toDate")}
-                    value={item.toDate}
-                  />
+                  {item.type === "SAMPLE" ? (
+                    <>
+                      <MiniField
+                        icon={Tag}
+                        label={t("requests.serviceType")}
+                        value={item.title}
+                      />
+                      <MiniField
+                        icon={Clock3}
+                        label={t("requests.days")}
+                        value={`${item.days} ${t("requests.day")}`}
+                      />
+                      <MiniField
+                        icon={CalendarDays}
+                        label={t("requests.fromDate")}
+                        value={item.fromDate || "-"}
+                      />
+                      <MiniField
+                        icon={CalendarDays}
+                        label={t("requests.toDate")}
+                        value={item.toDate || "-"}
+                      />
+                    </>
+                  ) : (
+                    <>
+                      <MiniField
+                        icon={Tag}
+                        label={t(
+                          "reservation.investment.fields.investmentType",
+                        )}
+                        value={item.investmentType || "-"}
+                      />
+                      <MiniField
+                        icon={Clock3}
+                        label={t(
+                          "reservation.investment.fields.investmentDuration",
+                        )}
+                        value={`${item.durationMonths} ${t("reservation.investment.units.months")}`}
+                      />
+                      <MiniField
+                        icon={CalendarDays}
+                        label={t(
+                          "reservation.investment.fields.financialProposal",
+                        )}
+                        value={`${item.proposedBudget} ${t("reservation.investment.units.jod")}`}
+                      />
+                    </>
+                  )}
                 </div>
               </div>
             </div>

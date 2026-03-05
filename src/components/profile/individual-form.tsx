@@ -110,10 +110,10 @@ export default function IndividualForm({
                   />
                 </Field>
 
-                {/* ID number */}
+                {/* nationality */}
                 <Field>
                   <FieldLabel htmlFor="id">
-                    {t("profile.individual.idNumber")}
+                    {t("profile.individual.nationality")}
                   </FieldLabel>
                   <Input
                     id="id"
@@ -126,19 +126,17 @@ export default function IndividualForm({
 
               {/* email and pass */}
               <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* email */}
                 <Field>
-                  <FieldLabel htmlFor="email">
-                    {t("profile.individual.email")}
+                  <FieldLabel htmlFor="birth">
+                    {t("profile.individual.birth")}
                   </FieldLabel>
                   <Input
-                    id="email"
-                    value={data?.mail || "not found"}
+                    id="birth"
+                    value="11/03/1995"
                     readOnly
                     className="bg-muted cursor-not-allowed"
                   />
                 </Field>
-
                 {/* phone number */}
                 <Field>
                   <FieldLabel htmlFor="phone">
@@ -152,36 +150,6 @@ export default function IndividualForm({
                   />
                 </Field>
               </FieldGroup>
-
-              {/* birth and reg number */}
-              <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {/* birth date */}
-                <Field>
-                  <FieldLabel htmlFor="birth">
-                    {t("profile.individual.birth")}
-                  </FieldLabel>
-                  <Input
-                    id="birth"
-                    value="11/03/1995"
-                    readOnly
-                    className="bg-muted cursor-not-allowed"
-                  />
-                </Field>
-
-                {/* civil number */}
-                <Field>
-                  <FieldLabel htmlFor="civil">
-                    {t("profile.individual.civil")}
-                  </FieldLabel>
-                  <Input
-                    id="civil"
-                    value="12312"
-                    readOnly
-                    className="bg-muted cursor-not-allowed"
-                  />
-                </Field>
-              </FieldGroup>
-
               {/* gender and social state */}
               <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {/* gender */}
@@ -210,6 +178,19 @@ export default function IndividualForm({
                   />
                 </Field>
               </FieldGroup>
+
+              {/* email */}
+              <Field>
+                <FieldLabel htmlFor="email">
+                  {t("profile.individual.email")}
+                </FieldLabel>
+                <Input
+                  id="email"
+                  value={data?.mail || "not found"}
+                  readOnly
+                  className="bg-muted cursor-not-allowed"
+                />
+              </Field>
 
               {/* Residence details */}
               <FieldGroup>

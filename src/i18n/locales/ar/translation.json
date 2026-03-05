@@ -130,6 +130,7 @@
       "account": "حساب فردي",
       "name": "الاسم الرباعي",
       "idNumber": "رقم الهوية",
+      "nationality": "الجنسية",
       "email": "البريد الالكتروني",
       "phone": "رقم الهاتف",
       "birth": "تاريخ الميلاد",
@@ -406,19 +407,14 @@
           "serviceType": "نشاط"
         },
         {
-          "title": "بيت شباب عجلون",
-          "location": "عجلون",
-          "serviceType": "إقامة"
-        },
-        {
-          "title": "بيت شباب العقبة",
-          "location": "العقبة",
+          "title": "مركز شباب إربد النموذجي",
+          "location": "إربد",
           "serviceType": "نشاط"
         },
         {
-          "title": "بيت الشباب - وادي موسى",
-          "location": "البترا - وادي موسى",
-          "serviceType": "إقامة"
+          "title": "مجمع الأمير راشد الرياضي",
+          "location": "إربد",
+          "serviceType": "مجمع رياضي"
         }
       ],
       "approved": [
@@ -428,19 +424,14 @@
           "serviceType": "إقامة"
         },
         {
-          "title": "بيت شباب العقبة",
+          "title": "مركز شباب السلط",
+          "location": "البلقاء - السلط",
+          "serviceType": "نشاط"
+        },
+        {
+          "title": "مجمع العقبة الرياضي",
           "location": "العقبة",
-          "serviceType": "نشاط"
-        },
-        {
-          "title": "بيت الشباب - وادي موسى",
-          "location": "البترا - وادي موسى",
-          "serviceType": "نشاط"
-        },
-        {
-          "title": "بيت شباب عجلون",
-          "location": "عجلون",
-          "serviceType": "إقامة"
+          "serviceType": "مجمع رياضي"
         }
       ],
       "rejected": [
@@ -450,43 +441,99 @@
           "serviceType": "نشاط"
         },
         {
-          "title": "بيت شباب عجلون",
-          "location": "عجلون",
+          "title": "مركز شباب الطفيلة",
+          "location": "الطفيلة",
           "serviceType": "إقامة"
         },
         {
-          "title": "بيت الشباب - وادي موسى",
-          "location": "البترا - وادي موسى",
-          "serviceType": "نشاط"
-        },
-        {
-          "title": "بيت شباب العقبة",
-          "location": "العقبة",
-          "serviceType": "إقامة"
+          "title": "مجمع الحسن الرياضي",
+          "location": "الزرقاء",
+          "serviceType": "مجمع رياضي"
         }
       ],
       "canceled": [
         {
-          "title": "بيت الشباب - وادي موسى",
-          "location": "البترا - وادي موسى",
+          "title": "بيت شباب جرش",
+          "location": "جرش",
           "serviceType": "إقامة"
         },
         {
-          "title": "بيت شباب عجلون",
-          "location": "عجلون",
+          "title": "بيت شباب الزرقاء",
+          "location": "الزرقاء",
           "serviceType": "نشاط"
         },
         {
-          "title": "بيت شباب العقبة",
-          "location": "العقبة",
-          "serviceType": "إقامة"
-        },
-        {
-          "title": "بيت الشباب - وادي موسى",
-          "location": "البترا - وادي موسى",
-          "serviceType": "نشاط"
+          "title": "مجمع الملك عبدالله الثاني الرياضي",
+          "location": "القويسمة - عمان",
+          "serviceType": "مجمع رياضي"
         }
       ]
-    }
+    },
+    "investmentSamples": [
+      {
+        "id": "INV-3001",
+        "investmentType": "مواقع الضيافة",
+        "location": "إربد",
+        "durationMonths": 12,
+        "proposedBudget": 12000,
+        "status": "pending"
+      },
+      {
+        "id": "INV-3002",
+        "investmentType": "المساحات التجارية",
+        "location": "الزرقاء",
+        "durationMonths": 24,
+        "proposedBudget": 25000,
+        "status": "approved"
+      },
+      {
+        "id": "INV-3003",
+        "investmentType": "اللوحات الإعلانية",
+        "location": " لعقبة",
+        "durationMonths": 36,
+        "proposedBudget": 30000,
+        "status": "rejected"
+      },
+      {
+        "id": "INV-3004",
+        "investmentType": "الأكشاك",
+        "location": "عجلون",
+        "durationMonths": 18,
+        "proposedBudget": 15000,
+        "status": "canceled"
+      },
+      {
+        "id": "INV-3005",
+        "investmentType": "القاعات",
+        "location": "الكرك",
+        "durationMonths": 6,
+        "proposedBudget": 8000,
+        "status": "pending"
+      },
+      {
+        "id": "INV-3006",
+        "investmentType": "الملاعب",
+        "location": "المفرق",
+        "durationMonths": 48,
+        "proposedBudget": 40000,
+        "status": "approved"
+      },
+      {
+        "id": "INV-3007",
+        "investmentType": "اللوحات الإعلانية",
+        "location": "الطفيلة",
+        "durationMonths": 12,
+        "proposedBudget": 10000,
+        "status": "rejected"
+      },
+      {
+        "id": "INV-3008",
+        "investmentType": "مواقع الضيافة",
+        "location": "السلط",
+        "durationMonths": 24,
+        "proposedBudget": 22000,
+        "status": "canceled"
+      }
+    ]
   }
 }

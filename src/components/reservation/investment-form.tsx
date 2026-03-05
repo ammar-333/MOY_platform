@@ -24,17 +24,15 @@ import { z } from "zod";
 
 const allowedTypes = ["application/pdf", "image/jpeg", "image/png"];
 
+const fileValidation = (t: any) =>
+  z.instanceof(File).refine((file) => allowedTypes.includes(file.type), {
+    message: t("errors.invalidFileType", {
+      types: "PDF, JPG, PNG",
+    }),
+  });
+
 const formSchema = (t: any) =>
   z.object({
-    beneficiaryName: z
-      .string()
-      .min(1, t("errors.required"))
-      .max(200, t("errors.max", { len: 200 })),
-
-    governorate: z.string().min(1, t("errors.required")),
-    district: z.string().min(1, t("errors.required")),
-    directorate: z.string().min(1, t("errors.required")),
-
     investmentType: z.string().min(1, t("errors.required")),
     investmentLocation: z
       .string()
@@ -42,34 +40,31 @@ const formSchema = (t: any) =>
       .max(200, t("errors.max", { len: 200 })),
     investmentDuration: z.string().regex(/^\d{1,4}$/, t("errors.digitsOnly")),
     financialProposal: z.string().regex(/^\d{1,15}$/, t("errors.digitsOnly")),
-    operationalPlan: z
-      .instanceof(File)
-      .refine((file) => allowedTypes.includes(file.type), {
-        message: t("errors.invalidFileType", {
-          types: "PDF, JPG, PNG",
-        }),
-      }),
-    feasibilityStudy: z.instanceof(File),
-    presentation: z.instanceof(File),
-    financialSolvency: z.instanceof(File),
+    operationalPlan: fileValidation(t),
+    feasibilityStudy: fileValidation(t),
+    presentation: fileValidation(t),
+    financialSolvency: fileValidation(t),
   });
+
+type InvestmentFormData = z.infer<ReturnType<typeof formSchema>>;
 
 export default function InvestmentForm({ className }: { className?: string }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const schema = formSchema(t);
 
-  const [form, setForm] = useState<any>({});
-  const [errors, setErrors] = useState<any>({});
+  const [form, setForm] = useState<Partial<InvestmentFormData>>({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   function validate() {
     const result = schema.safeParse(form);
 
     if (!result.success) {
-      const fieldErrors: any = {};
+      const fieldErrors: Record<string, string> = {};
       result.error.issues.forEach((issue) => {
-        fieldErrors[issue.path[0]] = issue.message;
+        const key = issue.path[0] as string;
+        fieldErrors[key] = issue.message;
       });
       setErrors(fieldErrors);
       return false;
@@ -80,10 +75,12 @@ export default function InvestmentForm({ className }: { className?: string }) {
   }
 
   async function handleSubmit(e: React.FormEvent) {
-    debugger;
     e.preventDefault();
 
+    if (!validate()) return;
+
     setIsSubmitting(true);
+
     await new Promise((r) => setTimeout(r, 1500));
 
     navigate("/user/confirmation-message", {
@@ -105,12 +102,12 @@ export default function InvestmentForm({ className }: { className?: string }) {
       )}
     >
       {/* HEADER */}
-      <div className="flex items-center gap-4 bg-primary text-white px-8 py-7">
-        <div className="flex size-16 items-center justify-center rounded-2xl bg-white/20 backdrop-blur">
-          <Briefcase className="h-8 w-8" />
+      <div className="flex items-center gap-4 bg-primary text-white px-6 py-6">
+        <div className="flex size-14 items-center justify-center rounded-2xl bg-white/20 backdrop-blur">
+          <Briefcase className="h-7 w-7" />
         </div>
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">
+          <h1 className="text-xl font-bold">
             {t("reservation.investment.title")}
           </h1>
           <p className="text-sm opacity-90 mt-1">
@@ -120,65 +117,16 @@ export default function InvestmentForm({ className }: { className?: string }) {
       </div>
 
       <Card className="rounded-none shadow-none border-0">
-        <CardContent className="p-8 bg-muted/30">
+        <CardContent className="p-6 bg-muted/30">
           <form onSubmit={handleSubmit}>
-            <FieldGroup className="space-y-8">
-              {/* ================= BENEFICIARY SECTION ================= */}
-              <div className="bg-white rounded-xl p-6 shadow-sm border-primary border">
-                <h2 className="text-lg font-semibold mb-6">
-                  {t("reservation.sections.personal")}
-                </h2>
-
-                <div className="grid md:grid-cols-2 gap-6">
-                  {/* Beneficiary Name */}
-                  <Field>
-                    <FieldLabel>{t("shared.beneficiaryName")}</FieldLabel>
-                    <Input
-                      readOnly
-                      value={form.beneficiaryName}
-                      className="bg-gray-100 cursor-not-allowed"
-                    />
-                  </Field>
-
-                  {/* Governorate */}
-                  <Field>
-                    <FieldLabel>{t("shared.governorate")}</FieldLabel>
-                    <Input
-                      readOnly
-                      value={form.governorate}
-                      className="bg-gray-100 cursor-not-allowed"
-                    />
-                  </Field>
-
-                  {/* District */}
-                  <Field>
-                    <FieldLabel>{t("shared.district")}</FieldLabel>
-                    <Input
-                      readOnly
-                      value={form.district}
-                      className="bg-gray-100 cursor-not-allowed"
-                    />
-                  </Field>
-
-                  {/* Directorate */}
-                  <Field>
-                    <FieldLabel>{t("shared.directorate")}</FieldLabel>
-                    <Input
-                      readOnly
-                      value={form.directorate}
-                      className="bg-gray-100 cursor-not-allowed"
-                    />
-                  </Field>
-                </div>
-              </div>
-              {/* ================= DETAILS SECTION ================= */}
-              <div className="bg-white rounded-xl p-6 shadow-sm border">
+            <FieldGroup className="space-y-6">
+              {/* DETAILS */}
+              <div className="bg-white rounded-xl p-5 shadow-sm border">
                 <h2 className="text-lg font-semibold mb-6">
                   {t("reservation.investment.sections.details")}
                 </h2>
 
                 <div className="grid md:grid-cols-2 gap-6">
-                  {/* Investment Type */}
                   <Field>
                     <FieldLabel>
                       {t("reservation.investment.fields.investmentType")}{" "}
@@ -191,7 +139,7 @@ export default function InvestmentForm({ className }: { className?: string }) {
                         setForm({ ...form, investmentType: v })
                       }
                     >
-                      <SelectTrigger className="w-full">
+                      <SelectTrigger>
                         <SelectValue
                           placeholder={t("reservation.placeholders.select")}
                         />
@@ -214,7 +162,6 @@ export default function InvestmentForm({ className }: { className?: string }) {
                     <FieldError>{errors.investmentType}</FieldError>
                   </Field>
 
-                  {/* Location */}
                   <Field>
                     <FieldLabel>
                       {t("reservation.investment.fields.investmentLocation")}{" "}
@@ -222,7 +169,6 @@ export default function InvestmentForm({ className }: { className?: string }) {
                     </FieldLabel>
                     <Input
                       maxLength={200}
-                      className="bg-background"
                       onChange={(e) =>
                         setForm({ ...form, investmentLocation: e.target.value })
                       }
@@ -230,7 +176,6 @@ export default function InvestmentForm({ className }: { className?: string }) {
                     <FieldError>{errors.investmentLocation}</FieldError>
                   </Field>
 
-                  {/* Duration */}
                   <Field>
                     <FieldLabel>
                       {t("reservation.investment.fields.investmentDuration")}{" "}
@@ -238,7 +183,6 @@ export default function InvestmentForm({ className }: { className?: string }) {
                     </FieldLabel>
                     <div className="flex rounded-lg overflow-hidden border">
                       <Input
-                        dir={t("dir")}
                         inputMode="numeric"
                         className="border-0 focus-visible:ring-0"
                         onChange={(e) =>
@@ -248,14 +192,13 @@ export default function InvestmentForm({ className }: { className?: string }) {
                           })
                         }
                       />
-                      <span className="flex items-center px-4 bg-muted text-sm font-medium">
+                      <span className="flex items-center px-4 bg-muted text-sm">
                         {t("reservation.investment.units.months")}
                       </span>
                     </div>
                     <FieldError>{errors.investmentDuration}</FieldError>
                   </Field>
 
-                  {/* Financial */}
                   <Field>
                     <FieldLabel>
                       {t("reservation.investment.fields.financialProposal")}{" "}
@@ -263,7 +206,6 @@ export default function InvestmentForm({ className }: { className?: string }) {
                     </FieldLabel>
                     <div className="flex rounded-lg overflow-hidden border">
                       <Input
-                        dir={t("dir")}
                         inputMode="numeric"
                         className="border-0 focus-visible:ring-0"
                         onChange={(e) =>
@@ -273,7 +215,7 @@ export default function InvestmentForm({ className }: { className?: string }) {
                           })
                         }
                       />
-                      <span className="flex items-center px-4 bg-muted text-sm font-medium">
+                      <span className="flex items-center px-4 bg-muted text-sm">
                         {t("reservation.investment.units.jod")}
                       </span>
                     </div>
@@ -282,8 +224,8 @@ export default function InvestmentForm({ className }: { className?: string }) {
                 </div>
               </div>
 
-              {/* ================= DOCUMENTS SECTION ================= */}
-              <div className="bg-white rounded-xl p-6 shadow-sm border">
+              {/* DOCUMENTS */}
+              <div className="bg-white rounded-xl p-5 shadow-sm border">
                 <h2 className="text-lg font-semibold mb-6">
                   {t("reservation.investment.sections.documents")}
                 </h2>
@@ -330,14 +272,23 @@ export default function InvestmentForm({ className }: { className?: string }) {
                             PDF, JPG, PNG
                           </span>
 
-                          {form[field] && (
+                          {form[field as keyof InvestmentFormData] && (
                             <p className="mt-2 text-sm text-gray-700">
                               {t("common.selectedFile")}:{" "}
-                              <strong>{form[field].name}</strong>
+                              <strong>
+                                {
+                                  (
+                                    form[
+                                      field as keyof InvestmentFormData
+                                    ] as File
+                                  )?.name
+                                }
+                              </strong>
                             </p>
                           )}
                         </div>
                       </label>
+
                       {/* Hidden Input */}
                       <Input
                         id={field}
@@ -347,7 +298,7 @@ export default function InvestmentForm({ className }: { className?: string }) {
                           const file = e.target.files?.[0];
                           if (!file) return;
 
-                          setForm((prev: any) => ({
+                          setForm((prev) => ({
                             ...prev,
                             [field]: file,
                           }));
@@ -360,8 +311,7 @@ export default function InvestmentForm({ className }: { className?: string }) {
                   ))}
                 </div>
               </div>
-
-              {/* ================= ACTIONS ================= */}
+              {/* ACTIONS */}
               <div className="flex gap-4 pt-2">
                 <Button
                   type="submit"
