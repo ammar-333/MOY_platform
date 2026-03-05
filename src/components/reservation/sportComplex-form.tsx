@@ -332,6 +332,7 @@ export default function SportComplex({
         state: {
           descKey: "confirmationMassage.descForsportComplex",
           step1Key: "confirmationMassage.step1ForsportComplex",
+          title: "confirmationMassage.title",
         },
       });
     } catch (error) {

@@ -186,6 +186,7 @@
       "title": "Sports Complex Booking & Rental"
     },
     "investment": {
+      "selected": "Selected",
       "title": "Investment Request Service",
       "subtitle": "Fill the form below to submit your investment request",
       "sections": {
