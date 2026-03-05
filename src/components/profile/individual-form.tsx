@@ -54,7 +54,7 @@ export default function IndividualForm({
         return res.json();
       })
       .then((json) => {
-        setData(json.data);
+        setData(json);
         console.log(json);
       })
       .catch((err) => {

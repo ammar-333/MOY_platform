@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import {
   Field,
+  FieldContent,
   FieldDescription,
   FieldError,
   FieldGroup,
@@ -23,46 +24,54 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { Checkbox } from "@/components/ui/checkbox";
+
+const formatRegistration = (value: string) => {
+  const numbers = value.replace(/\D/g, "").slice(0, 6);
+
+  if (numbers.length <= 3) return numbers;
+  return numbers.slice(0, 3) + "/" + numbers.slice(3);
+};
 
 // Schema
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const formSchema = (t: any) =>
-  z.object({
-    delegateName: z.string().min(1, t("errors.required")),
+  z
+    .object({
+      delegateName: z.string().min(1, t("errors.required")),
 
-    delegateNationalId: z
-      .string()
-      .length(10, t("errors.length", { len: 10 }))
-      .regex(/^\d*$/, t("errors.digitsOnly")),
+      delegateNationalId: z
+        .string()
+        .length(10, t("errors.length", { len: 10 }))
+        .regex(/^\d*$/, t("errors.digitsOnly")),
 
-    RegistrationNumber: z
-      .string()
-      .length(6, t("errors.length", { len: 6 }))
-      .regex(/^\d*$/, t("errors.digitsOnly")),
+      RegistrationNumber: z
+        .string()
+        .length(6, t("errors.length", { len: 6 }))
+        .regex(/^\d*$/, t("errors.digitsOnly")),
+      delegateDateOfBirth: z.date().optional(),
+      JobTitle: z.string().min(1, t("errors.required")),
 
-    IdentificationNumber: z
-      .string()
-      .length(10, t("errors.length", { len: 10 }))
-      .regex(/^\d*$/, t("errors.digitsOnly")),
-
-    delegateDateOfBirth: z.date().optional(),
-
-    JobTitle: z.string().min(1, t("errors.required")),
-    orgEmail: z.string().email(t("errors.invalidEmail")),
-    orgPhone: z
-      .string()
-      .length(9, t("errors.length", { len: 9 }))
-      .regex(/^\d*$/, t("errors.digitsOnly"))
-      .regex(/^7/, t("errors.jordanNumber")),
-
-    password: z
-      .string()
-      .min(6, t("errors.min", { len: 6 }))
-      .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z\d]).+$/,
-        t("errors.passwordStrength"),
-      ),
-  });
+      IdentificationNumber: z
+        .string()
+        .length(10, t("errors.length", { len: 10 }))
+        .regex(/^\d*$/, t("errors.digitsOnly")),
+      orgEmail: z.string().email(t("errors.invalidEmail")),
+      orgPhone: z
+        .string()
+        .length(9, t("errors.length", { len: 9 }))
+        .regex(/^\d*$/, t("errors.digitsOnly"))
+        .regex(/^7/, t("errors.jordanNumber")),
+    })
+    .superRefine((data, ctx) => {
+      if (!data.delegateDateOfBirth) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["delegateDateOfBirth"],
+          message: t("errors.date"),
+        });
+      }
+    });
 export default function GovSignupForm({
   className,
   ...props
@@ -80,17 +89,18 @@ export default function GovSignupForm({
     delegateName: "",
     delegateNationalId: "",
     RegistrationNumber: "",
-    IdentificationNumber: "",
+    JobTitle: "",
     delegateDateOfBirth: undefined,
 
-    JobTitle: "",
+    IdentificationNumber: "",
     orgEmail: "",
     orgPhone: "",
-
-    password: "",
   });
   const [formErrors, setFormErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [isChecked, setIsChecked] = useState(false);
+  const [showError, setShowError] = useState(false);
 
   const formatPhone = (num: string | undefined) => `+962${num}`;
 
@@ -113,17 +123,31 @@ export default function GovSignupForm({
     e.preventDefault();
 
     if (!validate()) return;
+    if (!isChecked) {
+      setShowError(true);
+      return;
+    }
 
     setIsSubmitting(true);
 
     try {
       const formData = new FormData();
 
+      formData.append("delegateName", form.delegateName);
       formData.append("commissioner_NID", form.delegateNationalId);
+      formData.append("RegistrationNumber", form.RegistrationNumber);
+      formData.append("JobTitle", form.JobTitle);
+      formData.append(
+        "delegateDateOfBirth",
+        form.delegateDateOfBirth?.toString() ?? "",
+      );
 
+      formData.append(
+        "IdentificationNumber",
+        formatPhone(form.IdentificationNumber),
+      );
       formData.append("institutions_PhonNum", formatPhone(form.orgPhone));
       formData.append("institutions_Email", form.orgEmail);
-      formData.append("password", form.password);
 
       console.log(form);
       await register(formData);
@@ -145,23 +169,18 @@ export default function GovSignupForm({
     >
       <div className="overflow-hidden rounded-2xl border bg-background shadow-sm">
         {/* HEADER */}
-        <div className="bg-primary text-white px-6 md:px-8 py-7">
-          <div className="flex flex-col items-center justify-center text-center gap-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/20">
-              <LogIn className="h-6 w-6" />
-            </div>
-            <div>
-              <h1 className="text-xl md:text-2xl font-bold">
-                {t("form.gate")}
-              </h1>
-              <p className="mt-1 text-sm opacity-90">{t("form.reservation")}</p>
-            </div>
+        <div className="bg-primary text-white text-center px-6 pt-4 pb-4">
+          <div className="mx-auto mb-2 flex size-11 items-center justify-center rounded-full bg-white/20">
+            <LogIn className="h-6 w-6" />
           </div>
+
+          <h1 className="text-lg font-bold">{t("form.gate")}</h1>
+          <p className="mt-1 text-sm opacity-90">{t("form.reservation")}</p>
         </div>
 
         {/* FORM */}
         <Card className="rounded-none shadow-none dark:bg-slate-900">
-          <CardContent className="p-6 md:p-8">
+          <CardContent className="px-6 py-2 md:px-8 md:py-4">
             <form onSubmit={handleSubmit}>
               <FieldGroup>
                 {/* Name */}
@@ -175,7 +194,7 @@ export default function GovSignupForm({
                     type="text"
                     value={form.delegateName}
                     readOnly
-                    className="bg-muted border-dashed text-muted-foreground cursor-default focus-visible:ring-0"
+                    className="bg-muted dark:bg-muted border-dashed text-muted-foreground cursor-default focus-visible:ring-0"
                   />
                   <FieldError>{formErrors.delegateName}</FieldError>
                 </Field>
@@ -211,48 +230,49 @@ export default function GovSignupForm({
                     </FieldLabel>
                     <Input
                       id="RegistrationNumber"
+                      dir="ltr"
                       type="text"
                       value={form.RegistrationNumber}
                       onChange={(e) =>
                         setForm((prev) => ({
                           ...prev,
-                          RegistrationNumber: e.target.value,
+                          RegistrationNumber: formatRegistration(
+                            e.target.value,
+                          ),
                         }))
                       }
-                      maxLength={6}
+                      placeholder="123/456"
+                      maxLength={7}
+                      className="text-center tracking-[0.5em]"
                     />
-
                     <FieldError>{formErrors.RegistrationNumber}</FieldError>
                   </Field>
                 </FieldGroup>
 
                 <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-5">
-                  {/* Delegate Identification number */}
                   <Field>
-                    <FieldLabel htmlFor="IdentificationNumber">
-                      {t("auth.IdentificationNumber")}
+                    <FieldLabel htmlFor="JobTitle">
+                      {t("auth.JobTitle")}
                       <span className="text-red-500">*</span>
                     </FieldLabel>
                     <Input
-                      id="IdentificationNumber"
+                      id="JobTitle"
                       type="text"
-                      value={form.IdentificationNumber}
+                      value={form.JobTitle}
                       onChange={(e) =>
                         setForm((prev) => ({
                           ...prev,
-                          IdentificationNumber: e.target.value,
+                          JobTitle: e.target.value,
                         }))
                       }
-                      maxLength={10}
                     />
-
-                    <FieldError>{formErrors.IdentificationNumber}</FieldError>
+                    <FieldError>{formErrors.JobTitle}</FieldError>
                   </Field>
 
-                  {/* Organization date */}
+                  {/* birth date */}
                   <Field className="mx-auto">
                     <FieldLabel htmlFor="date">
-                      {t("auth.dateofEstablishment")}
+                      {t("auth.dateofBirth")}
                     </FieldLabel>
                     <Popover open={open} onOpenChange={setOpen}>
                       <PopoverTrigger asChild>
@@ -287,29 +307,33 @@ export default function GovSignupForm({
                         />
                       </PopoverContent>
                     </Popover>
+                    <FieldError>{formErrors.delegateDateOfBirth}</FieldError>
                   </Field>
                 </FieldGroup>
 
                 {/* Divider */}
                 <hr className="border-primary" />
 
+                {/*  Identification number */}
                 <Field>
-                  <FieldLabel htmlFor="JobTitle">
-                    {t("auth.JobTitle")}
+                  <FieldLabel htmlFor="IdentificationNumber">
+                    {t("auth.IdentificationNumber")}
                     <span className="text-red-500">*</span>
                   </FieldLabel>
                   <Input
-                    id="JobTitle"
+                    id="IdentificationNumber"
                     type="text"
-                    value={form.JobTitle}
+                    value={form.IdentificationNumber}
                     onChange={(e) =>
                       setForm((prev) => ({
                         ...prev,
-                        JobTitle: e.target.value,
+                        IdentificationNumber: e.target.value,
                       }))
                     }
+                    maxLength={10}
                   />
-                  <FieldError>{formErrors.JobTitle}</FieldError>
+
+                  <FieldError>{formErrors.IdentificationNumber}</FieldError>
                 </Field>
 
                 <FieldGroup className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -361,24 +385,34 @@ export default function GovSignupForm({
                   </Field>
                 </FieldGroup>
 
-                {/* Password */}
-                <Field>
-                  <FieldLabel htmlFor="password">
-                    {t("auth.password")} <span className="text-red-500">*</span>
-                  </FieldLabel>
-                  <Input
-                    id="password"
-                    type="password"
-                    value={form.password}
-                    onChange={(e) =>
-                      setForm((prev) => ({
-                        ...prev,
-                        password: e.target.value,
-                      }))
-                    }
-                  />
-                  <FieldError>{formErrors.password}</FieldError>
-                </Field>
+                {/* terms checkBox */}
+                <FieldGroup className="mx-auto" dir={t("dir")}>
+                  <Field
+                    orientation="horizontal"
+                    data-invalid={!isChecked && showError}
+                  >
+                    <Checkbox
+                      id="terms-checkbox-desc"
+                      name="terms-checkbox-desc"
+                      checked={isChecked}
+                      onCheckedChange={(value) => {
+                        const checked = value === true;
+                        setIsChecked(checked);
+
+                        if (checked) {
+                          setShowError(false); // remove red when user fixes it
+                        }
+                      }}
+                      aria-invalid={!isChecked && showError}
+                    />
+                    <FieldContent>
+                      <FieldLabel htmlFor="terms-checkbox-desc">
+                        {t("auth.terms")}
+                      </FieldLabel>
+                      <FieldDescription>{t("auth.termsDesc")}</FieldDescription>
+                    </FieldContent>
+                  </Field>
+                </FieldGroup>
 
                 {/* Submit */}
                 <Field className="md:col-span-2">

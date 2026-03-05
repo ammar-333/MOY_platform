@@ -27,30 +27,30 @@ export default function SandSignupForm({
     >
       <div className="overflow-hidden rounded-2xl border bg-background shadow-sm">
         {/* HEADER */}
-        <div className="bg-primary text-white text-center px-6 pt-6 pb-6">
-          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-white/20">
+        <div className="bg-primary text-white text-center px-6 pt-4 pb-4">
+          <div className="mx-auto mb-2 flex size-11 items-center justify-center rounded-full bg-white/20">
             <LogIn className="h-6 w-6" />
           </div>
 
-          <h1 className="text-xl font-bold">{t("form.gate")}</h1>
+          <h1 className="text-lg font-bold">{t("form.gate")}</h1>
           <p className="mt-1 text-sm opacity-90">{t("form.reservation")}</p>
         </div>
 
         {/* FORM */}
-        <Card className="rounded-none shadow-none dark:bg-slate-900 min-h-125">
-          <CardContent className="p-6">
+        <Card className="rounded-none shadow-none dark:bg-slate-900">
+          <CardContent className="px-6 py-2">
             <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-3">
               {t("auth.OrgsignupSanad")}{" "}
               <span className="text-emerald-600">{t("auth.sanad")}</span>
             </h1>
 
-            <p className="text-gray-500 text-sm mb-8 leading-relaxed">
+            <p className="text-gray-500 text-sm mb-6 leading-relaxed">
               {t("auth.orgSignupDesc")}{" "}
             </p>
 
             <hr className="border-muted" />
 
-            <div className="mt-5">
+            <div className="mt-4">
               <div className="flex flex-col items-center justify-center rounded-2xl">
                 <img
                   className="text-center w-4/5 dark:hidden"
@@ -66,7 +66,7 @@ export default function SandSignupForm({
 
               <Field className="md:col-span-2">
                 <button
-                  className="flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 dark:bg-primary dark:hover:bg-blue-800  text-white py-3 px-6 rounded-lg transition-colors w-full mt-6"
+                  className="flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 dark:bg-primary dark:hover:bg-blue-800  text-white py-3 px-6 rounded-lg transition-colors w-full mt-4"
                   type="button"
                   onClick={handleSanad}
                 >
@@ -79,7 +79,7 @@ export default function SandSignupForm({
                   </span>
                   <span>{t("auth.sanadSignOn")}</span>
                 </button>
-                <FieldDescription className="text-center mt-3">
+                <FieldDescription className="text-center">
                   {t("auth.account")}{" "}
                   <Link
                     to="/auth/login"

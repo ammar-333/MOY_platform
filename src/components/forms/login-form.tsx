@@ -147,18 +147,18 @@ export function LoginForm({
       {...props}
     >
       {/* HEADER */}
-      <div className="bg-primary text-white text-center px-6 pt-5 pb-5">
-        <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-white/20">
+      <div className="bg-primary text-white text-center px-6 pt-4 pb-4">
+        <div className="mx-auto mb-2 flex size-11 items-center justify-center rounded-full bg-white/20">
           <LogIn className="h-6 w-6" />
         </div>
 
-        <h1 className="text-xl font-bold">{t("form.gate")}</h1>
+        <h1 className="text-lg font-bold">{t("form.gate")}</h1>
         <p className="mt-1 text-sm opacity-90">{t("form.reservation")}</p>
       </div>
 
       {/* FORM */}
       <Card className="rounded-none shadow-none dark:bg-slate-900">
-        <CardContent className="p-5">
+        <CardContent className="px-5">
           <form
             onSubmit={userType === "government" ? handleGovLogin : handleLogin}
           >
@@ -235,7 +235,7 @@ export function LoginForm({
                     />
                   </div>
                   <button
-                    className="flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 dark:bg-primary dark:hover:bg-blue-800  text-white py-3 px-6 rounded-lg transition-colors w-full mt-8"
+                    className="flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 dark:bg-primary dark:hover:bg-blue-800  text-white py-3 px-6 rounded-lg transition-colors w-full mt-4 mb-2"
                     type="button"
                     onClick={handleSanad}
                   >
